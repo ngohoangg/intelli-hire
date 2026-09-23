@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: intelli-hire-question-postgres
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  db-gui:
+    container_name: db-gui
+    image: dpage/pgadmin4
+    ports:
+      - "${DB_GUI_PORT}:8080"
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${DB_GUI_ADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${DB_GUI_ADMIN_PASSWORD}
+      PGADMIN_LISTEN_PORT: 8080
+    volumes:
+      - ./servers.json:/pgadmin4/servers.json
+
+  redis:
+    image: redis:7-alpine
+    container_name: intelli-hire-question-redis
+    ports:
+      - "${REDIS_PORT}:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:

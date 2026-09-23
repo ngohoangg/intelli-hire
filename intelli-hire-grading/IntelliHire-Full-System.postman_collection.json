@@ -1,0 +1,329 @@
+{
+	"info": {
+		"_postman_id": "intelli-hire-full-system",
+		"name": "IntelliHire Full System",
+		"description": "Complete API collection for IntelliHire system.\n\nServices:\n- Interview Service: http://localhost:8083\n- Grading Service: http://localhost:8084/api\n- Report Service: http://localhost:8085/api\n\nKafka Flow:\nInterview (end session) → Kafka 'session_completed' → Grading (LLM) → Kafka 'grading_completed' → Report",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{"key": "interviewUrl", "value": "http://localhost:8083", "type": "string"},
+		{"key": "gradingUrl", "value": "http://localhost:8084/api", "type": "string"},
+		{"key": "reportUrl", "value": "http://localhost:8085/api", "type": "string"},
+		{"key": "userId", "value": "5", "type": "string"},
+		{"key": "sessionId", "value": "", "type": "string"},
+		{"key": "gradingId", "value": "", "type": "string"},
+		{"key": "reportId", "value": "", "type": "string"}
+	],
+	"item": [
+		{
+			"name": "0. Health Check",
+			"item": [
+				{
+					"name": "Interview Health",
+					"event": [{"listen": "test", "script": {"exec": ["pm.test('UP', () => pm.expect(pm.response.json().status).to.eql('UP'));"], "type": "text/javascript"}}],
+					"request": {"method": "GET", "url": {"raw": "{{interviewUrl}}/actuator/health", "host": ["{{interviewUrl}}"], "path": ["actuator", "health"]}}
+				},
+				{
+					"name": "Grading Health",
+					"event": [{"listen": "test", "script": {"exec": ["pm.test('UP', () => pm.expect(pm.response.json().status).to.eql('UP'));"], "type": "text/javascript"}}],
+					"request": {"method": "GET", "url": {"raw": "{{gradingUrl}}/actuator/health", "host": ["{{gradingUrl}}"], "path": ["actuator", "health"]}}
+				},
+				{
+					"name": "Report Health",
+					"event": [{"listen": "test", "script": {"exec": ["pm.test('UP', () => pm.expect(pm.response.json().status).to.eql('UP'));"], "type": "text/javascript"}}],
+					"request": {"method": "GET", "url": {"raw": "{{reportUrl}}/actuator/health", "host": ["{{reportUrl}}"], "path": ["actuator", "health"]}}
+				}
+			]
+		},
+		{
+			"name": "1. E2E Kafka Pipeline",
+			"description": "Full end-to-end: Interview → Kafka → Grading (LLM) → Kafka → Report\n\nRun in order. Wait 15-20s after step 4 before step 5.",
+			"item": [
+				{
+					"name": "1.1 Seed Interview Session (SQL)",
+					"event": [
+						{"listen": "prerequest", "script": {"exec": ["var sid = Math.floor(Math.random() * 90000) + 10000;", "pm.collectionVariables.set('sessionId', String(sid));", "console.log('Session ID:', sid);"], "type": "text/javascript"}},
+						{"listen": "test", "script": {"exec": ["pm.test('Seeded', () => pm.response.to.have.status(200));"], "type": "text/javascript"}}
+					],
+					"request": {
+						"method": "GET",
+						"url": {"raw": "{{interviewUrl}}/actuator/health", "host": ["{{interviewUrl}}"], "path": ["actuator", "health"]},
+						"description": "This step generates a random sessionId.\n\nYou need to manually run this SQL first:\n\nINSERT INTO interview_sessions (id, user_id, topic, difficulty, status, started_at, created_at)\nVALUES ({{sessionId}}, '5', 'Java Spring Boot', 'mid', 'ACTIVE', NOW(), NOW());\n\nINSERT INTO question_logs (session_id, question_id, question_text, question_order, asked_at) VALUES\n({{sessionId}}, 'q-001', 'What is Spring Boot?', 1, NOW()),\n({{sessionId}}, 'q-002', 'Explain Dependency Injection.', 2, NOW()),\n({{sessionId}}, 'q-003', 'What are Spring bean scopes?', 3, NOW());\n\nOr use pre-seeded session ID: set sessionId variable to an existing ACTIVE session."
+					}
+				},
+				{
+					"name": "1.2 Submit Answer 1 (good)",
+					"event": [{"listen": "test", "script": {"exec": ["pm.test('Submitted', () => pm.expect(pm.response.json().success).to.be.true);"], "type": "text/javascript"}}],
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}, {"key": "X-User-Id", "value": "{{userId}}"}],
+						"body": {"mode": "raw", "raw": "{\n    \"question_id\": \"q-001\",\n    \"answer_text\": \"Spring Boot is an extension of Spring Framework that simplifies development with auto-configuration, embedded servers, and starter dependencies. It follows convention over configuration to reduce boilerplate.\"\n}"},
+						"url": {"raw": "{{interviewUrl}}/api/v1/interviews/sessions/{{sessionId}}/answers", "host": ["{{interviewUrl}}"], "path": ["api", "v1", "interviews", "sessions", "{{sessionId}}", "answers"]}
+					}
+				},
+				{
+					"name": "1.3 Submit Answer 2 (medium)",
+					"event": [{"listen": "test", "script": {"exec": ["pm.test('Submitted', () => pm.expect(pm.response.json().success).to.be.true);"], "type": "text/javascript"}}],
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}, {"key": "X-User-Id", "value": "{{userId}}"}],
+						"body": {"mode": "raw", "raw": "{\n    \"question_id\": \"q-002\",\n    \"answer_text\": \"DI is a pattern where dependencies are provided externally via constructor, setter, or field injection. Spring uses @Autowired for this.\"\n}"},
+						"url": {"raw": "{{interviewUrl}}/api/v1/interviews/sessions/{{sessionId}}/answers", "host": ["{{interviewUrl}}"], "path": ["api", "v1", "interviews", "sessions", "{{sessionId}}", "answers"]}
+					}
+				},
+				{
+					"name": "1.4 Submit Answer 3 (bad)",
+					"event": [{"listen": "test", "script": {"exec": ["pm.test('Submitted', () => pm.expect(pm.response.json().success).to.be.true);"], "type": "text/javascript"}}],
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}, {"key": "X-User-Id", "value": "{{userId}}"}],
+						"body": {"mode": "raw", "raw": "{\n    \"question_id\": \"q-003\",\n    \"answer_text\": \"I have no idea what Spring bean scopes are.\"\n}"},
+						"url": {"raw": "{{interviewUrl}}/api/v1/interviews/sessions/{{sessionId}}/answers", "host": ["{{interviewUrl}}"], "path": ["api", "v1", "interviews", "sessions", "{{sessionId}}", "answers"]}
+					}
+				},
+				{
+					"name": "1.5 End Session (TRIGGERS KAFKA)",
+					"event": [{"listen": "test", "script": {"exec": ["pm.test('Session ended', () => pm.expect(pm.response.json().success).to.be.true);", "console.log('Kafka pipeline triggered! Wait 15-20s for LLM grading + report creation.');"], "type": "text/javascript"}}],
+					"request": {
+						"method": "PUT",
+						"header": [{"key": "X-User-Id", "value": "{{userId}}"}],
+						"url": {"raw": "{{interviewUrl}}/api/v1/interviews/sessions/{{sessionId}}/end", "host": ["{{interviewUrl}}"], "path": ["api", "v1", "interviews", "sessions", "{{sessionId}}", "end"]},
+						"description": "Triggers full Kafka pipeline:\n1. Interview → Kafka 'session_completed'\n2. Grading consumes → GET interview data → LLM grades\n3. Grading → Kafka 'grading_completed'\n4. Report consumes → creates report\n\nWAIT 15-20 seconds before running next requests."
+					}
+				},
+				{
+					"name": "1.6 Check Grading (wait 15-20s)",
+					"event": [{"listen": "test", "script": {"exec": ["var json = pm.response.json();", "if (json.success && json.data) {", "    pm.collectionVariables.set('gradingId', json.data.id);", "    pm.test('Grading COMPLETED', () => pm.expect(json.data.status).to.eql('COMPLETED'));", "    pm.test('Has results', () => pm.expect(json.data.results.length).to.be.above(0));", "    pm.test('Model is grok', () => pm.expect(json.data.results[0].model_used).to.include('grok'));", "    console.log('Total score:', json.data.total_score + '/' + json.data.max_score);", "} else {", "    pm.test('Grading not ready yet - wait longer', () => pm.expect(json.success).to.be.true);", "}"], "type": "text/javascript"}}],
+					"request": {
+						"method": "GET",
+						"url": {"raw": "{{gradingUrl}}/v1/gradings/session/{{sessionId}}", "host": ["{{gradingUrl}}"], "path": ["v1", "gradings", "session", "{{sessionId}}"]}
+					}
+				},
+				{
+					"name": "1.7 Check Report (auto-created via Kafka)",
+					"event": [{"listen": "test", "script": {"exec": ["var json = pm.response.json();", "if (json.success && json.data) {", "    pm.collectionVariables.set('reportId', json.data.id);", "    pm.test('Report COMPLETED', () => pm.expect(json.data.status).to.eql('COMPLETED'));", "    pm.test('Has question scores', () => pm.expect(json.data.question_scores.length).to.be.above(0));", "    pm.test('Scores match grading', () => pm.expect(json.data.total_score).to.be.above(0));", "    console.log('Report total:', json.data.total_score + '/' + json.data.max_score);", "} else {", "    pm.test('Report not ready yet', () => pm.expect(json.success).to.be.true);", "}"], "type": "text/javascript"}}],
+					"request": {
+						"method": "GET",
+						"url": {"raw": "{{reportUrl}}/v1/reports/session/{{sessionId}}", "host": ["{{reportUrl}}"], "path": ["v1", "reports", "session", "{{sessionId}}"]}
+					}
+				}
+			]
+		},
+		{
+			"name": "2. Interview Service APIs",
+			"item": [
+				{
+					"name": "Create Session",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}, {"key": "X-User-Id", "value": "{{userId}}"}],
+						"body": {"mode": "raw", "raw": "{\n    \"topic\": \"Java Spring Boot\",\n    \"difficulty\": \"mid\",\n    \"question_count\": 5\n}"},
+						"url": {"raw": "{{interviewUrl}}/api/v1/interviews/sessions", "host": ["{{interviewUrl}}"], "path": ["api", "v1", "interviews", "sessions"]},
+						"description": "Requires Question Service (port 8081) to be running."
+					}
+				},
+				{
+					"name": "List Sessions",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "X-User-Id", "value": "{{userId}}"}],
+						"url": {"raw": "{{interviewUrl}}/api/v1/interviews/sessions?page=0&size=10", "host": ["{{interviewUrl}}"], "path": ["api", "v1", "interviews", "sessions"], "query": [{"key": "page", "value": "0"}, {"key": "size", "value": "10"}]}
+					}
+				},
+				{
+					"name": "Get Session Detail",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "X-User-Id", "value": "{{userId}}"}],
+						"url": {"raw": "{{interviewUrl}}/api/v1/interviews/sessions/{{sessionId}}", "host": ["{{interviewUrl}}"], "path": ["api", "v1", "interviews", "sessions", "{{sessionId}}"]}
+					}
+				},
+				{
+					"name": "Submit Answer",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}, {"key": "X-User-Id", "value": "{{userId}}"}],
+						"body": {"mode": "raw", "raw": "{\n    \"question_id\": \"q-001\",\n    \"answer_text\": \"Your answer here...\"\n}"},
+						"url": {"raw": "{{interviewUrl}}/api/v1/interviews/sessions/{{sessionId}}/answers", "host": ["{{interviewUrl}}"], "path": ["api", "v1", "interviews", "sessions", "{{sessionId}}", "answers"]}
+					}
+				},
+				{
+					"name": "End Session",
+					"request": {
+						"method": "PUT",
+						"header": [{"key": "X-User-Id", "value": "{{userId}}"}],
+						"url": {"raw": "{{interviewUrl}}/api/v1/interviews/sessions/{{sessionId}}/end", "host": ["{{interviewUrl}}"], "path": ["api", "v1", "interviews", "sessions", "{{sessionId}}", "end"]}
+					}
+				},
+				{
+					"name": "Delete Session",
+					"request": {
+						"method": "DELETE",
+						"header": [{"key": "X-User-Id", "value": "{{userId}}"}],
+						"url": {"raw": "{{interviewUrl}}/api/v1/interviews/sessions/{{sessionId}}", "host": ["{{interviewUrl}}"], "path": ["api", "v1", "interviews", "sessions", "{{sessionId}}"]}
+					}
+				}
+			]
+		},
+		{
+			"name": "3. Grading Service APIs",
+			"item": [
+				{
+					"name": "Grade Answers (Direct REST)",
+					"event": [{"listen": "test", "script": {"exec": ["var json = pm.response.json();", "if (json.success && json.data) {", "    pm.collectionVariables.set('gradingId', json.data.id);", "    pm.collectionVariables.set('sessionId', json.data.session_id);", "}", "pm.test('201 Created', () => pm.response.to.have.status(201));", "pm.test('COMPLETED', () => pm.expect(json.data.status).to.eql('COMPLETED'));"], "type": "text/javascript"}}],
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}, {"key": "X-User-Name", "value": "test-user"}],
+						"body": {"mode": "raw", "raw": "{\n    \"session_id\": \"{{$guid}}\",\n    \"user_id\": \"5\",\n    \"topic\": \"Java Spring Boot\",\n    \"answers\": [\n        {\n            \"question_id\": \"q-001\",\n            \"question_text\": \"What is Spring Boot?\",\n            \"answer_text\": \"Spring Boot simplifies Spring development with auto-configuration, embedded servers, and starter dependencies.\",\n            \"skill_name\": \"spring-core\",\n            \"max_score\": 10.0\n        },\n        {\n            \"question_id\": \"q-002\",\n            \"question_text\": \"Explain Dependency Injection.\",\n            \"answer_text\": \"DI is a pattern where dependencies are provided externally. Spring uses @Autowired for constructor, setter, and field injection.\",\n            \"skill_name\": \"spring-core\",\n            \"max_score\": 10.0\n        },\n        {\n            \"question_id\": \"q-003\",\n            \"question_text\": \"What is REST?\",\n            \"answer_text\": \"I dont know.\",\n            \"skill_name\": \"rest-api\",\n            \"max_score\": 10.0\n        }\n    ]\n}"},
+						"url": {"raw": "{{gradingUrl}}/v1/gradings", "host": ["{{gradingUrl}}"], "path": ["v1", "gradings"]},
+						"description": "Direct REST grading (bypasses Kafka intake). Also publishes grading_completed to Kafka → Report auto-created."
+					}
+				},
+				{
+					"name": "Grade (No skill_name - Interview format)",
+					"event": [{"listen": "test", "script": {"exec": ["var json = pm.response.json();", "if (json.success && json.data) {", "    pm.collectionVariables.set('gradingId', json.data.id);", "    pm.collectionVariables.set('sessionId', json.data.session_id);", "}", "pm.test('201', () => pm.response.to.have.status(201));"], "type": "text/javascript"}}],
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}, {"key": "X-User-Name", "value": "test-user"}],
+						"body": {"mode": "raw", "raw": "{\n    \"session_id\": \"{{$guid}}\",\n    \"user_id\": \"5\",\n    \"topic\": \"Docker\",\n    \"answers\": [\n        {\n            \"question_id\": \"dk-001\",\n            \"question_text\": \"What is Docker?\",\n            \"answer_text\": \"Docker is a containerization platform for packaging apps with dependencies.\",\n            \"max_score\": 10.0\n        }\n    ]\n}"},
+						"url": {"raw": "{{gradingUrl}}/v1/gradings", "host": ["{{gradingUrl}}"], "path": ["v1", "gradings"]},
+						"description": "Without skill_name (like Interview Service sends). Topic used as fallback."
+					}
+				},
+				{
+					"name": "Grade (Validation Error)",
+					"event": [{"listen": "test", "script": {"exec": ["pm.test('400', () => pm.response.to.have.status(400));"], "type": "text/javascript"}}],
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\n    \"session_id\": \"\",\n    \"user_id\": \"\",\n    \"answers\": []\n}"},
+						"url": {"raw": "{{gradingUrl}}/v1/gradings", "host": ["{{gradingUrl}}"], "path": ["v1", "gradings"]}
+					}
+				},
+				{
+					"name": "Get Grading by ID",
+					"event": [{"listen": "test", "script": {"exec": ["pm.test('200', () => pm.response.to.have.status(200));"], "type": "text/javascript"}}],
+					"request": {"method": "GET", "url": {"raw": "{{gradingUrl}}/v1/gradings/{{gradingId}}", "host": ["{{gradingUrl}}"], "path": ["v1", "gradings", "{{gradingId}}"]}}
+				},
+				{
+					"name": "Get Grading by Session ID",
+					"event": [{"listen": "test", "script": {"exec": ["pm.test('200', () => pm.response.to.have.status(200));"], "type": "text/javascript"}}],
+					"request": {"method": "GET", "url": {"raw": "{{gradingUrl}}/v1/gradings/session/{{sessionId}}", "host": ["{{gradingUrl}}"], "path": ["v1", "gradings", "session", "{{sessionId}}"]}}
+				},
+				{
+					"name": "Get Grading (Not Found)",
+					"event": [{"listen": "test", "script": {"exec": ["pm.test('404', () => pm.response.to.have.status(404));"], "type": "text/javascript"}}],
+					"request": {"method": "GET", "url": {"raw": "{{gradingUrl}}/v1/gradings/non-existent-id", "host": ["{{gradingUrl}}"], "path": ["v1", "gradings", "non-existent-id"]}}
+				},
+				{
+					"name": "Get User History",
+					"event": [{"listen": "test", "script": {"exec": ["pm.test('200', () => pm.response.to.have.status(200));", "pm.test('Has content', () => pm.expect(pm.response.json().data).to.have.property('content'));"], "type": "text/javascript"}}],
+					"request": {"method": "GET", "url": {"raw": "{{gradingUrl}}/v1/gradings/history/{{userId}}", "host": ["{{gradingUrl}}"], "path": ["v1", "gradings", "history", "{{userId}}"]}}
+				},
+				{
+					"name": "Get User History (COMPLETED only)",
+					"request": {"method": "GET", "url": {"raw": "{{gradingUrl}}/v1/gradings/history/{{userId}}?status=COMPLETED&page=0&size=10", "host": ["{{gradingUrl}}"], "path": ["v1", "gradings", "history", "{{userId}}"], "query": [{"key": "status", "value": "COMPLETED"}, {"key": "page", "value": "0"}, {"key": "size", "value": "10"}]}}
+				},
+				{
+					"name": "Get User History (FAILED only)",
+					"request": {"method": "GET", "url": {"raw": "{{gradingUrl}}/v1/gradings/history/{{userId}}?status=FAILED", "host": ["{{gradingUrl}}"], "path": ["v1", "gradings", "history", "{{userId}}"], "query": [{"key": "status", "value": "FAILED"}]}}
+				},
+				{
+					"name": "Admin - Get All (ROLE_ADMIN)",
+					"event": [{"listen": "test", "script": {"exec": ["pm.test('200', () => pm.response.to.have.status(200));"], "type": "text/javascript"}}],
+					"request": {"method": "GET", "header": [{"key": "X-User-Role", "value": "ROLE_ADMIN"}], "url": {"raw": "{{gradingUrl}}/v1/gradings/admin/all?page=0&size=10", "host": ["{{gradingUrl}}"], "path": ["v1", "gradings", "admin", "all"], "query": [{"key": "page", "value": "0"}, {"key": "size", "value": "10"}]}}
+				},
+				{
+					"name": "Admin - Forbidden (no role)",
+					"event": [{"listen": "test", "script": {"exec": ["pm.test('403', () => pm.response.to.have.status(403));"], "type": "text/javascript"}}],
+					"request": {"method": "GET", "url": {"raw": "{{gradingUrl}}/v1/gradings/admin/all", "host": ["{{gradingUrl}}"], "path": ["v1", "gradings", "admin", "all"]}}
+				},
+				{
+					"name": "Admin - Forbidden (wrong role)",
+					"event": [{"listen": "test", "script": {"exec": ["pm.test('403', () => pm.response.to.have.status(403));"], "type": "text/javascript"}}],
+					"request": {"method": "GET", "header": [{"key": "X-User-Role", "value": "ROLE_USER"}], "url": {"raw": "{{gradingUrl}}/v1/gradings/admin/all", "host": ["{{gradingUrl}}"], "path": ["v1", "gradings", "admin", "all"]}}
+				}
+			]
+		},
+		{
+			"name": "4. Report Service APIs",
+			"item": [
+				{
+					"name": "Create Report (Direct REST)",
+					"event": [{"listen": "test", "script": {"exec": ["var json = pm.response.json();", "if (json.success && json.data) {", "    pm.collectionVariables.set('reportId', json.data.id);", "}", "pm.test('201', () => pm.response.to.have.status(201));"], "type": "text/javascript"}}],
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\n    \"session_id\": \"{{$guid}}\",\n    \"user_id\": 5,\n    \"topic\": \"Java Spring Boot\",\n    \"question_scores\": [\n        {\n            \"question_id\": \"q-001\",\n            \"question_text\": \"What is Spring Boot?\",\n            \"answer_text\": \"Spring Boot simplifies Spring.\",\n            \"score\": 8.5,\n            \"max_score\": 10.0,\n            \"feedback\": \"Good answer with key concepts.\",\n            \"skill_name\": \"spring-core\"\n        },\n        {\n            \"question_id\": \"q-002\",\n            \"question_text\": \"What is DI?\",\n            \"answer_text\": \"Dependency Injection.\",\n            \"score\": 6.0,\n            \"max_score\": 10.0,\n            \"feedback\": \"Brief but correct.\",\n            \"skill_name\": \"spring-core\"\n        }\n    ]\n}"},
+						"url": {"raw": "{{reportUrl}}/v1/reports", "host": ["{{reportUrl}}"], "path": ["v1", "reports"]},
+						"description": "Direct report creation (normally auto-created via Kafka from Grading)."
+					}
+				},
+				{
+					"name": "Get Report by ID",
+					"event": [{"listen": "test", "script": {"exec": ["pm.test('200', () => pm.response.to.have.status(200));"], "type": "text/javascript"}}],
+					"request": {"method": "GET", "url": {"raw": "{{reportUrl}}/v1/reports/{{reportId}}", "host": ["{{reportUrl}}"], "path": ["v1", "reports", "{{reportId}}"]}}
+				},
+				{
+					"name": "Get Report by Session ID",
+					"event": [{"listen": "test", "script": {"exec": ["pm.test('200', () => pm.response.to.have.status(200));"], "type": "text/javascript"}}],
+					"request": {"method": "GET", "url": {"raw": "{{reportUrl}}/v1/reports/session/{{sessionId}}", "host": ["{{reportUrl}}"], "path": ["v1", "reports", "session", "{{sessionId}}"]}}
+				},
+				{
+					"name": "Update Report",
+					"request": {
+						"method": "PUT",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\n    \"summary\": \"Candidate shows strong Spring Boot knowledge but needs improvement on REST concepts.\",\n    \"roadmap_json\": {\n        \"recommendations\": [\n            {\"skill\": \"rest-api\", \"action\": \"Study RESTful design principles\", \"priority\": \"high\"},\n            {\"skill\": \"spring-core\", \"action\": \"Practice advanced DI patterns\", \"priority\": \"medium\"}\n        ]\n    }\n}"},
+						"url": {"raw": "{{reportUrl}}/v1/reports/{{reportId}}", "host": ["{{reportUrl}}"], "path": ["v1", "reports", "{{reportId}}"]}
+					}
+				},
+				{
+					"name": "Regenerate Roadmap",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\n    \"roadmap_json\": {\n        \"level\": \"mid\",\n        \"weeks\": 4,\n        \"focus_areas\": [\"REST API design\", \"Spring Security\", \"Testing\"]\n    }\n}"},
+						"url": {"raw": "{{reportUrl}}/v1/reports/{{reportId}}/regenerate", "host": ["{{reportUrl}}"], "path": ["v1", "reports", "{{reportId}}", "regenerate"]}
+					}
+				},
+				{
+					"name": "Get Report History",
+					"event": [{"listen": "test", "script": {"exec": ["pm.test('200', () => pm.response.to.have.status(200));", "pm.test('Has content', () => pm.expect(pm.response.json().data).to.have.property('content'));"], "type": "text/javascript"}}],
+					"request": {"method": "GET", "url": {"raw": "{{reportUrl}}/v1/reports/history/5?page=0&size=10", "host": ["{{reportUrl}}"], "path": ["v1", "reports", "history", "5"], "query": [{"key": "page", "value": "0"}, {"key": "size", "value": "10"}]}}
+				},
+				{
+					"name": "Get User Stats",
+					"event": [{"listen": "test", "script": {"exec": ["pm.test('200', () => pm.response.to.have.status(200));"], "type": "text/javascript"}}],
+					"request": {"method": "GET", "url": {"raw": "{{reportUrl}}/v1/reports/stats/5", "host": ["{{reportUrl}}"], "path": ["v1", "reports", "stats", "5"]},
+						"description": "Returns avg score, highest, lowest, top/weak skills."
+					}
+				},
+				{
+					"name": "Get User Progress (all skills)",
+					"request": {"method": "GET", "url": {"raw": "{{reportUrl}}/v1/reports/progress/5", "host": ["{{reportUrl}}"], "path": ["v1", "reports", "progress", "5"]}}
+				},
+				{
+					"name": "Get User Progress (specific skill)",
+					"request": {"method": "GET", "url": {"raw": "{{reportUrl}}/v1/reports/progress/5/spring-core", "host": ["{{reportUrl}}"], "path": ["v1", "reports", "progress", "5", "spring-core"]}}
+				},
+				{
+					"name": "Delete Report by Session",
+					"request": {"method": "DELETE", "url": {"raw": "{{reportUrl}}/v1/reports/session/{{sessionId}}", "host": ["{{reportUrl}}"], "path": ["v1", "reports", "session", "{{sessionId}}"]},
+						"description": "Cascading delete: removes report + all question_scores + skill_scores."
+					}
+				},
+				{
+					"name": "Admin - Get All Reports",
+					"event": [{"listen": "test", "script": {"exec": ["pm.test('200', () => pm.response.to.have.status(200));"], "type": "text/javascript"}}],
+					"request": {"method": "GET", "header": [{"key": "X-User-Role", "value": "ADMIN"}], "url": {"raw": "{{reportUrl}}/v1/reports/admin/all?page=0&size=10", "host": ["{{reportUrl}}"], "path": ["v1", "reports", "admin", "all"], "query": [{"key": "page", "value": "0"}, {"key": "size", "value": "10"}]}}
+				},
+				{
+					"name": "Admin - Forbidden",
+					"event": [{"listen": "test", "script": {"exec": ["pm.test('403', () => pm.response.to.have.status(403));"], "type": "text/javascript"}}],
+					"request": {"method": "GET", "url": {"raw": "{{reportUrl}}/v1/reports/admin/all", "host": ["{{reportUrl}}"], "path": ["v1", "reports", "admin", "all"]}}
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,72 @@
+<div class="page-container">
+
+  <!-- Back -->
+  <button class="back-btn" (click)="back()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="15 18 9 12 15 6"/>
+    </svg>
+    Back to Interviews
+  </button>
+
+  <div *ngIf="session && !loading">
+
+    <!-- Header Card -->
+    <div class="header-card card">
+      <div class="header-content">
+        <div class="session-avatar">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+        </div>
+        <div class="header-info">
+          <div class="title-row">
+            <h1>{{ session.topic }}</h1>
+            <span class="status-badge" [ngClass]="getStatusClass(session.status)">
+              <span class="dot" *ngIf="session.status === 'ACTIVE'"></span>
+              {{ session.status }}
+            </span>
+          </div>
+          <div class="meta-row">
+            <span class="difficulty-badge difficulty-{{ session.difficulty }}">{{ session.difficulty | uppercase }}</span>
+            <span class="meta-text">{{ session.questions?.length ?? 0 }} questions</span>
+            <span class="meta-sep">·</span>
+            <span class="meta-text">{{ session.created_at | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- View Report Button -->
+    <button *ngIf="reportId" class="btn-view-report" (click)="viewReport()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+        <line x1="16" y1="13" x2="8" y2="13"/>
+        <line x1="16" y1="17" x2="8" y2="17"/>
+      </svg>
+      View Report
+    </button>
+
+    <!-- Q&A List -->
+    <div class="qa-list">
+      <div class="qa-item card" *ngFor="let q of session.questions">
+        <div class="qa-question">
+          <span class="q-num">Q{{ q.question_order }}</span>
+          <p class="q-text">{{ q.question_text }}</p>
+        </div>
+        <div class="qa-answer">
+          <span class="answer-label">ANSWER</span>
+          <p class="answer-text">{{ getAnswerForQuestion(q.question_id) }}</p>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="!session.questions?.length">
+        <p>No questions recorded for this session.</p>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<app-loading-spinner [isLoading]="loading" />

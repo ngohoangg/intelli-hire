@@ -1,0 +1,68 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="page-title">
+      <span class="ai-dot"></span>
+      <h1>Accounts</h1>
+      <span class="count-badge" *ngIf="totalElements > 0">{{ totalElements }}</span>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <input class="search-input" [(ngModel)]="searchQuery" (keyup.enter)="onSearch()" placeholder="Search email or username..." />
+    <select class="filter-select" [(ngModel)]="statusFilter" (change)="onSearch()">
+      <option value="">All Status</option>
+      <option value="ACTIVE">Active</option>
+      <option value="INACTIVE">Inactive</option>
+      <option value="LOCKED">Locked</option>
+    </select>
+  </div>
+
+  <div class="card table-card">
+    <table class="ih-table">
+      <thead>
+        <tr>
+          <th>Account</th>
+          <th>Status</th>
+          <th>Last Login</th>
+          <th>Created</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="table-row" *ngFor="let a of accounts" (click)="router.navigate(['/admin/accounts', a.id])">
+          <td>
+            <div class="account-cell">
+              <span class="account-username">{{ a.username }}</span>
+              <span class="account-email">{{ a.email }}</span>
+            </div>
+          </td>
+          <td><span class="status-badge" [class]="'status-' + a.status.toLowerCase()">{{ a.status }}</span></td>
+          <td class="date-cell">{{ formatDate(a.last_login_at) }}</td>
+          <td class="date-cell">{{ formatDate(a.created_at) }}</td>
+          <td class="actions-cell" (click)="$event.stopPropagation()">
+            <ng-container *ngIf="!a.is_super_admin; else protectedCell">
+              <button class="action-btn" (click)="updateStatus(a, 'ACTIVE')" *ngIf="a.status !== 'ACTIVE'" title="Activate">✓</button>
+              <button class="action-btn lock-btn" (click)="updateStatus(a, 'LOCKED')" *ngIf="a.status !== 'LOCKED'" title="Lock">⚿</button>
+            </ng-container>
+            <ng-template #protectedCell>
+              <span class="super-admin-lock" title="Super Admin — protected">⚑</span>
+            </ng-template>
+          </td>
+        </tr>
+        <tr *ngIf="accounts.length === 0 && !loading">
+          <td colspan="5">
+            <div class="empty-state"><p>No accounts found.</p></div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="pagination" *ngIf="totalElements > size">
+      <button class="page-btn" (click)="prevPage()" [disabled]="page === 0">← Prev</button>
+      <span class="page-info">Page {{ page + 1 }} of {{ Math.ceil(totalElements / size) }}</span>
+      <button class="page-btn" (click)="nextPage()" [disabled]="(page + 1) * size >= totalElements">Next →</button>
+    </div>
+  </div>
+
+  <app-loading-spinner [isLoading]="loading" />
+</div>

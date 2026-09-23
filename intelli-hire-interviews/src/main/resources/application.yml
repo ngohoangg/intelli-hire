@@ -1,0 +1,60 @@
+server:
+  port: 8083
+
+spring:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
+  application:
+    name: interview-service
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:5432/${DB_NAME:interview_db}?currentSchema=${DB_SCHEMA:interviews}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASS:postgres}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    open-in-view: false
+    properties:
+      hibernate:
+        default_schema: ${DB_SCHEMA:interviews}
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    schemas: ${DB_SCHEMA:interviews}
+    default-schema: ${DB_SCHEMA:interviews}
+    table: flyway_schema_history_interviews
+    baseline-on-migrate: true
+    baseline-version: 0
+    validate-on-migrate: false
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+  kafka:
+    bootstrap-servers: ${KAFKA_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: false
+
+question-service:
+  base-url: ${QUESTION_SERVICE_URL:http://localhost:8081}
+
+kafka:
+  topics:
+    answers-submitted: answers_submitted
+    session-completed: session_completed
+
+session:
+  expiry:
+    minutes: 60
+    check-interval-ms: 300000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always

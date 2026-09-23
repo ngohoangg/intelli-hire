@@ -1,0 +1,222 @@
+@use '../../styles/question-admin' as qs;
+
+@include qs.base-page;
+
+.layout-grid {
+  display: grid;
+  grid-template-columns: minmax(280px, 320px) minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.filter-panel,
+.stack-list {
+  display: grid;
+  gap: 14px;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+}
+
+.input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-bright);
+  border-radius: var(--radius-sm);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:focus-within {
+    border-color: var(--cyan);
+    box-shadow: 0 0 0 1px rgba(0, 245, 255, 0.14), var(--glow-subtle);
+  }
+}
+
+.textarea-wrap {
+  align-items: flex-start;
+}
+
+.field-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  flex-shrink: 0;
+  color: var(--text-tertiary);
+
+  &--top {
+    padding-top: 12px;
+    align-self: flex-start;
+  }
+}
+
+.field-input {
+  flex: 1;
+  height: 44px;
+  width: 100%;
+  padding: 0 14px 0 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 14px;
+  caret-color: var(--cyan);
+
+  &::placeholder {
+    color: var(--text-tertiary);
+    font-style: italic;
+  }
+}
+
+.field-textarea {
+  min-height: 112px;
+  height: auto;
+  padding: 12px 14px 12px 0;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.field-select {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.content-column {
+  display: grid;
+  gap: 16px;
+}
+
+.article-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.article-card {
+  cursor: pointer;
+  display: grid;
+  gap: 10px;
+
+  &.selected {
+    border-color: var(--border-accent);
+    background: rgba(0, 245, 255, 0.06);
+  }
+
+  h3 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.4;
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
+.article-top,
+.article-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+
+.article-taxonomy {
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.article-description {
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.compact {
+  min-height: 180px;
+}
+
+::ng-deep {
+  .field-select {
+    .mat-mdc-select-trigger {
+      height: 44px;
+      display: flex;
+      align-items: center;
+      padding-right: 14px;
+    }
+
+    .mat-mdc-select-value,
+    .mat-mdc-select-placeholder,
+    .mat-mdc-select-min-line {
+      color: #fff !important;
+      font-size: 14px !important;
+    }
+
+    .mat-mdc-select-arrow {
+      color: var(--text-tertiary) !important;
+    }
+  }
+
+  .study-select-panel {
+    background: #101923 !important;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px !important;
+    box-shadow: 0 18px 40px rgba(2, 6, 23, 0.48) !important;
+    overflow: hidden !important;
+
+    .mat-mdc-option {
+      min-height: 42px !important;
+      color: #fff !important;
+      font-size: 13px !important;
+    }
+
+    .mat-mdc-option:hover:not(.mdc-list-item--disabled),
+    .mat-mdc-option.mdc-list-item--focus {
+      background: rgba(255, 255, 255, 0.06) !important;
+    }
+
+    .mat-mdc-option.mdc-list-item--selected:not(.mat-mdc-option-multiple) {
+      background: rgba(0, 245, 255, 0.1) !important;
+      color: #fff !important;
+    }
+  }
+}
+
+@media (max-width: 1100px) {
+  .layout-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .article-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .article-top,
+  .article-actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

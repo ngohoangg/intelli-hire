@@ -1,0 +1,259 @@
+<div class="page-container">
+  <button class="back-btn" routerLink="/questions">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="15 18 9 12 15 6"></polyline>
+    </svg>
+    Back
+  </button>
+
+  <div class="page-header">
+    <div class="page-title-group">
+      <div class="page-title">
+        <span class="ai-dot"></span>
+        <h1>Study Articles</h1>
+        <span class="count-badge">{{ filteredArticles.length }}</span>
+      </div>
+      <p class="page-subtitle">
+        Curate learning resources by topic and difficulty so setup previews and post-session recommendations stay coherent.
+      </p>
+    </div>
+
+    <div class="header-actions">
+      <button class="btn-ghost" type="button" (click)="startCreate()">New Article</button>
+    </div>
+  </div>
+
+  <div class="metric-grid">
+    <article class="card metric-card">
+      <p class="metric-label">Loaded Resources</p>
+      <h2 class="metric-value">{{ articles.length }}</h2>
+      <p class="metric-detail">Articles matching the current topic and difficulty query.</p>
+    </article>
+    <article class="card metric-card">
+      <p class="metric-label">Active</p>
+      <h2 class="metric-value">{{ activeCount }}</h2>
+      <p class="metric-detail">Currently enabled resources available for recommendation flows.</p>
+    </article>
+    <article class="card metric-card">
+      <p class="metric-label">Sources</p>
+      <h2 class="metric-value">{{ uniqueSources }}</h2>
+      <p class="metric-detail">Distinct article sources represented in the loaded library slice.</p>
+    </article>
+  </div>
+
+  <div class="layout-grid">
+    <aside class="filter-panel">
+      <div class="field-group">
+        <label class="field-label" for="study-filter-topic">Topic</label>
+        <div class="input-wrap">
+          <span class="field-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 6h18"></path>
+              <path d="M7 12h10"></path>
+              <path d="M10 18h4"></path>
+            </svg>
+          </span>
+          <mat-select id="study-filter-topic" class="field-input field-select" [formControl]="filterForm.controls.topicId" panelClass="study-select-panel">
+            <mat-option value="">All topics</mat-option>
+            <mat-option *ngFor="let topic of topicOptions" [value]="topic.id">{{ topic.label }}</mat-option>
+          </mat-select>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="study-filter-difficulty">Difficulty</label>
+        <div class="input-wrap">
+          <span class="field-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 3 4 8l8 5 8-5-8-5Z"></path>
+              <path d="m4 16 8 5 8-5"></path>
+              <path d="m4 12 8 5 8-5"></path>
+            </svg>
+          </span>
+          <mat-select id="study-filter-difficulty" class="field-input field-select" [formControl]="filterForm.controls.difficultyId" panelClass="study-select-panel">
+            <mat-option value="">All levels</mat-option>
+            <mat-option *ngFor="let difficulty of difficulties" [value]="difficulty.id">{{ difficulty.name }}</mat-option>
+          </mat-select>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="study-filter-active">Active State</label>
+        <div class="input-wrap">
+          <span class="field-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="9"></circle>
+              <path d="m9 12 2 2 4-4"></path>
+            </svg>
+          </span>
+          <mat-select id="study-filter-active" class="field-input field-select" [formControl]="filterForm.controls.activeState" panelClass="study-select-panel">
+            <mat-option value="ALL">All</mat-option>
+            <mat-option value="ACTIVE">Active</mat-option>
+            <mat-option value="INACTIVE">Inactive</mat-option>
+          </mat-select>
+        </div>
+      </div>
+
+      <div class="editor-actions">
+        <button class="btn-ghost" type="button" (click)="resetFilters()">Reset</button>
+        <button class="btn-primary" type="button" (click)="applyFilters()">Apply</button>
+      </div>
+    </aside>
+
+    <section class="content-column">
+      <section class="card section-card">
+        <div class="section-header">
+          <div class="section-header-left">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+            <h2 class="section-title">Article Library</h2>
+          </div>
+        </div>
+
+        <div class="article-grid" *ngIf="filteredArticles.length; else emptyState">
+          <article class="stack-item article-card" *ngFor="let article of filteredArticles" [class.selected]="selectedArticle?.id === article.id" (click)="selectArticle(article)">
+            <div class="article-top">
+              <span class="status-badge" [class.active]="article.is_active" [class.inactive]="!article.is_active">
+                <span class="dot" *ngIf="article.is_active"></span>
+                {{ article.is_active ? 'Active' : 'Inactive' }}
+              </span>
+              <span class="table-secondary">{{ article.source || 'Unknown source' }}</span>
+            </div>
+            <h3>{{ article.title }}</h3>
+            <p class="article-taxonomy">{{ article.topic_name }} • {{ article.difficulty_name }}</p>
+            <p class="article-description">{{ article.description || 'No description provided.' }}</p>
+            <div class="article-actions">
+              <a class="text-action" [href]="article.url" target="_blank" rel="noreferrer">Open Article</a>
+              <button class="text-action danger" type="button" (click)="deleteArticle(article, $event)">Delete</button>
+            </div>
+          </article>
+        </div>
+
+        <ng-template #emptyState>
+          <div class="empty-panel compact">
+            <h3>No study articles found</h3>
+            <p>Try widening the taxonomy filters or create a new resource in the editor panel.</p>
+          </div>
+        </ng-template>
+      </section>
+
+      <aside class="side-panel">
+        <div class="section-header">
+          <div class="section-header-left">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--magenta)" stroke-width="2">
+              <path d="M12 20h9"></path>
+              <path d="M12 4h9"></path>
+              <path d="M4 9h16"></path>
+              <path d="M4 15h16"></path>
+            </svg>
+            <h2 class="section-title">{{ selectedArticle ? 'Edit Article' : 'Create Article' }}</h2>
+          </div>
+        </div>
+
+        <form [formGroup]="editorForm" class="stack-list">
+          <div class="field-group">
+            <label class="field-label" for="study-editor-topic">Topic</label>
+            <div class="input-wrap">
+              <span class="field-icon">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 6h18"></path>
+                  <path d="M7 12h10"></path>
+                  <path d="M10 18h4"></path>
+                </svg>
+              </span>
+              <mat-select id="study-editor-topic" class="field-input field-select" formControlName="topic_id" panelClass="study-select-panel">
+                <mat-option value="">Select topic</mat-option>
+                <mat-option *ngFor="let topic of topicOptions" [value]="topic.id">{{ topic.label }}</mat-option>
+              </mat-select>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="study-editor-difficulty">Difficulty</label>
+            <div class="input-wrap">
+              <span class="field-icon">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 3 4 8l8 5 8-5-8-5Z"></path>
+                  <path d="m4 16 8 5 8-5"></path>
+                  <path d="m4 12 8 5 8-5"></path>
+                </svg>
+              </span>
+              <mat-select id="study-editor-difficulty" class="field-input field-select" formControlName="difficulty_id" panelClass="study-select-panel">
+                <mat-option value="">Select difficulty</mat-option>
+                <mat-option *ngFor="let difficulty of difficulties" [value]="difficulty.id">{{ difficulty.name }}</mat-option>
+              </mat-select>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="study-editor-title">Title</label>
+            <div class="input-wrap">
+              <span class="field-icon">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 7h16"></path>
+                  <path d="M4 12h16"></path>
+                  <path d="M4 17h10"></path>
+                </svg>
+              </span>
+              <input id="study-editor-title" class="field-input" formControlName="title" />
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="study-editor-url">URL</label>
+            <div class="input-wrap">
+              <span class="field-icon">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                </svg>
+              </span>
+              <input id="study-editor-url" class="field-input" formControlName="url" />
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="study-editor-source">Source</label>
+            <div class="input-wrap">
+              <span class="field-icon">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 16V8"></path>
+                  <path d="M3 16V8"></path>
+                  <path d="M7 20h10"></path>
+                  <path d="M12 16v4"></path>
+                  <rect x="2" y="4" width="20" height="12" rx="2"></rect>
+                </svg>
+              </span>
+              <input id="study-editor-source" class="field-input" formControlName="source" />
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="study-editor-description">Description</label>
+            <div class="input-wrap textarea-wrap">
+              <span class="field-icon field-icon--top">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+              </span>
+              <textarea id="study-editor-description" class="field-input field-textarea" rows="4" formControlName="description"></textarea>
+            </div>
+          </div>
+
+          <mat-checkbox formControlName="is_active">Active recommendation resource</mat-checkbox>
+
+          <div class="editor-actions">
+            <button class="btn-ghost" type="button" (click)="startCreate()">Reset</button>
+            <button class="btn-primary" type="button" (click)="submit()">
+              {{ selectedArticle ? 'Save Article' : 'Create Article' }}
+            </button>
+          </div>
+        </form>
+      </aside>
+    </section>
+  </div>
+</div>
+
+<app-loading-spinner [isLoading]="loading || saving" />

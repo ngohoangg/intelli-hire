@@ -1,0 +1,182 @@
+<div class="page-container" *ngIf="resume">
+
+  <!-- Back -->
+  <button class="back-btn" (click)="router.navigate(['/resumes'])">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="15 18 9 12 15 6"/>
+    </svg>
+    Back to Resumes
+  </button>
+
+  <!-- Parse Job Status (shown when jobId is in queryParams) -->
+  <app-parse-job-status *ngIf="showJobStatus" [jobId]="jobId!" (jobSucceeded)="onJobSucceeded()" />
+
+  <!-- Resume Header Card -->
+  <div class="header-card card">
+    <div class="header-content">
+      <div class="resume-avatar">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14,2 14,8 20,8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+          <polyline points="10,9 9,9 8,9"/>
+        </svg>
+      </div>
+
+      <div class="header-info">
+        <div class="title-row">
+          <h1>{{ resume.title }}</h1>
+          <app-resume-status-badge [status]="resume.status" />
+        </div>
+<div class="meta-row">
+          <span class="meta-item">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+            Created {{ formatDate(resume.created_at) }}
+          </span>
+          <span class="meta-item" *ngIf="resume.updated_at !== resume.created_at">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+            Updated {{ formatDate(resume.updated_at) }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="header-actions">
+      <button class="action-chip" (click)="router.navigate(['/resumes', resume.id, 'edit'])">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+        </svg>
+        Edit
+      </button>
+      <button class="action-chip reprocess-chip" (click)="reprocess()"
+        [disabled]="isParsing || reprocessing">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          [style.animation]="reprocessing ? 'spin 1s linear infinite' : 'none'">
+          <path d="M23 4v6h-6"/>
+          <path d="M1 20v-6h6"/>
+          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+        </svg>
+        {{ reprocessing ? 'Re-parsing…' : 'Reprocess' }}
+      </button>
+      <button class="action-chip danger-chip" (click)="deleteResume()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="3 6 5 6 21 6"/>
+          <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+        </svg>
+        Delete
+      </button>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <mat-tab-group *ngIf="detailsReady" class="detail-tabs" animationDuration="200ms">
+
+    <mat-tab label="Overview">
+      <ng-template matTabContent>
+        <div class="tab-content">
+          <div class="overview-grid">
+            <div class="info-card">
+              <span class="info-label">Status</span>
+              <app-resume-status-badge [status]="resume.status" />
+            </div>
+            <div class="info-card">
+              <span class="info-label">Created</span>
+              <span class="info-value">{{ formatDate(resume.created_at) }}</span>
+            </div>
+            <div class="info-card">
+              <span class="info-label">Last Updated</span>
+              <span class="info-value">{{ formatDate(resume.updated_at) }}</span>
+            </div>
+            <div class="info-card" *ngIf="profile?.years_estimated != null">
+              <span class="info-label">Years of Experience</span>
+              <div class="years-display">
+                <span class="years-num">{{ profile!.years_estimated }}</span>
+                <span class="years-unit">yrs</span>
+                <span class="seniority-pill" *ngIf="profile?.seniority">{{ profile!.seniority }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="summary-block" *ngIf="profile?.summary">
+            <span class="info-label">Summary</span>
+            <p class="summary-text">{{ profile!.summary }}</p>
+          </div>
+        </div>
+      </ng-template>
+    </mat-tab>
+
+    <mat-tab label="File">
+      <ng-template matTabContent>
+        <div class="tab-content">
+          <app-file-upload [resumeId]="resume.id" (uploaded)="onFileUploaded()" />
+        </div>
+      </ng-template>
+    </mat-tab>
+
+    <mat-tab label="Contact">
+      <ng-template matTabContent>
+        <div class="tab-content">
+          <app-contact-form [resumeId]="resume.id" />
+        </div>
+      </ng-template>
+    </mat-tab>
+
+    <mat-tab label="Experience">
+      <ng-template matTabContent>
+        <div class="tab-content">
+          <app-experience-list [resumeId]="resume.id" />
+        </div>
+      </ng-template>
+    </mat-tab>
+
+    <mat-tab label="Education">
+      <ng-template matTabContent>
+        <div class="tab-content">
+          <app-education-list [resumeId]="resume.id" />
+        </div>
+      </ng-template>
+    </mat-tab>
+
+    <mat-tab label="Skills">
+      <ng-template matTabContent>
+        <div class="tab-content">
+          <app-resume-skill-list [resumeId]="resume.id" />
+        </div>
+      </ng-template>
+    </mat-tab>
+
+    <mat-tab label="Skill Profile">
+      <ng-template matTabContent>
+        <div class="tab-content">
+          <app-skill-profile-card [resumeId]="resume.id" />
+        </div>
+      </ng-template>
+    </mat-tab>
+
+    <mat-tab label="AI Review">
+      <ng-template matTabContent>
+        <div class="tab-content">
+          <app-cv-review [resumeId]="resume.id" />
+        </div>
+      </ng-template>
+    </mat-tab>
+
+  </mat-tab-group>
+
+</div>
+
+<div class="page-container" *ngIf="!resume && !loading">
+  <p style="color: var(--text-secondary); text-align: center; margin-top: 80px;">Resume not found.</p>
+</div>
+
+<app-loading-spinner [isLoading]="loading" />

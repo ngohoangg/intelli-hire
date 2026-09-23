@@ -1,0 +1,325 @@
+.page-container {
+  padding: 32px;
+  max-width: 660px;
+  margin: 0 auto;
+  animation: fadeInUp 0.5s ease-out both;
+}
+
+.form-card {
+  margin-top: 24px;
+}
+
+.form-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+
+  h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 4px;
+    letter-spacing: -0.01em;
+  }
+}
+
+.form-subtitle {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin: 0;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.form-icon {
+  width: 48px;
+  height: 48px;
+  background: var(--cyan-glow);
+  border: 1px solid var(--border-accent);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cyan);
+  flex-shrink: 0;
+}
+
+.form-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+// ── Field primitives (mirrors question-create pattern) ─────────
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+  user-select: none;
+  display: block;
+}
+
+.input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-bright);
+  border-radius: var(--radius-sm);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:focus-within {
+    border-color: var(--cyan);
+    box-shadow: 0 0 0 1px rgba(0, 245, 255, 0.14), var(--glow-subtle);
+  }
+
+  &.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+}
+
+.field-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  flex-shrink: 0;
+  color: var(--text-tertiary);
+}
+
+.field-input {
+  flex: 1;
+  height: 44px;
+  width: 100%;
+  padding: 0 14px 0 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 14px;
+  caret-color: var(--cyan);
+
+  &::placeholder {
+    color: var(--text-tertiary);
+    font-style: italic;
+  }
+}
+
+.field-select {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.field-error {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--danger);
+}
+
+.field-hint {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-tertiary);
+
+  &.warn { color: var(--magenta); }
+}
+
+// ── mat-select inside input-wrap ───────────────────────────────
+::ng-deep {
+  .field-select {
+    .mat-mdc-select-trigger {
+      height: 44px;
+      display: flex;
+      align-items: center;
+      padding-right: 14px;
+    }
+
+    .mat-mdc-select-value,
+    .mat-mdc-select-placeholder,
+    .mat-mdc-select-min-line {
+      color: var(--text-primary) !important;
+      font-size: 14px !important;
+    }
+
+    .mat-mdc-select-arrow {
+      color: var(--text-tertiary) !important;
+    }
+  }
+
+  .ih-select-panel {
+    background: var(--bg-card) !important;
+    border: 1px solid var(--border-bright);
+    border-radius: var(--radius-md) !important;
+    box-shadow: 0 18px 40px rgba(2, 6, 23, 0.48) !important;
+    overflow: hidden !important;
+
+    .mat-mdc-option {
+      min-height: 42px !important;
+      color: var(--text-primary) !important;
+      font-size: 13px !important;
+    }
+
+    .mat-mdc-option:hover:not(.mdc-list-item--disabled),
+    .mat-mdc-option.mdc-list-item--focus {
+      background: rgba(255, 255, 255, 0.06) !important;
+    }
+
+    .mat-mdc-option.mdc-list-item--selected:not(.mat-mdc-option-multiple) {
+      background: rgba(0, 245, 255, 0.1) !important;
+    }
+  }
+}
+
+// ── Source Selector ────────────────────────────────────────────
+.source-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.source-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.source-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+  text-align: left;
+
+  &:hover {
+    border-color: var(--border-bright);
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--text-primary);
+  }
+
+  &.active {
+    border-color: var(--cyan);
+    background: rgba(0, 245, 255, 0.05);
+    color: var(--text-primary);
+    box-shadow: 0 0 12px rgba(0, 245, 255, 0.08);
+  }
+}
+
+.source-option-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--text-tertiary);
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+
+  .source-option.active & {
+    border-color: var(--border-accent);
+    background: var(--cyan-glow);
+    color: var(--cyan);
+  }
+
+  &.ai .source-option.active & {
+    border-color: rgba(255, 0, 170, 0.3);
+    background: rgba(255, 0, 170, 0.08);
+    color: var(--magenta);
+  }
+}
+
+.source-option-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.source-option-title {
+  display: block;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: inherit;
+  line-height: 1.3;
+}
+
+.source-option-desc {
+  display: block;
+  font-size: 11px;
+  color: var(--text-tertiary);
+  margin-top: 2px;
+  line-height: 1.4;
+}
+
+.source-check {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--cyan);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--bg-void);
+}
+
+// ── Two-column row ─────────────────────────────────────────────
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+// ── Question Count slider ──────────────────────────────────────
+.question-count {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  .count-value {
+    color: var(--cyan);
+    font-weight: 700;
+  }
+
+  mat-slider {
+    width: 100%;
+  }
+}
+
+// ── Actions ────────────────────────────────────────────────────
+.form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 4px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+
+  .btn-primary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}

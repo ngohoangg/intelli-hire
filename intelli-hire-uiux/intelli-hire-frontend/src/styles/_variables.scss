@@ -1,0 +1,75 @@
+/* =========================================
+   IntelliHire — Design Tokens
+   Theme: Neon Cyberpunk (Pure × Corporate)
+   ========================================= */
+
+:root {
+  /* ---- Backgrounds ---- */
+  --bg-void:       #030306;
+  --bg-primary:    #07070F;
+  --bg-secondary:  #0D0D1A;
+  --bg-card:       #111120;
+  --bg-card-hover: #181830;
+  --bg-elevated:   #1A1A35;
+
+  /* ---- Neon Accents ---- */
+  --cyan:               #00F5FF;
+  --cyan-dim:           #00C5CC;
+  --cyan-glow:          rgba(0, 245, 255, 0.20);
+  --cyan-glow-strong:   rgba(0, 245, 255, 0.35);
+
+  --magenta:            #FF00AA;
+  --magenta-dim:        #CC0088;
+  --magenta-glow:       rgba(255, 0, 170, 0.20);
+  --magenta-glow-subtle: rgba(255, 0, 170, 0.06);
+
+  --purple:             #9B00FF;
+  --purple-glow:        rgba(155, 0, 255, 0.20);
+  --purple-glow-subtle: rgba(155, 0, 255, 0.08);
+
+  /* ---- Backward-compat aliases (do NOT remove until all components migrated) ---- */
+  --accent:             var(--cyan);
+  --accent-dim:         var(--cyan-dim);
+  --accent-glow:        var(--cyan-glow);
+  --accent-glow-strong: var(--cyan-glow-strong);
+
+  /* ---- Status ---- */
+  --success: #00FF88;
+  --warning: #FFCC00;
+  --warning-glow:        rgba(255, 204, 0, 0.15);
+  --warning-glow-subtle: rgba(255, 204, 0, 0.08);
+  --warning-border:      rgba(255, 204, 0, 0.3);
+  --danger:  #FF1744;
+
+  /* ---- Text ---- */
+  --text-primary:   #EEF0FF;
+  --text-secondary: #6B7AB8;
+  --text-tertiary:  #3D4466;
+
+  /* ---- Borders ---- */
+  --border:         rgba(255, 255, 255, 0.06);
+  --border-subtle:  rgba(255, 255, 255, 0.04);
+  --border-bright:  rgba(255, 255, 255, 0.12);
+  --border-accent:  rgba(0, 245, 255, 0.25);
+  --border-magenta: rgba(255, 0, 170, 0.25);
+
+  /* ---- Shadows & Glows ---- */
+  --shadow-card:     0 8px 32px rgba(0, 0, 0, 0.50);
+  --shadow-glow:     0 0 24px rgba(0, 245, 255, 0.18);
+  --shadow-elevated: 0 16px 56px rgba(0, 0, 0, 0.70);
+  --glow-cyan:       0 0 20px rgba(0, 245, 255, 0.4), 0 0 40px rgba(0, 245, 255, 0.2);
+  --glow-magenta:    0 0 20px rgba(255, 0, 170, 0.4), 0 0 40px rgba(255, 0, 170, 0.2);
+  --glow-subtle:     0 0 12px rgba(0, 245, 255, 0.15);
+
+  /* ---- Radius ---- */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+
+  /* ---- Typography ---- */
+  --font-display: 'Syne', sans-serif;
+  --font-body:    'DM Sans', 'Helvetica Neue', sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
+}

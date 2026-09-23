@@ -1,0 +1,53 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="page-title">
+      <span class="ai-dot"></span>
+      <h1>Roles</h1>
+    </div>
+    <button class="btn-primary" (click)="creating = !creating">+ New Role</button>
+  </div>
+
+  <div class="card create-card" *ngIf="creating">
+    <div class="field-row">
+      <div class="field-group"><label class="field-label">Role Name *</label><input class="field-input" [(ngModel)]="newRoleName" placeholder="ROLE_MANAGER" /></div>
+      <div class="field-group"><label class="field-label">Description</label><input class="field-input" [(ngModel)]="newRoleDesc" placeholder="Optional description" /></div>
+    </div>
+    <div class="create-actions">
+      <button class="btn-primary" (click)="create()">Create</button>
+      <button class="btn-ghost" (click)="creating = false">Cancel</button>
+    </div>
+  </div>
+
+  <div class="error-banner" *ngIf="error">{{ error }}</div>
+  <div class="success-banner" *ngIf="success">{{ success }}</div>
+
+  <div class="card table-card">
+    <table class="ih-table">
+      <thead>
+        <tr>
+          <th>Role Name</th>
+          <th>Description</th>
+          <th>Type</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let r of roles">
+          <td><span class="role-name-cell">{{ r.name }}</span></td>
+          <td class="desc-cell">{{ r.description || '—' }}</td>
+          <td><span class="type-badge" [class.system]="r.is_system">{{ r.is_system ? 'System' : 'Custom' }}</span></td>
+          <td><span class="status-badge" [class.status-active]="r.is_active" [class.status-inactive]="!r.is_active">{{ r.is_active ? 'Active' : 'Inactive' }}</span></td>
+          <td class="actions-cell">
+            <button class="action-btn" (click)="toggleActive(r)" [title]="r.is_active ? 'Deactivate' : 'Activate'">
+              {{ r.is_active ? '⏸' : '▶' }}
+            </button>
+            <button class="action-btn delete-btn" (click)="delete(r)" title="Delete" [disabled]="r.is_system">✕</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <app-loading-spinner [isLoading]="loading" />
+</div>

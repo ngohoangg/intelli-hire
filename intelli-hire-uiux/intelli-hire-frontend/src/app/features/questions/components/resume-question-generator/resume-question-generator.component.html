@@ -1,0 +1,191 @@
+<div class="generator-shell">
+  <section class="card hero-panel">
+    <div class="hero-copy">
+      <div class="hero-kicker">
+        <span class="ai-dot"></span>
+        <span>Resume-driven interview prep</span>
+      </div>
+      <h2>Generate a question pack from this resume</h2>
+      <p>
+        Pull candidate context from the resume profile, refine the focus areas, then let Question Service
+        produce a tailored set for practice or interviewer preparation.
+      </p>
+    </div>
+
+    <div class="hero-metrics">
+      <div class="hero-metric">
+        <span class="metric-label">Resume</span>
+        <strong>{{ resumeId }}</strong>
+      </div>
+      <div class="hero-metric">
+        <span class="metric-label">Suggested focus</span>
+        <strong>{{ suggestedFocusAreas.length || 0 }}</strong>
+      </div>
+      <div class="hero-metric" *ngIf="profile?.seniority">
+        <span class="metric-label">Seniority</span>
+        <strong>{{ profile?.seniority }}</strong>
+      </div>
+      <div class="hero-metric" *ngIf="profile?.years_estimated != null">
+        <span class="metric-label">Experience</span>
+        <strong>{{ profile?.years_estimated }} yrs</strong>
+      </div>
+    </div>
+  </section>
+
+  <div class="content-grid">
+    <section class="card control-panel" [formGroup]="form">
+      <div class="section-header">
+        <div class="section-header-left">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2">
+            <path d="M12 3v18"></path>
+            <path d="M3 12h18"></path>
+          </svg>
+          <h3>Generator Controls</h3>
+        </div>
+        <button class="btn-ghost" type="button" (click)="resetForm()">Reset</button>
+      </div>
+
+      <div class="field-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Question Count</mat-label>
+          <input matInput type="number" formControlName="count" />
+          <mat-hint>1 to 20 questions</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Question Type</mat-label>
+          <mat-select formControlName="question_type">
+            <mat-option value="">Adaptive mix</mat-option>
+            <mat-option *ngFor="let type of questionTypes" [value]="type">{{ formatType(type) }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Difficulty</mat-label>
+          <mat-select formControlName="difficulty_name" [disabled]="loadingDifficulties">
+            <mat-option value="">Let the service adapt</mat-option>
+            <mat-option *ngFor="let difficulty of difficulties" [value]="difficulty.name">
+              {{ difficulty.name }}
+            </mat-option>
+          </mat-select>
+          <mat-hint>Optional explicit target difficulty</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Language</mat-label>
+          <mat-select formControlName="language">
+            <mat-option *ngFor="let language of languageOptions" [value]="language.value">
+              {{ language.label }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="suggestion-block" *ngIf="suggestedFocusAreas.length">
+        <div class="block-head">
+          <div>
+            <p class="block-label">Suggested Focus Areas</p>
+            <p class="block-copy">Pulled from the current resume skill profile.</p>
+          </div>
+          <button class="text-action" type="button" (click)="applySuggestedFocusAreas()">Use All</button>
+        </div>
+
+        <div class="chip-list">
+          <button
+            class="chip selectable-chip"
+            type="button"
+            *ngFor="let area of suggestedFocusAreas"
+            [class.selected]="isFocusAreaSelected(area)"
+            (click)="toggleSuggestedFocusArea(area)">
+            {{ area }}
+          </button>
+        </div>
+      </div>
+
+      <mat-form-field appearance="outline" class="full-span">
+        <mat-label>Focus Areas</mat-label>
+        <textarea
+          matInput
+          rows="6"
+          formControlName="focus_areas"
+          placeholder="One focus area per line. Example: Spring Boot&#10;REST APIs&#10;Microservices">
+        </textarea>
+        <mat-hint>Leave empty to let the backend derive all focus areas from the resume.</mat-hint>
+      </mat-form-field>
+
+      <div class="action-row">
+        <button class="btn-primary" type="button" (click)="generate()" [disabled]="loading">
+          {{ loading ? 'Generating…' : 'Generate Question Pack' }}
+        </button>
+      </div>
+
+      <p class="inline-error" *ngIf="errorMessage">{{ errorMessage }}</p>
+    </section>
+
+    <section class="card result-panel">
+      <div class="section-header">
+        <div class="section-header-left">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--magenta)" stroke-width="2">
+            <path d="M5 12h14"></path>
+            <path d="M12 5v14"></path>
+          </svg>
+          <h3>Generated Output</h3>
+        </div>
+        <span class="count-badge" *ngIf="generatedCount">{{ generatedCount }}</span>
+      </div>
+
+      <p class="result-caption">
+        Question pack stays in the same visual lane as the resume profile so reviewers can scan quickly without a hard white break.
+      </p>
+
+      <div class="loading-state" *ngIf="loading">
+        <div class="skeleton hero-skeleton"></div>
+        <div class="skeleton question-skeleton" *ngFor="let _ of [1, 2, 3]"></div>
+      </div>
+
+      <ng-container *ngIf="!loading && result; else emptyState">
+        <div class="summary-panel" *ngIf="result.candidate_summary">
+          <p class="summary-label">Candidate Summary</p>
+          <p class="summary-text">{{ result.candidate_summary }}</p>
+          <p class="summary-meta" *ngIf="result.generated_at">
+            Generated {{ formatGeneratedAt(result.generated_at) }}
+          </p>
+        </div>
+
+        <div class="question-stack">
+          <article
+            class="question-item"
+            *ngFor="let question of result.questions; let index = index"
+            [ngClass]="'type-' + (question.question_type || 'technical').toLowerCase()">
+            <div class="question-meta">
+              <span class="question-index">Q{{ index + 1 }}</span>
+              <span class="chip chip-accent">{{ formatType(question.question_type) }}</span>
+              <span class="chip" *ngIf="question.topic_name">{{ question.topic_name }}</span>
+              <span class="chip" *ngIf="question.difficulty_name">{{ question.difficulty_name }}</span>
+            </div>
+
+            <div class="question-body">
+              <h4>{{ question.question_text }}</h4>
+
+              <div class="question-rationale-block" *ngIf="question.rationale">
+                <span class="rationale-label">Why this appears</span>
+                <p class="question-rationale">
+                  {{ question.rationale }}
+                </p>
+              </div>
+            </div>
+          </article>
+        </div>
+      </ng-container>
+
+      <ng-template #emptyState>
+        <div class="empty-panel">
+          <h4>No generated set yet</h4>
+          <p>
+            Configure the generator on the left and create a resume-tailored question pack here.
+          </p>
+        </div>
+      </ng-template>
+    </section>
+  </div>
+</div>

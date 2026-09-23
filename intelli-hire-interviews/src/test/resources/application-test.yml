@@ -1,0 +1,9 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: none
+  kafka:
+    bootstrap-servers: ${spring.embedded.kafka.brokers}
+
+question-service:
+  base-url: http://localhost:${mockwebserver.port:8099}

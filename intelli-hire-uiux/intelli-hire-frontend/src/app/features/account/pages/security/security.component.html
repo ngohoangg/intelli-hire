@@ -1,0 +1,104 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="page-title">
+      <span class="ai-dot"></span>
+      <h1>Security Settings</h1>
+    </div>
+  </div>
+
+  <app-loading-spinner [isLoading]="loading" />
+
+  <!-- Change Password -->
+  <div class="card settings-card">
+    <div class="section-label">Change Password</div>
+
+    <div class="error-banner" *ngIf="pwError">{{ pwError }}</div>
+    <div class="success-banner" *ngIf="pwSuccess">{{ pwSuccess }}</div>
+
+    <form [formGroup]="pwForm" (ngSubmit)="changePassword()" class="pw-form">
+      <div class="field-group">
+        <label class="field-label">Current Password</label>
+        <div class="input-wrapper">
+          <input class="field-input" formControlName="currentPassword"
+                 [type]="showCurrent ? 'text' : 'password'"
+                 placeholder="Enter current password" />
+          <button type="button" class="eye-btn" (click)="showCurrent = !showCurrent" tabindex="-1">
+            <svg *ngIf="!showCurrent" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+            </svg>
+            <svg *ngIf="showCurrent" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+              <line x1="1" y1="1" x2="23" y2="23"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">New Password</label>
+          <div class="input-wrapper">
+            <input class="field-input" formControlName="newPassword"
+                   [type]="showNew ? 'text' : 'password'"
+                   placeholder="Min. 8 characters" />
+            <button type="button" class="eye-btn" (click)="showNew = !showNew" tabindex="-1">
+              <svg *ngIf="!showNew" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+              </svg>
+              <svg *ngIf="showNew" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                <line x1="1" y1="1" x2="23" y2="23"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Confirm New Password</label>
+          <div class="input-wrapper">
+            <input class="field-input" formControlName="confirmPassword"
+                   [type]="showConfirm ? 'text' : 'password'"
+                   placeholder="Repeat new password" />
+            <button type="button" class="eye-btn" (click)="showConfirm = !showConfirm" tabindex="-1">
+              <svg *ngIf="!showConfirm" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+              </svg>
+              <svg *ngIf="showConfirm" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                <line x1="1" y1="1" x2="23" y2="23"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn-primary" type="submit" [disabled]="pwForm.invalid || pwSaving">
+          {{ pwSaving ? 'Saving...' : 'Change Password' }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Linked OAuth Providers -->
+  <div class="card settings-card" *ngIf="!loading">
+    <div class="error-banner" *ngIf="error">{{ error }}</div>
+    <div class="success-banner" *ngIf="success">{{ success }}</div>
+
+    <div class="section-label">Linked OAuth Providers</div>
+
+    <div class="empty-state" *ngIf="linkedProviders.length === 0">
+      <p>No OAuth providers linked to your account.</p>
+    </div>
+
+    <div class="provider-list" *ngIf="linkedProviders.length > 0">
+      <div class="provider-row" *ngFor="let p of linkedProviders">
+        <div class="provider-info">
+          <span class="provider-name">{{ p.provider_name }}</span>
+          <span class="provider-email">{{ p.provider_email }}</span>
+        </div>
+        <button class="btn-danger-outline" (click)="unlink(p.provider_code)">Unlink</button>
+      </div>
+    </div>
+  </div>
+</div>

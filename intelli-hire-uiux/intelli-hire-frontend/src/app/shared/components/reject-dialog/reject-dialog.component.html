@@ -1,0 +1,24 @@
+<div class="reject-dialog">
+  <h2 class="dialog-title">Reject Question</h2>
+
+  <p class="dialog-preview">{{ data.questionText | slice:0:120 }}{{ data.questionText.length > 120 ? '...' : '' }}</p>
+
+  <div class="field-group">
+    <label class="field-label">Rejection Reason <span class="required">*</span></label>
+    <textarea
+      class="field-textarea"
+      [(ngModel)]="reason"
+      placeholder="Explain why this question is being rejected..."
+      rows="4"
+      maxlength="500"
+    ></textarea>
+    <span class="char-count">{{ reason.length }}/500</span>
+  </div>
+
+  <div class="dialog-actions">
+    <button class="btn-cancel" (click)="cancel()">Cancel</button>
+    <button class="btn-reject" (click)="confirm()" [disabled]="!reason.trim()">
+      Reject Question
+    </button>
+  </div>
+</div>

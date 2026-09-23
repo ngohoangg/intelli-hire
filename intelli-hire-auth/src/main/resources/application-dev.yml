@@ -1,0 +1,14 @@
+logging:
+  level:
+    org.aibles.intellihire: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+
+application:
+  cors:
+    allowed-origins: http://localhost:3000,http://localhost:5173
+  rate-limit:
+    enabled: true
+    default-capacity: 200
+    default-refill-tokens: 200
+    default-refill-seconds: 60

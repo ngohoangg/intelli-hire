@@ -1,0 +1,56 @@
+<h2 mat-dialog-title>{{ isEdit ? 'Edit Experience' : 'Add Experience' }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="exp-form">
+
+    <mat-form-field appearance="outline" floatLabel="always" class="full-width">
+      <mat-label>Company *</mat-label>
+      <input matInput formControlName="company" placeholder="e.g. Acme Corp">
+      <mat-error *ngIf="company.hasError('required')">Company is required</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" floatLabel="always" class="full-width">
+      <mat-label>Job Title *</mat-label>
+      <input matInput formControlName="title" placeholder="e.g. Software Engineer">
+      <mat-error *ngIf="title.hasError('required')">Job title is required</mat-error>
+    </mat-form-field>
+
+    <div class="two-col">
+      <mat-form-field appearance="outline" floatLabel="always">
+        <mat-label>Start Date *</mat-label>
+        <input matInput [matDatepicker]="startPicker" formControlName="startDate">
+        <mat-datepicker-toggle matIconSuffix [for]="startPicker" />
+        <mat-datepicker #startPicker />
+        <mat-error *ngIf="startDate.hasError('required')">Start date is required</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" floatLabel="always">
+        <mat-label>End Date</mat-label>
+        <input matInput [matDatepicker]="endPicker" formControlName="endDate">
+        <mat-datepicker-toggle matIconSuffix [for]="endPicker" />
+        <mat-datepicker #endPicker />
+      </mat-form-field>
+    </div>
+
+    <mat-error class="range-error" *ngIf="hasDateRangeError">
+      End date must be after start date
+    </mat-error>
+
+    <mat-checkbox formControlName="isCurrent" class="current-checkbox">
+      Currently working here
+    </mat-checkbox>
+
+    <mat-form-field appearance="outline" floatLabel="always" class="full-width">
+      <mat-label>Description</mat-label>
+      <textarea matInput formControlName="description" rows="4" placeholder="Key responsibilities and achievements…"></textarea>
+    </mat-form-field>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()">Cancel</button>
+  <button mat-flat-button class="save-btn" (click)="submit()">
+    {{ isEdit ? 'Save Changes' : 'Add Experience' }}
+  </button>
+</mat-dialog-actions>

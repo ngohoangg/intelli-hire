@@ -1,0 +1,149 @@
+<div class="skill-list-wrapper">
+
+  <div class="list-header">
+    <h3 class="section-title">Skills</h3>
+    <button class="add-btn" (click)="openAdd()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+      </svg>
+      Add Skill
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-row" *ngIf="loading">
+    <div class="skeleton" *ngFor="let i of [1,2,3,4,5,6]"></div>
+  </div>
+
+  <!-- Empty -->
+  <div class="empty-state" *ngIf="!loading && skills.length === 0">
+    <div class="empty-icon">⚡</div>
+    <p>No skills added yet.</p>
+    <button class="add-btn" (click)="openAdd()">Add First Skill</button>
+  </div>
+
+  <!-- Skills Grid -->
+  <div class="skills-content" *ngIf="!loading && skills.length > 0">
+
+    <!-- Primary Skills -->
+    <div *ngIf="primarySkills.length > 0" class="skills-section">
+      <div class="skills-section-label">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+        </svg>
+        Primary Skills
+      </div>
+      <div class="skill-cards">
+        <div class="skill-card primary" *ngFor="let skill of primarySkills">
+          <div class="skill-card-header">
+            <div class="skill-name">{{ skillName(skill) }}</div>
+            <div class="skill-actions">
+              <button class="icon-btn" (click)="openEdit(skill)" title="Edit">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                </svg>
+              </button>
+              <button class="icon-btn danger" (click)="delete(skill)" title="Remove">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="skill-meta">
+            <span class="skill-category">{{ skillCategory(skill) }}</span>
+            <span class="skill-years" *ngIf="skill.years_experience">{{ skill.years_experience }}yr</span>
+          </div>
+          <div class="skill-confidence" *ngIf="skill.confidence_score != null">
+            <div class="confidence-header">
+              <span class="confidence-label">AI Confidence</span>
+              <span class="confidence-value">{{ (skill.confidence_score * 100) | number:'1.0-0' }}%</span>
+            </div>
+            <div class="confidence-track">
+              <div class="confidence-fill"
+                [style.width.%]="skill.confidence_score * 100">
+              </div>
+            </div>
+          </div>
+          <div class="skill-evidence" *ngIf="skill.evidence_text"
+            [class.expandable]="isLongEvidence(skill.evidence_text)"
+            [class.expanded]="isExpanded(skill.id)"
+            (click)="isLongEvidence(skill.evidence_text) && toggleExpand(skill.id)">
+            <span class="evidence-text">
+              {{ isLongEvidence(skill.evidence_text) && !isExpanded(skill.id)
+                ? evidencePreview(skill.evidence_text)
+                : skill.evidence_text }}
+            </span>
+            <span class="evidence-toggle" *ngIf="isLongEvidence(skill.evidence_text)">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                [style.transform]="isExpanded(skill.id) ? 'rotate(180deg)' : 'rotate(0deg)'"
+                style="transition: transform 0.2s ease">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Other Skills -->
+    <div *ngIf="otherSkills.length > 0" class="skills-section">
+      <div class="skills-section-label" *ngIf="primarySkills.length > 0">Other Skills</div>
+      <div class="skill-cards">
+        <div class="skill-card" *ngFor="let skill of otherSkills">
+          <div class="skill-card-header">
+            <div class="skill-name">{{ skillName(skill) }}</div>
+            <div class="skill-actions">
+              <button class="icon-btn" (click)="openEdit(skill)" title="Edit">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                </svg>
+              </button>
+              <button class="icon-btn danger" (click)="delete(skill)" title="Remove">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="skill-meta">
+            <span class="skill-category">{{ skillCategory(skill) }}</span>
+            <span class="skill-years" *ngIf="skill.years_experience">{{ skill.years_experience }}yr</span>
+          </div>
+          <div class="skill-confidence" *ngIf="skill.confidence_score != null">
+            <div class="confidence-header">
+              <span class="confidence-label">AI Confidence</span>
+              <span class="confidence-value">{{ (skill.confidence_score * 100) | number:'1.0-0' }}%</span>
+            </div>
+            <div class="confidence-track">
+              <div class="confidence-fill"
+                [style.width.%]="skill.confidence_score * 100">
+              </div>
+            </div>
+          </div>
+          <div class="skill-evidence" *ngIf="skill.evidence_text"
+            [class.expandable]="isLongEvidence(skill.evidence_text)"
+            [class.expanded]="isExpanded(skill.id)"
+            (click)="isLongEvidence(skill.evidence_text) && toggleExpand(skill.id)">
+            <span class="evidence-text">
+              {{ isLongEvidence(skill.evidence_text) && !isExpanded(skill.id)
+                ? evidencePreview(skill.evidence_text)
+                : skill.evidence_text }}
+            </span>
+            <span class="evidence-toggle" *ngIf="isLongEvidence(skill.evidence_text)">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                [style.transform]="isExpanded(skill.id) ? 'rotate(180deg)' : 'rotate(0deg)'"
+                style="transition: transform 0.2s ease">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>

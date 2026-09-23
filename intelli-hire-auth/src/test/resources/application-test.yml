@@ -1,0 +1,62 @@
+spring:
+  datasource:
+    url: jdbc:tc:postgresql:16-alpine:///intellihire?TC_INITSCRIPT=init-schema.sql
+    username: postgres
+    password: secret
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        default_schema: auth
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    schemas: auth
+    baseline-on-migrate: true
+  mail:
+    host: localhost
+    port: 25
+
+application:
+  auth:
+    jwt:
+      secret: test-secret-key-that-is-at-least-256-bits-long-for-hmac-sha256
+      issuer: intellihire-test
+      access-token-expiration-seconds: 900
+      refresh-token-expiration-seconds: 604800
+      access-token-audience: intellihire-api
+      refresh-token-audience: intellihire-auth-refresh
+    password:
+      min-length: 8
+      require-uppercase: true
+      require-lowercase: true
+      require-digit: true
+      require-special: false
+      max-failed-attempts: 5
+      lock-duration-minutes: 30
+  oauth:
+    google:
+      client-id: test-google-client-id
+      client-secret: test-google-client-secret
+      redirect-uri: http://localhost:8080/v1/oauth/google/callback
+    github:
+      client-id: test-github-client-id
+      client-secret: test-github-client-secret
+      redirect-uri: http://localhost:8080/v1/oauth/github/callback
+  cors:
+    allowed-origins: http://localhost:3000
+  email:
+    from: test@intellihire.com
+    base-url: http://localhost:8080
+  rate-limit:
+    enabled: false
+
+server:
+  port: 0
+
+logging:
+  level:
+    root: WARN
+    org.aibles.intellihire: DEBUG

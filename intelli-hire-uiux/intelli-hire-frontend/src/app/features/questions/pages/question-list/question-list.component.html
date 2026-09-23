@@ -1,0 +1,286 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="page-title-group">
+      <div class="page-title">
+        <span class="ai-dot"></span>
+        <h1>Questions</h1>
+        <span class="count-badge" *ngIf="totalElements > 0">{{ totalElements }}</span>
+      </div>
+      <p class="page-subtitle">
+        Manage interview questions with direct CRUD actions and filter by topic, difficulty,
+        type, tags and active state.
+      </p>
+    </div>
+
+    <div class="header-actions">
+      <a class="btn-ghost" routerLink="/questions/bulk-import">Bulk Import</a>
+      <a class="btn-primary" routerLink="/questions/create">New Question</a>
+    </div>
+  </div>
+
+  <section class="card section-card filter-card">
+    <div class="section-header">
+      <div class="section-header-left">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2">
+          <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+        </svg>
+        <h2 class="section-title">Filters</h2>
+      </div>
+    </div>
+
+    <div class="filter-grid">
+      <div class="field-group">
+        <label class="field-label" for="question-filter-keyword">Keyword</label>
+        <div class="input-wrap">
+          <span class="field-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="7"></circle>
+              <path d="m20 20-3.5-3.5"></path>
+            </svg>
+          </span>
+          <input
+            id="question-filter-keyword"
+            class="field-input"
+            [formControl]="filterForm.controls.keyword"
+            placeholder="Search question text" />
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="question-filter-topic">Topic</label>
+        <div class="input-wrap">
+          <span class="field-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 6h18"></path>
+              <path d="M7 12h10"></path>
+              <path d="M10 18h4"></path>
+            </svg>
+          </span>
+          <mat-select
+            id="question-filter-topic"
+            class="field-input field-select"
+            [formControl]="filterForm.controls.topicId"
+            panelClass="filter-select-panel">
+            <mat-option value="">All topics</mat-option>
+            <mat-option *ngFor="let topic of topicOptions" [value]="topic.id">
+              {{ topic.label }}
+            </mat-option>
+          </mat-select>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="question-filter-difficulty">Difficulty</label>
+        <div class="input-wrap">
+          <span class="field-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 3 4 8l8 5 8-5-8-5Z"></path>
+              <path d="m4 16 8 5 8-5"></path>
+              <path d="m4 12 8 5 8-5"></path>
+            </svg>
+          </span>
+          <mat-select
+            id="question-filter-difficulty"
+            class="field-input field-select"
+            [formControl]="filterForm.controls.difficultyId"
+            panelClass="filter-select-panel">
+            <mat-option value="">All levels</mat-option>
+            <mat-option *ngFor="let difficulty of difficulties" [value]="difficulty.id">
+              {{ difficulty.name }}
+            </mat-option>
+          </mat-select>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="question-filter-type">Type</label>
+        <div class="input-wrap">
+          <span class="field-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 7h16"></path>
+              <path d="M4 12h10"></path>
+              <path d="M4 17h7"></path>
+            </svg>
+          </span>
+          <mat-select
+            id="question-filter-type"
+            class="field-input field-select"
+            [formControl]="filterForm.controls.type"
+            panelClass="filter-select-panel">
+            <mat-option value="">All types</mat-option>
+            <mat-option *ngFor="let type of questionTypes" [value]="type">
+              {{ formatType(type) }}
+            </mat-option>
+          </mat-select>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="question-filter-tags">Tags</label>
+        <div class="input-wrap input-wrap--multiple">
+          <span class="field-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20.59 13.41 11 3H4v7l9.59 9.59a2 2 0 0 0 2.82 0l4.18-4.18a2 2 0 0 0 0-2.82Z"></path>
+              <path d="M7 7h.01"></path>
+            </svg>
+          </span>
+          <mat-select
+            id="question-filter-tags"
+            class="field-input field-select field-select-multiple"
+            [formControl]="filterForm.controls.tagIds"
+            multiple
+            panelClass="filter-select-panel filter-select-panel--multiple">
+            <mat-option *ngFor="let tag of tags" [value]="tag.id">{{ tag.name }}</mat-option>
+          </mat-select>
+        </div>
+      </div>
+
+      <div class="field-group" *ngIf="isAdmin">
+        <label class="field-label" for="question-filter-status">Status</label>
+        <div class="input-wrap">
+          <span class="field-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="9"></circle>
+              <path d="m9 12 2 2 4-4"></path>
+            </svg>
+          </span>
+          <mat-select
+            id="question-filter-status"
+            class="field-input field-select"
+            [formControl]="filterForm.controls.isActive"
+            panelClass="filter-select-panel">
+            <mat-option value="">All</mat-option>
+            <mat-option [value]="true">Active</mat-option>
+            <mat-option [value]="false">Inactive</mat-option>
+          </mat-select>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="question-filter-sort">Sort</label>
+        <div class="input-wrap">
+          <span class="field-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M11 5h10"></path>
+              <path d="M11 12h7"></path>
+              <path d="M11 19h4"></path>
+              <path d="m3 17 3 3 3-3"></path>
+              <path d="M6 20V4"></path>
+            </svg>
+          </span>
+          <mat-select
+            id="question-filter-sort"
+            class="field-input field-select"
+            [formControl]="filterForm.controls.sort"
+            panelClass="filter-select-panel">
+            <mat-option *ngFor="let option of sortOptions" [value]="option.value">
+              {{ option.label }}
+            </mat-option>
+          </mat-select>
+        </div>
+      </div>
+    </div>
+
+    <div class="filter-actions">
+      <button class="btn-ghost" type="button" (click)="resetFilters()">Reset</button>
+      <button class="btn-primary" type="button" (click)="applyFilters()">Apply Filters</button>
+    </div>
+  </section>
+
+  <section class="card table-card">
+    <div class="table-wrapper" *ngIf="questions.length; else emptyState">
+      <table mat-table [dataSource]="questions" class="ih-table">
+        <ng-container matColumnDef="question_text">
+          <th mat-header-cell *matHeaderCellDef>Question</th>
+          <td mat-cell *matCellDef="let question">
+            <div class="table-title">
+              <span class="table-primary">{{ question.question_text }}</span>
+              <span class="table-secondary">{{ getTagPreview(question) }}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="topic">
+          <th mat-header-cell *matHeaderCellDef>Topic</th>
+          <td mat-cell *matCellDef="let question">{{ question.topic_name }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="difficulty">
+          <th mat-header-cell *matHeaderCellDef>Difficulty</th>
+          <td mat-cell *matCellDef="let question">{{ question.difficulty_name }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef>Type</th>
+          <td mat-cell *matCellDef="let question">
+            <span class="chip chip-accent">{{ formatType(question.question_type) }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="tags">
+          <th mat-header-cell *matHeaderCellDef>Tags</th>
+          <td mat-cell *matCellDef="let question">
+            <div class="chip-list">
+              <span class="chip" *ngFor="let tag of question.tags.slice(0, 2)">{{ tag.name }}</span>
+              <span class="chip chip-magenta" *ngIf="question.tags.length > 2">+{{ question.tags.length - 2 }}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Status</th>
+          <td mat-cell *matCellDef="let question">
+            <span class="status-badge" [ngClass]="getStatusClass(question)">
+              <span class="dot" *ngIf="question.is_active"></span>
+              {{ question.is_active ? 'Active' : 'Inactive' }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="updated">
+          <th mat-header-cell *matHeaderCellDef>Updated</th>
+          <td mat-cell *matCellDef="let question">{{ formatDate(question.last_updated_at) }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let question" (click)="$event.stopPropagation()">
+            <div class="row-actions">
+              <button type="button" class="text-action" (click)="openQuestion(question.id)">View</button>
+              <button type="button" class="text-action" (click)="editQuestion($event, question.id)" *ngIf="isAdmin">Edit</button>
+              <button type="button" class="text-action danger" (click)="archiveQuestion($event, question)" *ngIf="isAdmin">Archive</button>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row" (click)="openQuestion(row.id)"></tr>
+      </table>
+
+      <div class="table-footer">
+        <span class="footer-info">
+          <span class="result-count">{{ totalElements }}</span> result{{ totalElements === 1 ? '' : 's' }}
+        </span>
+        <span class="footer-note">Topic filter is applied via backend search API.</span>
+      </div>
+    </div>
+
+    <ng-template #emptyState>
+      <div class="empty-panel compact">
+        <h3>No questions found</h3>
+        <p>Try widening the filters or create a new question to seed this list.</p>
+      </div>
+    </ng-template>
+
+    <mat-paginator
+      *ngIf="totalElements > 0"
+      [length]="totalElements"
+      [pageIndex]="pageIndex"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="[5, 10, 20]"
+      (page)="onPageChange($event)">
+    </mat-paginator>
+  </section>
+</div>
+
+<app-loading-spinner [isLoading]="loading" />

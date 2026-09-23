@@ -1,0 +1,57 @@
+<h2 mat-dialog-title>{{ isEdit ? 'Edit Education' : 'Add Education' }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="edu-form">
+
+    <mat-form-field appearance="outline" floatLabel="always" class="full-width">
+      <mat-label>School / Institution *</mat-label>
+      <input matInput formControlName="school" placeholder="e.g. Hanoi University of Technology">
+      <mat-error *ngIf="school.hasError('required')">School name is required</mat-error>
+    </mat-form-field>
+
+    <div class="two-col">
+      <mat-form-field appearance="outline" floatLabel="always">
+        <mat-label>Degree</mat-label>
+        <input matInput formControlName="degree" placeholder="e.g. Bachelor of Science">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" floatLabel="always">
+        <mat-label>Field of Study</mat-label>
+        <input matInput formControlName="field" placeholder="e.g. Computer Science">
+      </mat-form-field>
+    </div>
+
+    <div class="two-col">
+      <mat-form-field appearance="outline" floatLabel="always">
+        <mat-label>Start Year</mat-label>
+        <input matInput formControlName="startYear" type="number" [min]="1900" [max]="currentYear" placeholder="e.g. 2018">
+        <mat-error *ngIf="startYear.hasError('yearRange')">Year must be between 1900 and {{ currentYear }}</mat-error>
+        <mat-error *ngIf="startYear.hasError('yearInvalid')">Enter a valid year</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" floatLabel="always">
+        <mat-label>End Year</mat-label>
+        <input matInput formControlName="endYear" type="number" [min]="1900" [max]="currentYear" placeholder="e.g. 2022">
+        <mat-error *ngIf="endYear.hasError('yearRange')">Year must be between 1900 and {{ currentYear }}</mat-error>
+        <mat-error *ngIf="endYear.hasError('yearInvalid')">Enter a valid year</mat-error>
+      </mat-form-field>
+    </div>
+
+    <mat-error class="range-error" *ngIf="hasYearOrderError">
+      End year must be after start year
+    </mat-error>
+
+    <mat-form-field appearance="outline" floatLabel="always" class="full-width">
+      <mat-label>Description</mat-label>
+      <textarea matInput formControlName="description" rows="3" placeholder="GPA, honors, activities…"></textarea>
+    </mat-form-field>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()">Cancel</button>
+  <button mat-flat-button class="save-btn" (click)="submit()">
+    {{ isEdit ? 'Save Changes' : 'Add Education' }}
+  </button>
+</mat-dialog-actions>

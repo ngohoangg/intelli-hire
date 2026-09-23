@@ -1,0 +1,11 @@
+.forgot-link {
+  display: block;
+  text-align: right;
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--cyan);
+  text-decoration: none;
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
+  &:hover { text-shadow: var(--glow-subtle); }
+}

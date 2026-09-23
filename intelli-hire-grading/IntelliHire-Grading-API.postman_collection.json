@@ -1,0 +1,869 @@
+{
+	"info": {
+		"_postman_id": "intelli-hire-grading-api",
+		"name": "IntelliHire Grading API",
+		"description": "API collection for IntelliHire Grading Service - Automated interview answer grading using LLM.\n\nBase URL: http://localhost:8084/api\n\nIntegration: Interview Service (8083) → Kafka → Grading Service (8084) → Kafka → Report Service (8085)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8084/api",
+			"type": "string"
+		},
+		{
+			"key": "interviewUrl",
+			"value": "http://localhost:8083",
+			"type": "string"
+		},
+		{
+			"key": "reportUrl",
+			"value": "http://localhost:8085/api",
+			"type": "string"
+		},
+		{
+			"key": "gradingId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "sessionId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "userId",
+			"value": "5",
+			"type": "string"
+		},
+		{
+			"key": "interviewSessionId",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "E2E Kafka Pipeline",
+			"description": "End-to-end test: Interview → Kafka → Grading → Kafka → Report\n\nRun these requests in order to test the full pipeline.",
+			"item": [
+				{
+					"name": "1. Create Interview Session (seed DB)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var sessionId = Math.floor(Math.random() * 90000) + 10000;",
+									"pm.collectionVariables.set('interviewSessionId', String(sessionId));",
+									"console.log('Generated interviewSessionId:', sessionId);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('Session created', function () {",
+									"    var body = pm.response.text();",
+									"    pm.expect(body).to.include('INSERT');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "Note: This step requires direct DB insert since Question Service is not running.\nUse psql or run this SQL:\n\nINSERT INTO interview_sessions (id, user_id, topic, difficulty, status, started_at, created_at)\nVALUES ({{interviewSessionId}}, '5', 'Java Spring Boot', 'mid', 'ACTIVE', NOW(), NOW());\n\nINSERT INTO question_logs (session_id, question_id, question_text, question_order, asked_at) VALUES\n({{interviewSessionId}}, 'q-001', 'What is Spring Boot?', 1, NOW()),\n({{interviewSessionId}}, 'q-002', 'Explain Dependency Injection.', 2, NOW());"
+						},
+						"url": {
+							"raw": "{{interviewUrl}}/api/v1/interviews/sessions",
+							"host": ["{{interviewUrl}}"],
+							"path": ["api", "v1", "interviews", "sessions"]
+						},
+						"description": "NOTE: This will fail if Question Service is down. In that case, seed data directly via SQL (see body)."
+					},
+					"response": []
+				},
+				{
+					"name": "2. Submit Answer 1 (good answer)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('Answer submitted', function () {",
+									"    pm.expect(pm.response.json().success).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-User-Id",
+								"value": "{{userId}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"question_id\": \"q-001\",\n    \"answer_text\": \"Spring Boot is an extension of Spring Framework that simplifies development with auto-configuration, embedded servers, and starter dependencies. It follows convention over configuration to reduce boilerplate.\"\n}"
+						},
+						"url": {
+							"raw": "{{interviewUrl}}/api/v1/interviews/sessions/{{interviewSessionId}}/answers",
+							"host": ["{{interviewUrl}}"],
+							"path": ["api", "v1", "interviews", "sessions", "{{interviewSessionId}}", "answers"]
+						},
+						"description": "Submit a good answer to Interview Service."
+					},
+					"response": []
+				},
+				{
+					"name": "3. Submit Answer 2 (bad answer)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Answer submitted', function () {",
+									"    pm.expect(pm.response.json().success).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-User-Id",
+								"value": "{{userId}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"question_id\": \"q-002\",\n    \"answer_text\": \"I have no idea what dependency injection is.\"\n}"
+						},
+						"url": {
+							"raw": "{{interviewUrl}}/api/v1/interviews/sessions/{{interviewSessionId}}/answers",
+							"host": ["{{interviewUrl}}"],
+							"path": ["api", "v1", "interviews", "sessions", "{{interviewSessionId}}", "answers"]
+						},
+						"description": "Submit a bad answer to test low scoring."
+					},
+					"response": []
+				},
+				{
+					"name": "4. End Session (triggers Kafka pipeline)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Session ended', function () {",
+									"    pm.expect(pm.response.json().success).to.be.true;",
+									"});",
+									"console.log('Session ended! Kafka pipeline triggered.');",
+									"console.log('Wait 15-20s for LLM grading + report creation.');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-User-Id",
+								"value": "{{userId}}"
+							}
+						],
+						"url": {
+							"raw": "{{interviewUrl}}/api/v1/interviews/sessions/{{interviewSessionId}}/end",
+							"host": ["{{interviewUrl}}"],
+							"path": ["api", "v1", "interviews", "sessions", "{{interviewSessionId}}", "end"]
+						},
+						"description": "End the interview session.\n\nThis triggers:\n1. Interview → Kafka 'session_completed'\n2. Grading consumes → calls Interview API for data → LLM grades\n3. Grading → Kafka 'grading_completed'\n4. Report consumes → creates report\n\nWait 15-20 seconds before checking results."
+					},
+					"response": []
+				},
+				{
+					"name": "5. Check Grading Result (wait 15s)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.success && jsonData.data) {",
+									"    pm.collectionVariables.set('gradingId', jsonData.data.id);",
+									"    pm.collectionVariables.set('sessionId', jsonData.data.session_id);",
+									"}",
+									"pm.test('Grading completed', function () {",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    pm.expect(jsonData.data.status).to.eql('COMPLETED');",
+									"});",
+									"pm.test('Has results', function () {",
+									"    pm.expect(jsonData.data.results).to.be.an('array');",
+									"    pm.expect(jsonData.data.results.length).to.be.above(0);",
+									"});",
+									"pm.test('LLM model is grok', function () {",
+									"    pm.expect(jsonData.data.results[0].model_used).to.include('grok');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/v1/gradings/session/{{interviewSessionId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["v1", "gradings", "session", "{{interviewSessionId}}"]
+						},
+						"description": "Check if Grading Service has processed the session via Kafka.\nRun this 15-20 seconds after ending the session."
+					},
+					"response": []
+				},
+				{
+					"name": "6. Check Report Result (auto-created)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.test('Report created', function () {",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    pm.expect(jsonData.data.status).to.eql('COMPLETED');",
+									"});",
+									"pm.test('Scores match grading', function () {",
+									"    pm.expect(jsonData.data.total_score).to.be.above(0);",
+									"    pm.expect(jsonData.data.question_scores).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{reportUrl}}/v1/reports/session/{{interviewSessionId}}",
+							"host": ["{{reportUrl}}"],
+							"path": ["v1", "reports", "session", "{{interviewSessionId}}"]
+						},
+						"description": "Check if Report Service automatically created a report from Kafka event.\nShould have same scores as the grading result."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Grading (Direct REST)",
+			"description": "Direct REST API grading — bypass Kafka, call POST directly",
+			"item": [
+				{
+					"name": "Grade Answers (Basic - 2 questions)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.success && jsonData.data) {",
+									"    pm.collectionVariables.set('gradingId', jsonData.data.id);",
+									"    pm.collectionVariables.set('sessionId', jsonData.data.session_id);",
+									"    pm.collectionVariables.set('userId', String(jsonData.data.user_id));",
+									"}",
+									"pm.test('Status code is 201', function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"pm.test('Status is COMPLETED', function () {",
+									"    pm.expect(jsonData.data.status).to.eql('COMPLETED');",
+									"});",
+									"pm.test('Has 2 results', function () {",
+									"    pm.expect(jsonData.data.results.length).to.eql(2);",
+									"});",
+									"pm.test('Model is grok', function () {",
+									"    pm.expect(jsonData.data.results[0].model_used).to.include('grok');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-User-Name",
+								"value": "test-user",
+								"description": "Current user for auditing"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"session_id\": \"{{$guid}}\",\n    \"user_id\": \"5\",\n    \"topic\": \"Java Spring Boot\",\n    \"answers\": [\n        {\n            \"question_id\": \"q-001\",\n            \"question_text\": \"What is Spring Boot and how does it differ from Spring Framework?\",\n            \"answer_text\": \"Spring Boot is an extension of Spring Framework that simplifies the initial setup and development of Spring applications. It provides auto-configuration, embedded servers, and starter dependencies to reduce boilerplate code. Unlike Spring Framework which requires extensive XML or Java configuration, Spring Boot uses convention over configuration.\",\n            \"skill_name\": \"spring-core\",\n            \"max_score\": 10.0\n        },\n        {\n            \"question_id\": \"q-002\",\n            \"question_text\": \"Explain Dependency Injection in Spring.\",\n            \"answer_text\": \"Dependency Injection is a design pattern where objects receive their dependencies from external sources rather than creating them internally. Spring supports constructor injection, setter injection, and field injection using @Autowired annotation. Constructor injection is preferred as it ensures immutability and makes dependencies explicit.\",\n            \"skill_name\": \"spring-core\",\n            \"max_score\": 10.0\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/v1/gradings",
+							"host": ["{{baseUrl}}"],
+							"path": ["v1", "gradings"]
+						},
+						"description": "Grade a batch of interview answers via direct REST call.\nAuto-saves gradingId and sessionId for subsequent requests.\nAlso publishes grading_completed event to Kafka → Report Service."
+					},
+					"response": []
+				},
+				{
+					"name": "Grade Answers (Full - 5 questions, mixed skills)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.success && jsonData.data) {",
+									"    pm.collectionVariables.set('gradingId', jsonData.data.id);",
+									"    pm.collectionVariables.set('sessionId', jsonData.data.session_id);",
+									"}",
+									"pm.test('Status code is 201', function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"pm.test('Has 5 results', function () {",
+									"    pm.expect(jsonData.data.results.length).to.eql(5);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-User-Name",
+								"value": "interviewer-01"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"session_id\": \"{{$guid}}\",\n    \"user_id\": \"5\",\n    \"topic\": \"Full Stack Development\",\n    \"answers\": [\n        {\n            \"question_id\": \"q-101\",\n            \"question_text\": \"What is RESTful API and what are its key principles?\",\n            \"answer_text\": \"REST is an architectural style for designing networked applications. Key principles include statelessness, client-server architecture, uniform interface, resource-based URLs, and use of standard HTTP methods like GET, POST, PUT, DELETE.\",\n            \"skill_name\": \"rest-api\",\n            \"max_score\": 10.0\n        },\n        {\n            \"question_id\": \"q-102\",\n            \"question_text\": \"Explain the difference between SQL and NoSQL databases.\",\n            \"answer_text\": \"SQL databases are relational, use structured schemas and tables with predefined columns. NoSQL databases are non-relational, can store unstructured data, and include document stores like MongoDB, key-value stores like Redis, and column-family stores like Cassandra. SQL is better for complex queries, NoSQL for scalability.\",\n            \"skill_name\": \"database\",\n            \"max_score\": 10.0\n        },\n        {\n            \"question_id\": \"q-103\",\n            \"question_text\": \"What is Docker and why is it useful?\",\n            \"answer_text\": \"Docker is a platform for containerizing applications. It packages code and dependencies into portable containers that run consistently across environments.\",\n            \"skill_name\": \"devops\",\n            \"max_score\": 10.0\n        },\n        {\n            \"question_id\": \"q-104\",\n            \"question_text\": \"Explain the concept of microservices architecture.\",\n            \"answer_text\": \"Microservices architecture breaks down an application into small, independent services that communicate via APIs. Each service handles a specific business capability, can be deployed independently, and can use different technology stacks. Benefits include scalability, fault isolation, and easier maintenance.\",\n            \"skill_name\": \"architecture\",\n            \"max_score\": 15.0\n        },\n        {\n            \"question_id\": \"q-105\",\n            \"question_text\": \"What is JWT and how does authentication work with it?\",\n            \"answer_text\": \"I don't know.\",\n            \"skill_name\": \"security\",\n            \"max_score\": 10.0\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/v1/gradings",
+							"host": ["{{baseUrl}}"],
+							"path": ["v1", "gradings"]
+						},
+						"description": "Grade 5 questions with mixed skills. Last answer is intentionally bad for testing low scores."
+					},
+					"response": []
+				},
+				{
+					"name": "Grade Answers (No skill_name - Interview format)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.success && jsonData.data) {",
+									"    pm.collectionVariables.set('gradingId', jsonData.data.id);",
+									"    pm.collectionVariables.set('sessionId', jsonData.data.session_id);",
+									"}",
+									"pm.test('Status code is 201', function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"pm.test('skill_name is null (uses topic as fallback)', function () {",
+									"    pm.expect(jsonData.data.results[0].skill_name).to.be.null;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-User-Name",
+								"value": "test-user"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"session_id\": \"{{$guid}}\",\n    \"user_id\": \"5\",\n    \"topic\": \"Docker and Kubernetes\",\n    \"answers\": [\n        {\n            \"question_id\": \"dk-001\",\n            \"question_text\": \"What is Docker?\",\n            \"answer_text\": \"Docker is a containerization platform that packages apps with dependencies into portable containers.\",\n            \"max_score\": 10.0\n        },\n        {\n            \"question_id\": \"dk-002\",\n            \"question_text\": \"What is Kubernetes?\",\n            \"answer_text\": \"No idea.\",\n            \"max_score\": 10.0\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/v1/gradings",
+							"host": ["{{baseUrl}}"],
+							"path": ["v1", "gradings"]
+						},
+						"description": "Test grading without skill_name (simulates data from Interview Service which doesn't have per-question skills). Topic is used as fallback in prompt."
+					},
+					"response": []
+				},
+				{
+					"name": "Grade Answers (Validation Error)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 400', function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"pm.test('Response is error', function () {",
+									"    pm.expect(pm.response.json().success).to.be.false;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"session_id\": \"\",\n    \"user_id\": \"\",\n    \"answers\": []\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/v1/gradings",
+							"host": ["{{baseUrl}}"],
+							"path": ["v1", "gradings"]
+						},
+						"description": "Test validation: empty session_id, empty user_id, empty answers. Should return 400."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Query",
+			"description": "Query grading results",
+			"item": [
+				{
+					"name": "Get Grading by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('Has grading data', function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    pm.expect(jsonData.data.id).to.not.be.empty;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/v1/gradings/{{gradingId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["v1", "gradings", "{{gradingId}}"]
+						},
+						"description": "Get grading result by grading ID."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Grading by Session ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('Has results array', function () {",
+									"    pm.expect(pm.response.json().data.results).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/v1/gradings/session/{{sessionId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["v1", "gradings", "session", "{{sessionId}}"]
+						},
+						"description": "Get grading result by session ID."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Grading by ID (Not Found)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 404', function () {",
+									"    pm.response.to.have.status(404);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/v1/gradings/non-existent-id-12345",
+							"host": ["{{baseUrl}}"],
+							"path": ["v1", "gradings", "non-existent-id-12345"]
+						},
+						"description": "Test 404 response when grading ID does not exist."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "History",
+			"description": "Grading history endpoints",
+			"item": [
+				{
+					"name": "Get User History (default pagination)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('Has pagination fields', function () {",
+									"    var data = pm.response.json().data;",
+									"    pm.expect(data).to.have.property('content');",
+									"    pm.expect(data).to.have.property('total_elements');",
+									"    pm.expect(data).to.have.property('total_pages');",
+									"    pm.expect(data).to.have.property('page');",
+									"    pm.expect(data).to.have.property('size');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/v1/gradings/history/{{userId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["v1", "gradings", "history", "{{userId}}"]
+						},
+						"description": "Get grading history for a user with default pagination."
+					},
+					"response": []
+				},
+				{
+					"name": "Get User History (with pagination)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/v1/gradings/history/{{userId}}?page=0&size=5&sort=createdAt,desc",
+							"host": ["{{baseUrl}}"],
+							"path": ["v1", "gradings", "history", "{{userId}}"],
+							"query": [
+								{ "key": "page", "value": "0" },
+								{ "key": "size", "value": "5" },
+								{ "key": "sort", "value": "createdAt,desc" }
+							]
+						},
+						"description": "Get grading history with custom pagination."
+					},
+					"response": []
+				},
+				{
+					"name": "Get User History (filter COMPLETED)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/v1/gradings/history/{{userId}}?status=COMPLETED&page=0&size=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["v1", "gradings", "history", "{{userId}}"],
+							"query": [
+								{ "key": "status", "value": "COMPLETED" },
+								{ "key": "page", "value": "0" },
+								{ "key": "size", "value": "10" }
+							]
+						},
+						"description": "Get only COMPLETED grading sessions."
+					},
+					"response": []
+				},
+				{
+					"name": "Get User History (filter FAILED)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/v1/gradings/history/{{userId}}?status=FAILED",
+							"host": ["{{baseUrl}}"],
+							"path": ["v1", "gradings", "history", "{{userId}}"],
+							"query": [
+								{ "key": "status", "value": "FAILED" }
+							]
+						},
+						"description": "Get only FAILED grading sessions."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin",
+			"description": "Admin-only endpoints (require X-User-Role header)",
+			"item": [
+				{
+					"name": "Get All Gradings (ROLE_ADMIN)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('Has paginated content', function () {",
+									"    pm.expect(pm.response.json().data).to.have.property('content');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-User-Role",
+								"value": "ROLE_ADMIN"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/v1/gradings/admin/all?page=0&size=10&sort=createdAt,desc",
+							"host": ["{{baseUrl}}"],
+							"path": ["v1", "gradings", "admin", "all"],
+							"query": [
+								{ "key": "page", "value": "0" },
+								{ "key": "size", "value": "10" },
+								{ "key": "sort", "value": "createdAt,desc" }
+							]
+						},
+						"description": "Admin view all gradings. Requires X-User-Role: ROLE_ADMIN."
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Gradings (ADMIN)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "X-User-Role", "value": "ADMIN" }
+						],
+						"url": {
+							"raw": "{{baseUrl}}/v1/gradings/admin/all?page=0&size=20",
+							"host": ["{{baseUrl}}"],
+							"path": ["v1", "gradings", "admin", "all"],
+							"query": [
+								{ "key": "page", "value": "0" },
+								{ "key": "size", "value": "20" }
+							]
+						},
+						"description": "Test with 'ADMIN' role."
+					},
+					"response": []
+				},
+				{
+					"name": "Forbidden - no role",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('403 Forbidden', function () { pm.response.to.have.status(403); });"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/v1/gradings/admin/all",
+							"host": ["{{baseUrl}}"],
+							"path": ["v1", "gradings", "admin", "all"]
+						},
+						"description": "Test 403 without X-User-Role header."
+					},
+					"response": []
+				},
+				{
+					"name": "Forbidden - wrong role",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('403 Forbidden', function () { pm.response.to.have.status(403); });"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "X-User-Role", "value": "ROLE_USER" }
+						],
+						"url": {
+							"raw": "{{baseUrl}}/v1/gradings/admin/all",
+							"host": ["{{baseUrl}}"],
+							"path": ["v1", "gradings", "admin", "all"]
+						},
+						"description": "Test 403 with wrong role."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Health Check",
+			"description": "Service health and docs",
+			"item": [
+				{
+					"name": "Grading Health",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('UP', function () { pm.expect(pm.response.json().status).to.eql('UP'); });"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/actuator/health",
+							"host": ["{{baseUrl}}"],
+							"path": ["actuator", "health"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Interview Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{interviewUrl}}/actuator/health",
+							"host": ["{{interviewUrl}}"],
+							"path": ["actuator", "health"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Report Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{reportUrl}}/actuator/health",
+							"host": ["{{reportUrl}}"],
+							"path": ["actuator", "health"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Swagger UI",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8084/api/swagger-ui.html",
+							"host": ["http://localhost:8084"],
+							"path": ["api", "swagger-ui.html"]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

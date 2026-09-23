@@ -1,0 +1,12 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "Intelihire",
+      "Group": "Servers",
+      "Host": "intelli-hire-question-postgres",
+      "Port": 5432,
+      "MaintenanceDB": "intelli_hire_question",
+      "Username": "postgres"
+    }
+  }
+}

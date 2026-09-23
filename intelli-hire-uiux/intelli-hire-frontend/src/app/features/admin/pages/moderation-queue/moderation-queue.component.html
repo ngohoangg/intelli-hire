@@ -1,0 +1,45 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="page-title">
+      <span class="ai-dot"></span>
+      <h1>Moderation Queue</h1>
+      <span class="count-badge" *ngIf="!loading && questions.length > 0">{{ questions.length }}</span>
+    </div>
+    <span class="overflow-hint" *ngIf="hasMore">
+      Showing first 50 — use <a routerLink="/admin/questions" [queryParams]="{status: 'PENDING'}">Question Management</a> for full list
+    </span>
+  </div>
+
+  <app-loading-spinner *ngIf="loading" />
+
+  <!-- Action Error -->
+  <div class="action-error" *ngIf="actionError">{{ actionError }}</div>
+
+  <div class="cards-grid" *ngIf="!loading">
+    <div class="question-card" *ngFor="let q of questions">
+      <div class="card-meta">
+        <span class="meta-badge topic">{{ q.topic_name }}</span>
+        <span class="meta-badge type">{{ q.question_type }}</span>
+        <span class="submitted-by">by {{ q.submitted_by ?? 'unknown' }}</span>
+        <span class="submitted-date">{{ q.created_at | date:'dd MMM yyyy' }}</span>
+      </div>
+      <p class="question-text">{{ q.question_text }}</p>
+      <div class="card-actions">
+        <button class="card-btn approve" (click)="approve(q)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20,6 9,17 4,12"/></svg>
+          Approve
+        </button>
+        <button class="card-btn reject" (click)="openRejectDialog(q)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          Reject
+        </button>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="questions.length === 0">
+      <div class="empty-icon">✓</div>
+      <p>All clear — no questions pending review</p>
+      <span class="terminal-cursor">_</span>
+    </div>
+  </div>
+</div>

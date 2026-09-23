@@ -1,0 +1,84 @@
+.job-status-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+
+  .job-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .job-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .job-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-family: var(--font-mono);
+  }
+
+  .job-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    border: 1px solid transparent;
+
+    &.job-queued    { background: rgba(255,170,0,0.1); color: #FFAA00; border-color: rgba(255,170,0,0.2); }
+    &.job-running   { background: var(--cyan-glow); color: #00F0FF; border-color: var(--border-accent); }
+    &.job-succeeded { background: rgba(0,230,138,0.1); color: #00E68A; border-color: rgba(0,230,138,0.2); }
+    &.job-failed    { background: rgba(255,23,68,0.1); color: #FF3D71; border-color: rgba(255,23,68,0.2); }
+    &.job-cancelled { background: rgba(90,94,114,0.1); color: #5A5E72; border-color: rgba(90,94,114,0.2); }
+  }
+
+  .cancel-btn {
+    font-size: 12px;
+    height: 28px;
+    line-height: 28px;
+    color: var(--text-secondary);
+    border-color: var(--border);
+  }
+
+  mat-progress-bar {
+    border-radius: 4px;
+    height: 4px;
+
+    &.job-running, &.job-queued {
+      --mdc-linear-progress-active-indicator-color: var(--accent);
+      --mdc-linear-progress-track-color: var(--cyan-glow);
+    }
+    &.job-succeeded {
+      --mdc-linear-progress-active-indicator-color: var(--success);
+      --mdc-linear-progress-track-color: rgba(0,230,138,0.1);
+    }
+    &.job-failed {
+      --mdc-linear-progress-active-indicator-color: var(--danger);
+      --mdc-linear-progress-track-color: rgba(255,23,68,0.1);
+    }
+  }
+
+  .job-meta {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--text-tertiary);
+
+    .error-msg {
+      color: var(--danger);
+    }
+  }
+}

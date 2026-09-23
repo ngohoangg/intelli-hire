@@ -1,0 +1,182 @@
+@use '../../styles/question-admin' as qs;
+
+@include qs.base-page;
+
+.content-grid {
+  align-items: start;
+}
+
+.main-card {
+  align-self: stretch;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+  user-select: none;
+}
+
+.input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-bright);
+  border-radius: var(--radius-sm);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:focus-within {
+    border-color: var(--cyan);
+    box-shadow: 0 0 0 1px rgba(0, 245, 255, 0.14), var(--glow-subtle);
+  }
+}
+
+.textarea-wrap {
+  align-items: flex-start;
+}
+
+.field-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  flex-shrink: 0;
+  color: var(--text-tertiary);
+
+  &--top {
+    padding-top: 12px;
+    align-self: flex-start;
+  }
+}
+
+.field-input {
+  flex: 1;
+  height: 44px;
+  width: 100%;
+  padding: 0 14px 0 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 14px;
+  caret-color: var(--cyan);
+
+  &::placeholder {
+    color: var(--text-tertiary);
+    font-style: italic;
+  }
+}
+
+.field-textarea {
+  min-height: 112px;
+  height: auto;
+  padding: 12px 14px 12px 0;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.field-select {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.field-select-multiple {
+  min-height: 44px;
+}
+
+.field-hint {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-tertiary);
+  letter-spacing: 0.02em;
+}
+
+.full-span {
+  width: 100%;
+}
+
+.quick-tag-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: end;
+}
+
+::ng-deep {
+  .field-select {
+    .mat-mdc-select-trigger {
+      height: 44px;
+      display: flex;
+      align-items: center;
+      padding-right: 14px;
+    }
+
+    .mat-mdc-select-value,
+    .mat-mdc-select-placeholder,
+    .mat-mdc-select-min-line {
+      color: #fff !important;
+      font-size: 14px !important;
+    }
+
+    .mat-mdc-select-arrow {
+      color: var(--text-tertiary) !important;
+    }
+  }
+
+  .field-select-multiple {
+    .mat-mdc-select-trigger {
+      min-height: 44px;
+      height: auto;
+      padding-top: 10px;
+      padding-bottom: 10px;
+      align-items: flex-start;
+    }
+
+    .mat-mdc-select-value {
+      white-space: normal;
+      line-height: 1.5;
+    }
+  }
+
+  .question-select-panel {
+    background: #101923 !important;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px !important;
+    box-shadow: 0 18px 40px rgba(2, 6, 23, 0.48) !important;
+    overflow: hidden !important;
+
+    .mat-mdc-option {
+      min-height: 42px !important;
+      color: #fff !important;
+      font-size: 13px !important;
+    }
+
+    .mat-mdc-option:hover:not(.mdc-list-item--disabled),
+    .mat-mdc-option.mdc-list-item--focus {
+      background: rgba(255, 255, 255, 0.06) !important;
+    }
+
+    .mat-mdc-option.mdc-list-item--selected:not(.mat-mdc-option-multiple) {
+      background: rgba(0, 245, 255, 0.1) !important;
+      color: #fff !important;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .quick-tag-row {
+    grid-template-columns: 1fr;
+  }
+}

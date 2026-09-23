@@ -1,0 +1,10 @@
+<div class="auth-page">
+  <h1>Authenticating...</h1>
+
+  <div class="status-block" *ngIf="!error">
+    <div class="spinner"></div>
+    <p>Completing OAuth sign-in...</p>
+  </div>
+
+  <div class="error-banner" *ngIf="error">{{ error }}</div>
+</div>

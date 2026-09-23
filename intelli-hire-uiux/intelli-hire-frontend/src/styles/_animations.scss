@@ -1,0 +1,135 @@
+/* =========================================
+   IntelliHire — Animation Library
+   ========================================= */
+
+/* ---- Existing (preserved) ---- */
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes rotate-reverse {
+  from { transform: rotate(360deg); }
+  to   { transform: rotate(0deg); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; box-shadow: 0 0 4px var(--accent); }
+  50%       { opacity: 0.5; box-shadow: 0 0 14px var(--accent), 0 0 28px var(--cyan-glow); }
+}
+
+@keyframes scan-line {
+  0%   { transform: translateY(-100%); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translateY(3000%); opacity: 0; }
+}
+
+/* ---- NEW: Cyberpunk ---- */
+
+@keyframes glitch {
+  0%, 90%, 100% {
+    transform: translate(0);
+    clip-path: none;
+    color: inherit;
+  }
+  91% {
+    transform: translate(-2px, 1px);
+    color: var(--magenta);
+  }
+  92% {
+    transform: translate(2px, -1px);
+    clip-path: inset(20% 0 60% 0);
+  }
+  93% {
+    transform: translate(-1px, 0);
+    color: var(--cyan);
+  }
+  94% {
+    transform: translate(0);
+    clip-path: none;
+  }
+}
+
+@keyframes neon-flicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
+  20%, 24%, 55% { opacity: 0.85; }
+}
+
+@keyframes grid-pulse {
+  0%, 100% { opacity: 0.04; }
+  50%       { opacity: 0.07; }
+}
+
+@keyframes scan-line-v {
+  0%   { top: -2px; opacity: 0; }
+  5%   { opacity: 0.6; }
+  95%  { opacity: 0.6; }
+  100% { top: 100%; opacity: 0; }
+}
+
+@keyframes hud-ping {
+  0%   { transform: scale(1);   opacity: 0.8; }
+  70%  { transform: scale(2.2); opacity: 0; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+@keyframes corner-glow-rotate {
+  0%, 100% { opacity: 0.4; }
+  50%       { opacity: 1; }
+}
+
+@keyframes terminal-cursor {
+  0%,  50%  { border-right-color: var(--cyan); }
+  51%, 100% { border-right-color: transparent; }
+}
+
+@keyframes nav-scan {
+  0%   { top: -2px; }
+  100% { top: calc(100% + 2px); }
+}
+
+/* ---- Reduced Motion Gate ---- */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0s !important;
+  }
+}

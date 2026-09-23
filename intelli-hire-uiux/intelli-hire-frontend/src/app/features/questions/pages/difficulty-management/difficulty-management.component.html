@@ -1,0 +1,121 @@
+<div class="page-container">
+  <button class="back-btn" routerLink="/questions">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="15 18 9 12 15 6"></polyline>
+    </svg>
+    Back
+  </button>
+
+  <div class="page-header">
+    <div class="page-title-group">
+      <div class="page-title">
+        <span class="ai-dot"></span>
+        <h1>Difficulty Levels</h1>
+        <span class="count-badge">{{ difficulties.length }}</span>
+      </div>
+      <p class="page-subtitle">
+        Keep difficulty naming, weighting and descriptions consistent across question bank and study resources.
+      </p>
+    </div>
+
+    <div class="header-actions">
+      <button class="btn-ghost" type="button" (click)="startCreate()">New Difficulty</button>
+    </div>
+  </div>
+
+  <div class="metric-grid">
+    <article class="card metric-card">
+      <p class="metric-label">Total Levels</p>
+      <h2 class="metric-value">{{ difficulties.length }}</h2>
+      <p class="metric-detail">Distinct difficulty records available for classification.</p>
+    </article>
+    <article class="card metric-card">
+      <p class="metric-label">Highest Weight</p>
+      <h2 class="metric-value">{{ maxWeight }}</h2>
+      <p class="metric-detail">Current max weighting used by the difficulty catalog.</p>
+    </article>
+  </div>
+
+  <div class="split-layout">
+    <section class="card section-card">
+      <div class="section-header">
+        <div class="section-header-left">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2">
+            <path d="M12 20V10"></path>
+            <path d="M18 20V4"></path>
+            <path d="M6 20v-4"></path>
+          </svg>
+          <h2 class="section-title">Difficulty Catalog</h2>
+        </div>
+      </div>
+
+      <div class="stack-list" *ngIf="difficulties.length; else emptyState">
+        <article
+          class="stack-item difficulty-item"
+          *ngFor="let difficulty of difficulties"
+          [class.selected]="selectedDifficulty?.id === difficulty.id"
+          (click)="selectDifficulty(difficulty)">
+          <div class="difficulty-top">
+            <span class="table-primary">{{ difficulty.name }}</span>
+            <span class="chip chip-accent">Weight {{ difficulty.weight }}</span>
+          </div>
+          <p class="difficulty-description">{{ difficulty.description || 'No description provided.' }}</p>
+          <button class="text-action danger" type="button" (click)="deleteDifficulty(difficulty, $event)">Delete</button>
+        </article>
+      </div>
+
+      <ng-template #emptyState>
+        <div class="empty-panel compact">
+          <h3>No difficulty levels yet</h3>
+          <p>Create at least one level before categorizing question difficulty.</p>
+        </div>
+      </ng-template>
+    </section>
+
+    <aside class="side-panel">
+      <div class="section-header">
+        <div class="section-header-left">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--magenta)" stroke-width="2">
+            <path d="M12 20h9"></path>
+            <path d="M12 4h9"></path>
+            <path d="M4 9h16"></path>
+            <path d="M4 15h16"></path>
+          </svg>
+          <h2 class="section-title">{{ selectedDifficulty ? 'Edit Difficulty' : 'Create Difficulty' }}</h2>
+        </div>
+      </div>
+
+      <form [formGroup]="form" class="stack-list">
+        <mat-form-field appearance="outline">
+          <mat-label>Name</mat-label>
+          <input matInput formControlName="name" placeholder="Mid" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Weight</mat-label>
+          <input matInput type="number" formControlName="weight" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Description</mat-label>
+          <textarea matInput rows="4" formControlName="description"></textarea>
+        </mat-form-field>
+
+        <div class="editor-actions">
+          <button class="btn-ghost" type="button" (click)="startCreate()">Reset</button>
+          <button class="btn-primary" type="button" (click)="submit()">
+            {{ selectedDifficulty ? 'Save Difficulty' : 'Create Difficulty' }}
+          </button>
+        </div>
+      </form>
+
+      <div class="divider"></div>
+
+      <button class="text-action" type="button" [disabled]="!selectedDifficulty" (click)="openQuestionBank()">
+        Open question bank with this difficulty
+      </button>
+    </aside>
+  </div>
+</div>
+
+<app-loading-spinner [isLoading]="loading || saving" />

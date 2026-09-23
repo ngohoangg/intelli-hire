@@ -1,0 +1,749 @@
+{
+  "info": {
+    "name": "IntelliHire Report Service",
+    "description": "API collection for IntelliHire Report Service",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8085/api"
+    },
+    {
+      "key": "reportId",
+      "value": ""
+    },
+    {
+      "key": "sessionId",
+      "value": "session-001"
+    },
+    {
+      "key": "userId",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "health"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reports",
+      "item": [
+        {
+          "name": "1. Create Report (from Grading Service)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.id) {",
+                  "    pm.collectionVariables.set('reportId', jsonData.data.id);",
+                  "    pm.collectionVariables.set('sessionId', jsonData.data.session_id);",
+                  "}",
+                  "",
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Response has report data', function () {",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data).to.have.property('id');",
+                  "    pm.expect(jsonData.data).to.have.property('total_score');",
+                  "    pm.expect(jsonData.data).to.have.property('skill_scores');",
+                  "    pm.expect(jsonData.data).to.have.property('question_scores');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-User-Name",
+                "value": "grading-service"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"session_id\": \"session-001\",\n  \"user_id\": 1,\n  \"topic\": \"Backend Java\",\n  \"summary\": \"Ứng viên có kiến thức tốt về Java Core và Spring Boot. Cần cải thiện thêm về Database Optimization và System Design.\",\n  \"roadmap_json\": {\n    \"recommendations\": [\n      {\n        \"skill\": \"Database Optimization\",\n        \"priority\": \"HIGH\",\n        \"resources\": [\"SQL Performance Explained\", \"Use The Index, Luke\"]\n      },\n      {\n        \"skill\": \"System Design\",\n        \"priority\": \"MEDIUM\",\n        \"resources\": [\"Designing Data-Intensive Applications\", \"System Design Interview\"]\n      }\n    ],\n    \"next_focus\": \"Database Optimization\",\n    \"estimated_improvement_weeks\": 4\n  },\n  \"question_scores\": [\n    {\n      \"question_id\": \"q-001\",\n      \"question_text\": \"Explain the difference between ArrayList and LinkedList in Java\",\n      \"answer_text\": \"ArrayList uses dynamic array internally, provides O(1) random access but O(n) insertion. LinkedList uses doubly-linked list, O(1) insertion but O(n) access.\",\n      \"score\": 8.5,\n      \"max_score\": 10,\n      \"feedback\": \"Good explanation of time complexity differences. Could mention memory overhead of LinkedList nodes.\",\n      \"skill_name\": \"Java Core\"\n    },\n    {\n      \"question_id\": \"q-002\",\n      \"question_text\": \"What is Spring Boot Auto-Configuration?\",\n      \"answer_text\": \"Spring Boot auto-configuration automatically configures Spring application based on jar dependencies. It uses @EnableAutoConfiguration and conditional annotations.\",\n      \"score\": 9.0,\n      \"max_score\": 10,\n      \"feedback\": \"Excellent answer covering the key concepts. Good mention of conditional annotations.\",\n      \"skill_name\": \"Spring Boot\"\n    },\n    {\n      \"question_id\": \"q-003\",\n      \"question_text\": \"How would you optimize a slow SQL query?\",\n      \"answer_text\": \"I would check the execution plan, add appropriate indexes, and consider query restructuring.\",\n      \"score\": 5.0,\n      \"max_score\": 10,\n      \"feedback\": \"Basic answer. Missing details about EXPLAIN ANALYZE, covering indexes, query caching, and denormalization strategies.\",\n      \"skill_name\": \"Database\"\n    },\n    {\n      \"question_id\": \"q-004\",\n      \"question_text\": \"Explain the SOLID principles\",\n      \"answer_text\": \"SOLID stands for Single Responsibility, Open-Closed, Liskov Substitution, Interface Segregation, and Dependency Inversion. Each class should have one reason to change.\",\n      \"score\": 7.0,\n      \"max_score\": 10,\n      \"feedback\": \"Correctly listed all principles but only explained SRP in detail. Should elaborate on each with examples.\",\n      \"skill_name\": \"Java Core\"\n    },\n    {\n      \"question_id\": \"q-005\",\n      \"question_text\": \"Design a URL shortener system\",\n      \"answer_text\": \"Use a hash function to generate short codes, store mapping in database, redirect on access.\",\n      \"score\": 4.5,\n      \"max_score\": 10,\n      \"feedback\": \"Very high-level answer. Missing discussion of: base62 encoding, collision handling, caching layer, analytics, scalability considerations.\",\n      \"skill_name\": \"System Design\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/reports",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "reports"]
+            }
+          }
+        },
+        {
+          "name": "2. Get Report by Session ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Response has full report', function () {",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data.skill_scores).to.be.an('array');",
+                  "    pm.expect(jsonData.data.question_scores).to.be.an('array');",
+                  "    pm.expect(jsonData.data.question_scores.length).to.eql(5);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Name",
+                "value": "test-user"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/reports/session/{{sessionId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "reports", "session", "{{sessionId}}"]
+            }
+          }
+        },
+        {
+          "name": "3. Get Report by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Report data is correct', function () {",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data.id).to.eql(pm.collectionVariables.get('reportId'));",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Name",
+                "value": "test-user"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/reports/{{reportId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "reports", "{{reportId}}"]
+            }
+          }
+        },
+        {
+          "name": "4. Get Report History by User ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Paginated response', function () {",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data).to.have.property('content');",
+                  "    pm.expect(jsonData.data).to.have.property('total_elements');",
+                  "    pm.expect(jsonData.data).to.have.property('total_pages');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Name",
+                "value": "test-user"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/reports/history/{{userId}}?page=0&size=10&sort=createdAt,desc",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "reports", "history", "{{userId}}"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "10" },
+                { "key": "sort", "value": "createdAt,desc" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "5. Get User Progress",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Progress data returned', function () {",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Name",
+                "value": "test-user"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/reports/progress/{{userId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "reports", "progress", "{{userId}}"]
+            }
+          }
+        },
+        {
+          "name": "6. Create Report (Session 2 - for progress tracking)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Second report created', function () {",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-User-Name",
+                "value": "grading-service"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"session_id\": \"session-002\",\n  \"user_id\": 1,\n  \"topic\": \"Backend Java\",\n  \"summary\": \"Buổi phỏng vấn lần 2. Ứng viên đã cải thiện về Database nhưng vẫn cần luyện thêm System Design.\",\n  \"roadmap_json\": {\n    \"recommendations\": [\n      {\n        \"skill\": \"System Design\",\n        \"priority\": \"HIGH\",\n        \"resources\": [\"System Design Interview Vol 2\"]\n      }\n    ],\n    \"next_focus\": \"System Design\",\n    \"estimated_improvement_weeks\": 3\n  },\n  \"question_scores\": [\n    {\n      \"question_id\": \"q-006\",\n      \"question_text\": \"What is the difference between HashMap and ConcurrentHashMap?\",\n      \"answer_text\": \"HashMap is not thread-safe while ConcurrentHashMap uses segment locking for thread safety with better performance than synchronized HashMap.\",\n      \"score\": 8.0,\n      \"max_score\": 10,\n      \"feedback\": \"Good understanding of concurrency concepts.\",\n      \"skill_name\": \"Java Core\"\n    },\n    {\n      \"question_id\": \"q-007\",\n      \"question_text\": \"Explain database indexing and when to use composite indexes\",\n      \"answer_text\": \"Indexes are B-tree structures for fast lookups. Composite indexes follow leftmost prefix rule. Use when queries filter on multiple columns frequently.\",\n      \"score\": 7.5,\n      \"max_score\": 10,\n      \"feedback\": \"Much improved from last session. Good mention of B-tree and leftmost prefix.\",\n      \"skill_name\": \"Database\"\n    },\n    {\n      \"question_id\": \"q-008\",\n      \"question_text\": \"Design a notification system\",\n      \"answer_text\": \"Use message queue like Kafka, with different channels (email, push, SMS). Store notification preferences per user.\",\n      \"score\": 5.5,\n      \"max_score\": 10,\n      \"feedback\": \"Better than previous system design answer but still missing details on retry mechanism, rate limiting, and template system.\",\n      \"skill_name\": \"System Design\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/reports",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "reports"]
+            }
+          }
+        },
+        {
+          "name": "7. Get User Progress (after 2 sessions)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Multiple skills tracked', function () {",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data.length).to.be.greaterThan(1);",
+                  "});",
+                  "",
+                  "pm.test('Java Core has 2 attempts', function () {",
+                  "    var javaCore = jsonData.data.find(p => p.skill_name === 'Java Core');",
+                  "    if (javaCore) {",
+                  "        pm.expect(javaCore.total_attempts).to.eql(2);",
+                  "        pm.expect(javaCore.score_trend.length).to.eql(2);",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Name",
+                "value": "test-user"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/reports/progress/{{userId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "reports", "progress", "{{userId}}"]
+            }
+          }
+        },
+        {
+          "name": "8. Delete Report by Session ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Delete successful', function () {",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "X-User-Name",
+                "value": "admin"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/reports/session/session-002",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "reports", "session", "session-002"]
+            }
+          }
+        },
+        {
+          "name": "9. Create Report - Duplicate Session (expect 409)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 409 Conflict', function () {",
+                  "    pm.response.to.have.status(409);",
+                  "});",
+                  "",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Error response', function () {",
+                  "    pm.expect(jsonData.success).to.be.false;",
+                  "    pm.expect(jsonData.error_code).to.eql('RPT_002');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-User-Name",
+                "value": "grading-service"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"session_id\": \"session-001\",\n  \"user_id\": 1,\n  \"topic\": \"Backend Java\",\n  \"summary\": \"Duplicate test\",\n  \"question_scores\": [\n    {\n      \"question_id\": \"q-001\",\n      \"question_text\": \"Test question\",\n      \"answer_text\": \"Test answer\",\n      \"score\": 5.0,\n      \"max_score\": 10,\n      \"feedback\": \"Test feedback\",\n      \"skill_name\": \"Java Core\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/reports",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "reports"]
+            }
+          }
+        },
+        {
+          "name": "10. Get Report - Not Found (expect 404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 404', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Error response', function () {",
+                  "    pm.expect(jsonData.success).to.be.false;",
+                  "    pm.expect(jsonData.error_code).to.eql('RPT_001');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Name",
+                "value": "test-user"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/reports/session/non-existent-session",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "reports", "session", "non-existent-session"]
+            }
+          }
+        },
+        {
+          "name": "11. Update Report (summary & roadmap)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Summary updated', function () {",
+                  "    pm.expect(jsonData.data.summary).to.include('Updated summary');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-User-Name", "value": "admin" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"summary\": \"Updated summary: Ứng viên có tiềm năng tốt, cần tập trung vào System Design và Database.\",\n  \"roadmap_json\": {\n    \"recommendations\": [\n      {\"skill\": \"System Design\", \"priority\": \"HIGH\", \"resources\": [\"DDIA Book\"]},\n      {\"skill\": \"Database\", \"priority\": \"MEDIUM\", \"resources\": [\"SQL Performance Explained\"]}\n    ],\n    \"next_focus\": \"System Design\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/reports/{{reportId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "reports", "{{reportId}}"]
+            }
+          }
+        },
+        {
+          "name": "12. Get History with Status Filter",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('All results have COMPLETED status', function () {",
+                  "    jsonData.data.content.forEach(function(r) {",
+                  "        pm.expect(r.status).to.eql('COMPLETED');",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-User-Name", "value": "test-user" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/reports/history/{{userId}}?status=COMPLETED&page=0&size=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "reports", "history", "{{userId}}"],
+              "query": [
+                { "key": "status", "value": "COMPLETED" },
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "13. Get Progress by Skill Name",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Correct skill returned', function () {",
+                  "    pm.expect(jsonData.data.skill_name).to.eql('Java Core');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-User-Name", "value": "test-user" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/reports/progress/{{userId}}/Java Core",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "reports", "progress", "{{userId}}", "Java Core"]
+            }
+          }
+        },
+        {
+          "name": "14. Get User Stats",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Stats data returned', function () {",
+                  "    pm.expect(jsonData.data).to.have.property('total_sessions');",
+                  "    pm.expect(jsonData.data).to.have.property('average_score');",
+                  "    pm.expect(jsonData.data).to.have.property('top_skills');",
+                  "    pm.expect(jsonData.data).to.have.property('weak_skills');",
+                  "    pm.expect(jsonData.data.top_skills).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-User-Name", "value": "test-user" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/reports/stats/{{userId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "reports", "stats", "{{userId}}"]
+            }
+          }
+        },
+        {
+          "name": "15. Regenerate Roadmap",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Roadmap updated', function () {",
+                  "    pm.expect(jsonData.data.roadmap_json).to.have.property('focus_areas');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-User-Name", "value": "admin" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"roadmap_json\": {\n    \"focus_areas\": [\"System Design\", \"Database Optimization\"],\n    \"weekly_plan\": [\n      {\"week\": 1, \"topic\": \"System Design basics\", \"hours\": 10},\n      {\"week\": 2, \"topic\": \"Database indexing deep dive\", \"hours\": 8},\n      {\"week\": 3, \"topic\": \"Mock interviews\", \"hours\": 6}\n    ],\n    \"target_score\": 8.0\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/reports/{{reportId}}/regenerate",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "reports", "{{reportId}}", "regenerate"]
+            }
+          }
+        },
+        {
+          "name": "16. Admin - Get All Reports",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Paginated list returned', function () {",
+                  "    pm.expect(jsonData.data).to.have.property('content');",
+                  "    pm.expect(jsonData.data.content[0]).to.have.property('user_id');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-User-Name", "value": "admin" },
+              { "key": "X-User-Role", "value": "ROLE_ADMIN" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/reports/admin/all?page=0&size=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "reports", "admin", "all"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "17. Admin - Access Denied (expect 400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Access denied error', function () {",
+                  "    pm.expect(jsonData.error_code).to.eql('RPT_005');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-User-Name", "value": "normal-user" },
+              { "key": "X-User-Role", "value": "ROLE_USER" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/reports/admin/all?page=0&size=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "reports", "admin", "all"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "18. Create Report - Validation Error (expect 400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Validation errors returned', function () {",
+                  "    pm.expect(jsonData.success).to.be.false;",
+                  "    pm.expect(jsonData.errors).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-User-Name",
+                "value": "grading-service"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"session_id\": \"\",\n  \"user_id\": null,\n  \"question_scores\": []\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/reports",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "reports"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

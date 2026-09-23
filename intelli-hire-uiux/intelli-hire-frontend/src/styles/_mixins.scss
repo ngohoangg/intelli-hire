@@ -1,0 +1,50 @@
+/* =========================================
+   IntelliHire — SCSS Mixins
+   ========================================= */
+
+/* Neon glow helpers — one per color (CSS variables can't be interpolated in rgba()) */
+@mixin neon-glow-cyan {
+  box-shadow: var(--glow-cyan);
+}
+
+@mixin neon-glow-magenta {
+  box-shadow: var(--glow-magenta);
+}
+
+@mixin neon-glow-subtle {
+  box-shadow: var(--glow-subtle);
+}
+
+/* Cyberpunk corner cut via clip-path (top-right and bottom-left) */
+@mixin clip-corner($size: 12px) {
+  clip-path: polygon(
+    0 0,
+    calc(100% - #{$size}) 0,
+    100% #{$size},
+    100% 100%,
+    #{$size} 100%,
+    0 calc(100% - #{$size})
+  );
+}
+
+/* Apply glitch animation to a heading element */
+@mixin glitch-text($interval: 4s) {
+  animation: glitch $interval infinite;
+  position: relative;
+}
+
+/* Mono label style (JetBrains Mono uppercase label) */
+@mixin mono-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Terminal cursor effect */
+@mixin terminal-cursor {
+  border-right: 2px solid var(--cyan);
+  animation: terminal-cursor 1s step-end infinite;
+  padding-right: 2px;
+}

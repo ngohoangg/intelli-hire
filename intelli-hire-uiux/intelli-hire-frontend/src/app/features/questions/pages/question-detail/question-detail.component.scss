@@ -1,0 +1,110 @@
+@use '../../styles/question-admin' as qs;
+
+@include qs.base-page;
+
+.content-grid {
+  grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+}
+
+.main-card {
+  display: grid;
+  gap: 18px;
+
+  h2 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 24px;
+    color: var(--text-primary);
+    line-height: 1.45;
+  }
+}
+
+.question-meta,
+.quick-action-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.rubric-card,
+.article-card,
+.usage-card,
+.metadata-card {
+  align-self: start;
+}
+
+.rubric-card {
+  display: grid;
+  gap: 18px;
+}
+
+.rubric-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.rubric-block {
+  display: grid;
+  gap: 10px;
+
+  p,
+  ul {
+    margin: 0;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  ul {
+    padding-left: 18px;
+  }
+}
+
+.rubric-score {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--cyan);
+  text-shadow: 0 0 16px rgba(0, 245, 255, 0.45);
+}
+
+.article-title,
+.article-meta,
+.article-description {
+  margin: 0;
+}
+
+.article-title {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.article-meta {
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.article-description {
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.compact {
+  min-height: 170px;
+}
+
+@media (max-width: 1080px) {
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .rubric-grid {
+    grid-template-columns: 1fr;
+  }
+}

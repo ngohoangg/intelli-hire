@@ -1,0 +1,20 @@
+# Secrets
+.env
+.env.*
+!.env.sample
+!.env.example
+
+# Build output
+target/
+dist/
+.angular/
+node_modules/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,15 @@
+<div class="auth-page">
+  <h1>Verify Email</h1>
+
+  <div class="status-block" *ngIf="status === 'loading'">
+    <div class="spinner"></div>
+    <p>Verifying your email...</p>
+  </div>
+
+  <div class="success-banner" *ngIf="status === 'success'">{{ message }}</div>
+  <div class="error-banner" *ngIf="status === 'error'">{{ message }}</div>
+
+  <p class="auth-link" *ngIf="status !== 'loading'">
+    <a routerLink="/auth/login">Back to Sign In</a>
+  </p>
+</div>
