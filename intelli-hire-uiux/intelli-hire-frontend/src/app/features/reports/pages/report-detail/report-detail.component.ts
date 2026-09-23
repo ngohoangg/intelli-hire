@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ReportService } from '../../services/report.service';
 import { ReportResponse, ReportStatus } from '../../../../core/models/report.model';
 import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
@@ -10,13 +11,14 @@ import { LoadingSpinnerComponent } from '../../../../shared/components/loading-s
 @Component({
   selector: 'app-report-detail',
   standalone: true,
-  imports: [CommonModule, LoadingSpinnerComponent, MatSnackBarModule],
+  imports: [CommonModule, LoadingSpinnerComponent, MatSnackBarModule, TranslatePipe],
   templateUrl: './report-detail.component.html',
   styleUrl: './report-detail.component.scss'
 })
 export class ReportDetailComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private snackBar = inject(MatSnackBar);
+  private translate = inject(TranslateService);
 
   report: ReportResponse | null = null;
   loading = false;
@@ -36,7 +38,7 @@ export class ReportDetailComponent implements OnInit {
       next: r => { this.report = r; this.loading = false; },
       error: () => {
         this.loading = false;
-        this.snackBar.open('Failed to load report', 'Close', { duration: 4000 });
+        this.snackBar.open(this.translate.instant('reports.detail.loadError'), 'Close', { duration: 4000 });
       }
     });
   }
@@ -53,11 +55,11 @@ export class ReportDetailComponent implements OnInit {
       next: r => {
         this.report = r;
         this.regenerating = false;
-        this.snackBar.open('Roadmap regenerated', 'Close', { duration: 3000 });
+        this.snackBar.open(this.translate.instant('reports.detail.regenerateSuccess'), 'Close', { duration: 3000 });
       },
       error: () => {
         this.regenerating = false;
-        this.snackBar.open('Failed to regenerate roadmap', 'Close', { duration: 4000 });
+        this.snackBar.open(this.translate.instant('reports.detail.regenerateError'), 'Close', { duration: 4000 });
       }
     });
   }
@@ -81,14 +83,15 @@ export class ReportDetailComponent implements OnInit {
     return map[status] ?? '';
   }
 
-  getRoadmapEntries(): [string, any][] {
-    if (!this.report?.roadmap_json) return [];
-    if (typeof this.report.roadmap_json === 'object' && !Array.isArray(this.report.roadmap_json)) {
-      return Object.entries(this.report.roadmap_json);
+  getRoadmapEntries(): { kind: 'raw' | 'step' | 'label'; text: string; index?: number; value: any }[] {
+    const data = this.report?.roadmap_json;
+    if (!data) return [];
+    if (typeof data === 'object' && !Array.isArray(data)) {
+      return Object.entries(data).map(([key, value]) => ({ kind: 'raw' as const, text: key, value }));
     }
-    if (Array.isArray(this.report.roadmap_json)) {
-      return this.report.roadmap_json.map((item, i) => [`Step ${i + 1}`, item]);
+    if (Array.isArray(data)) {
+      return data.map((value, i) => ({ kind: 'step' as const, text: '', index: i + 1, value }));
     }
-    return [['Roadmap', this.report.roadmap_json]];
+    return [{ kind: 'label' as const, text: '', value: data }];
   }
 }

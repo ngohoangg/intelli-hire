@@ -6,6 +6,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ResumeFileService } from '../../services/resume-file.service';
 import { ResumeFile } from '../../../../core/models/resume-file.model';
 import { ParseJobService } from '../../../parse-job/services/parse-job.service';
@@ -26,7 +27,8 @@ const MAX_SIZE_BYTES = 5 * 1024 * 1024;
     MatIconModule,
     MatSnackBarModule,
     MatDialogModule,
-    ParseJobStatusComponent
+    ParseJobStatusComponent,
+    TranslatePipe
   ],
   templateUrl: './file-upload.component.html',
   styleUrl: './file-upload.component.scss'
@@ -46,7 +48,8 @@ export class FileUploadComponent implements OnInit {
     private fileService: ResumeFileService,
     private parseJobService: ParseJobService,
     private snackBar: MatSnackBar,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -90,11 +93,19 @@ export class FileUploadComponent implements OnInit {
 
   private handleFile(file: File): void {
     if (!ALLOWED_MIME.includes(file.type)) {
-      this.snackBar.open('Invalid file type. Only PDF and DOCX are allowed.', 'Close', { duration: 4000 });
+      this.snackBar.open(
+        this.translate.instant('resume.fileUpload.invalidTypeSnackbar'),
+        this.translate.instant('resume.actions.close'),
+        { duration: 4000 }
+      );
       return;
     }
     if (file.size > MAX_SIZE_BYTES) {
-      this.snackBar.open('File size exceeds 5MB limit.', 'Close', { duration: 4000 });
+      this.snackBar.open(
+        this.translate.instant('resume.fileUpload.fileTooLargeSnackbar'),
+        this.translate.instant('resume.actions.close'),
+        { duration: 4000 }
+      );
       return;
     }
     if (this.existingFile) {
@@ -108,7 +119,11 @@ export class FileUploadComponent implements OnInit {
         },
         error: () => {
           this.uploading = false;
-          this.snackBar.open('Failed to replace file. Please try again.', 'Close', { duration: 4000 });
+          this.snackBar.open(
+            this.translate.instant('resume.fileUpload.replaceFailedSnackbar'),
+            this.translate.instant('resume.actions.close'),
+            { duration: 4000 }
+          );
         }
       });
     } else {
@@ -165,7 +180,10 @@ export class FileUploadComponent implements OnInit {
 
   deleteFile(): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
-      data: { title: 'Delete File', message: `Delete "${this.existingFile?.original_name}"? This cannot be undone.` }
+      data: {
+        title: this.translate.instant('resume.fileUpload.deleteDialogTitle'),
+        message: this.translate.instant('resume.fileUpload.deleteDialogMessage', { name: this.existingFile?.original_name })
+      }
     });
     ref.afterClosed().subscribe(confirmed => {
       if (confirmed) {
@@ -184,6 +202,6 @@ export class FileUploadComponent implements OnInit {
   }
 
   formatDate(date: string): string {
-    return new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    return new Date(date).toLocaleDateString('vi-VN', { year: 'numeric', month: 'short', day: 'numeric' });
   }
 }

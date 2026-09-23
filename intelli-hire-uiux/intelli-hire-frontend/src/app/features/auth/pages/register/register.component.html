@@ -1,6 +1,6 @@
 <div class="auth-page">
-  <h1>Create Account</h1>
-  <p class="subtitle">Join IntelliHire — AI-powered hiring</p>
+  <h1>{{ 'auth.register.title' | translate }}</h1>
+  <p class="subtitle">{{ 'auth.register.subtitle' | translate }}</p>
 
   <div class="error-banner" *ngIf="error">{{ error }}</div>
   <div class="success-banner" *ngIf="success">{{ success }}</div>
@@ -8,57 +8,57 @@
   <form *ngIf="!success" [formGroup]="form" (ngSubmit)="submit()" class="auth-form">
     <div class="field-row">
       <div class="field-group">
-        <label class="field-label">First Name</label>
-        <input class="field-input" formControlName="firstName" placeholder="Jane" />
+        <label class="field-label">{{ 'auth.register.firstNameLabel' | translate }}</label>
+        <input class="field-input" formControlName="firstName" [placeholder]="'auth.register.firstNamePlaceholder' | translate" />
       </div>
       <div class="field-group">
-        <label class="field-label">Last Name</label>
-        <input class="field-input" formControlName="lastName" placeholder="Doe" />
+        <label class="field-label">{{ 'auth.register.lastNameLabel' | translate }}</label>
+        <input class="field-input" formControlName="lastName" [placeholder]="'auth.register.lastNamePlaceholder' | translate" />
       </div>
     </div>
 
     <div class="field-group">
-      <label class="field-label">Email <span class="required">*</span></label>
-      <input class="field-input" formControlName="email" type="email" placeholder="you@example.com" />
-      <span class="field-error" *ngIf="hasError('email','required')">Email is required</span>
-      <span class="field-error" *ngIf="hasError('email','email')">Invalid email format</span>
+      <label class="field-label">{{ 'auth.register.emailLabel' | translate }} <span class="required">*</span></label>
+      <input class="field-input" formControlName="email" type="email" [placeholder]="'auth.register.emailPlaceholder' | translate" />
+      <span class="field-error" *ngIf="hasError('email','required')">{{ 'auth.register.emailRequired' | translate }}</span>
+      <span class="field-error" *ngIf="hasError('email','email')">{{ 'auth.register.emailInvalid' | translate }}</span>
     </div>
 
     <div class="field-group">
-      <label class="field-label">Username <span class="required">*</span></label>
-      <input class="field-input" formControlName="username" placeholder="jane_doe" />
-      <span class="field-error" *ngIf="hasError('username','required')">Username is required</span>
-      <span class="field-error" *ngIf="hasError('username','minlength')">Min 3 characters</span>
+      <label class="field-label">{{ 'auth.register.usernameLabel' | translate }} <span class="required">*</span></label>
+      <input class="field-input" formControlName="username" [placeholder]="'auth.register.usernamePlaceholder' | translate" />
+      <span class="field-error" *ngIf="hasError('username','required')">{{ 'auth.register.usernameRequired' | translate }}</span>
+      <span class="field-error" *ngIf="hasError('username','minlength')">{{ 'auth.register.usernameMinLength' | translate }}</span>
     </div>
 
     <div class="field-group">
-      <label class="field-label">Password <span class="required">*</span></label>
+      <label class="field-label">{{ 'auth.register.passwordLabel' | translate }} <span class="required">*</span></label>
       <div class="input-wrapper">
-        <input class="field-input" formControlName="password" [type]="showPassword ? 'text' : 'password'" placeholder="Min 8 characters" autocomplete="new-password" />
+        <input class="field-input" formControlName="password" [type]="showPassword ? 'text' : 'password'" [placeholder]="'auth.register.passwordPlaceholder' | translate" autocomplete="new-password" />
         <button type="button" class="eye-btn" (click)="showPassword = !showPassword" tabindex="-1">
           {{ showPassword ? '🙈' : '👁' }}
         </button>
       </div>
-      <span class="field-error" *ngIf="hasError('password','required')">Password is required</span>
-      <span class="field-error" *ngIf="hasError('password','minlength')">Password must be at least 8 characters</span>
+      <span class="field-error" *ngIf="hasError('password','required')">{{ 'auth.register.passwordRequired' | translate }}</span>
+      <span class="field-error" *ngIf="hasError('password','minlength')">{{ 'auth.register.passwordMinLength' | translate }}</span>
     </div>
 
     <div class="field-group">
-      <label class="field-label">Confirm Password <span class="required">*</span></label>
+      <label class="field-label">{{ 'auth.register.confirmPasswordLabel' | translate }} <span class="required">*</span></label>
       <div class="input-wrapper">
-        <input class="field-input" formControlName="confirmPassword" [type]="showConfirm ? 'text' : 'password'" placeholder="Re-enter your password" autocomplete="new-password" />
+        <input class="field-input" formControlName="confirmPassword" [type]="showConfirm ? 'text' : 'password'" [placeholder]="'auth.register.confirmPasswordPlaceholder' | translate" autocomplete="new-password" />
         <button type="button" class="eye-btn" (click)="showConfirm = !showConfirm" tabindex="-1">
           {{ showConfirm ? '🙈' : '👁' }}
         </button>
       </div>
-      <span class="field-error" *ngIf="hasError('confirmPassword','required')">Please confirm your password</span>
-      <span class="field-error" *ngIf="passwordMismatch">Passwords do not match</span>
+      <span class="field-error" *ngIf="hasError('confirmPassword','required')">{{ 'auth.register.confirmPasswordRequired' | translate }}</span>
+      <span class="field-error" *ngIf="passwordMismatch">{{ 'auth.register.passwordMismatch' | translate }}</span>
     </div>
 
     <button class="btn-primary full-width" type="submit" [disabled]="loading">
-      {{ loading ? 'Creating account...' : 'Create Account' }}
+      {{ loading ? ('auth.register.submitting' | translate) : ('auth.register.submit' | translate) }}
     </button>
   </form>
 
-  <p class="auth-link">Already have an account? <a routerLink="/auth/login">Sign in</a></p>
+  <p class="auth-link">{{ 'auth.register.alreadyHaveAccount' | translate }} <a routerLink="/auth/login">{{ 'auth.register.signIn' | translate }}</a></p>
 </div>

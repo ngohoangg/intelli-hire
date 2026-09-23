@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { catchError, forkJoin, map, of, switchMap } from 'rxjs';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
 import {
   DifficultyLevelResponse,
@@ -32,7 +33,8 @@ import {
     RouterLink,
     MatCheckboxModule,
     MatSelectModule,
-    LoadingSpinnerComponent
+    LoadingSpinnerComponent,
+    TranslatePipe
   ],
   templateUrl: './question-create.component.html',
   styleUrl: './question-create.component.scss'
@@ -40,6 +42,7 @@ import {
 export class QuestionCreateComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
+  private readonly translate = inject(TranslateService);
 
   readonly questionTypes = QUESTION_TYPE_OPTIONS;
 
@@ -134,11 +137,11 @@ export class QuestionCreateComponent implements OnInit {
       next: () => {
         this.saving = false;
         if (this.isAdminCreate) {
-          this.successMessage = 'Question created and approved.';
+          this.successMessage = this.translate.instant('questions.questionCreate.successApproved');
           this.adminQuestionService.refreshPendingCount();
           setTimeout(() => this.router.navigate(['/admin/questions']), 1500);
         } else {
-          this.successMessage = 'Question submitted! Waiting for admin review.';
+          this.successMessage = this.translate.instant('questions.questionCreate.successSubmitted');
           setTimeout(() => this.router.navigate(['/questions/submitted']), 1500);
         }
       },

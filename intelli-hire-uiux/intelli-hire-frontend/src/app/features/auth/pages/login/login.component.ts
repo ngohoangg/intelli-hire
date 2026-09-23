@@ -2,13 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../../../core/services/auth.service';
 import { OAuthProvider } from '../../../../core/models/auth.model';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslatePipe],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
@@ -18,7 +19,12 @@ export class LoginComponent implements OnInit {
   error = '';
   oauthProviders: OAuthProvider[] = [];
 
-  constructor(private fb: FormBuilder, private auth: AuthService, private router: Router) {
+  constructor(
+    private fb: FormBuilder,
+    private auth: AuthService,
+    private router: Router,
+    private translate: TranslateService
+  ) {
     this.form = this.fb.group({
       identifier: ['', Validators.required],
       password: ['', Validators.required]
@@ -35,7 +41,7 @@ export class LoginComponent implements OnInit {
     this.loading = true; this.error = '';
     this.auth.login(this.form.value).subscribe({
       next: () => { this.loading = false; this.router.navigate([this.homeRoute]); },
-      error: err => { this.error = err?.error?.message ?? 'Invalid credentials'; this.loading = false; }
+      error: err => { this.error = err?.error?.message ?? this.translate.instant('auth.login.invalidCredentials'); this.loading = false; }
     });
   }
 
@@ -46,7 +52,7 @@ export class LoginComponent implements OnInit {
   loginWithOAuth(provider: string): void {
     this.auth.getOAuthAuthorizationUrl(provider).subscribe({
       next: res => { localStorage.setItem('oauth_state', res.state); window.location.href = res.authorization_url; },
-      error: () => { this.error = 'Failed to initiate OAuth login'; }
+      error: () => { this.error = this.translate.instant('auth.login.oauthError'); }
     });
   }
 }

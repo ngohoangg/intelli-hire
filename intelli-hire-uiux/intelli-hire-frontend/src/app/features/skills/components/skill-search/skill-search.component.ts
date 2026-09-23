@@ -5,6 +5,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatIconModule } from '@angular/material/icon';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Subject, of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, catchError, takeUntil } from 'rxjs/operators';
 import { SkillService } from '../../services/skill.service';
@@ -19,14 +20,15 @@ import { Skill } from '../../../../core/models/skill.model';
     MatFormFieldModule,
     MatInputModule,
     MatAutocompleteModule,
-    MatIconModule
+    MatIconModule,
+    TranslatePipe
   ],
   templateUrl: './skill-search.component.html',
   styleUrl: './skill-search.component.scss'
 })
 export class SkillSearchComponent implements OnInit, OnDestroy {
-  @Input() placeholder = 'Search skills...';
-  @Input() label = 'Skill';
+  @Input() placeholder = 'resume.skillSearch.defaultPlaceholder';
+  @Input() label = 'resume.skillSearch.defaultLabel';
   @Output() skillSelected = new EventEmitter<Skill>();
   @Output() cleared = new EventEmitter<void>();
 

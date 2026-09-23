@@ -3,29 +3,29 @@
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <polyline points="15 18 9 12 15 6"></polyline>
     </svg>
-    Back
+    {{ 'questions.actions.back' | translate }}
   </button>
 
   <div class="page-header">
     <div class="page-title-group">
       <div class="page-title">
         <span class="ai-dot"></span>
-        <h1>Random Generator Lab</h1>
+        <h1>{{ 'questions.randomLab.title' | translate }}</h1>
       </div>
       <p class="page-subtitle">
-        Probe random selection quality, taxonomy combinations and exclusion behavior before exposing the pool to client flows.
+        {{ 'questions.randomLab.subtitle' | translate }}
       </p>
     </div>
 
     <div class="header-actions">
-      <button class="btn-primary" type="button" (click)="runLab()">Generate Set</button>
+      <button class="btn-primary" type="button" (click)="runLab()">{{ 'questions.randomLab.generateSetButton' | translate }}</button>
     </div>
   </div>
 
   <div class="layout-grid">
     <aside class="filter-panel" [formGroup]="form">
       <div class="field-group">
-        <label class="field-label" for="random-lab-count">Count</label>
+        <label class="field-label" for="random-lab-count">{{ 'questions.randomLab.countLabel' | translate }}</label>
         <div class="input-wrap">
           <span class="field-icon">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -38,7 +38,7 @@
       </div>
 
       <div class="field-group">
-        <label class="field-label" for="random-lab-topic">Topic</label>
+        <label class="field-label" for="random-lab-topic">{{ 'questions.fields.topic' | translate }}</label>
         <div class="input-wrap">
           <span class="field-icon">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -52,14 +52,14 @@
             class="field-input field-select"
             [formControl]="form.controls.topic_id"
             panelClass="lab-select-panel">
-            <mat-option value="">Any topic</mat-option>
+            <mat-option value="">{{ 'questions.options.anyTopic' | translate }}</mat-option>
             <mat-option *ngFor="let topic of topicOptions" [value]="topic.id">{{ topic.label }}</mat-option>
           </mat-select>
         </div>
       </div>
 
       <div class="field-group">
-        <label class="field-label" for="random-lab-difficulty">Difficulty</label>
+        <label class="field-label" for="random-lab-difficulty">{{ 'questions.fields.difficulty' | translate }}</label>
         <div class="input-wrap">
           <span class="field-icon">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -73,7 +73,7 @@
             class="field-input field-select"
             formControlName="difficulty_id"
             panelClass="lab-select-panel">
-            <mat-option value="">Any difficulty</mat-option>
+            <mat-option value="">{{ 'questions.options.anyDifficulty' | translate }}</mat-option>
             <mat-option *ngFor="let difficulty of difficulties" [value]="difficulty.id">
               {{ difficulty.name }}
             </mat-option>
@@ -82,7 +82,7 @@
       </div>
 
       <div class="field-group">
-        <label class="field-label" for="random-lab-type">Type</label>
+        <label class="field-label" for="random-lab-type">{{ 'questions.fields.type' | translate }}</label>
         <div class="input-wrap">
           <span class="field-icon">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -96,14 +96,14 @@
             class="field-input field-select"
             [formControl]="form.controls.type"
             panelClass="lab-select-panel">
-            <mat-option value="">Any type</mat-option>
-            <mat-option *ngFor="let type of questionTypes" [value]="type">{{ formatType(type) }}</mat-option>
+            <mat-option value="">{{ 'questions.options.anyType' | translate }}</mat-option>
+            <mat-option *ngFor="let type of questionTypes" [value]="type">{{ formatType(type) | translate }}</mat-option>
           </mat-select>
         </div>
       </div>
 
       <div class="field-group">
-        <label class="field-label" for="random-lab-tags">Tags</label>
+        <label class="field-label" for="random-lab-tags">{{ 'questions.fields.tags' | translate }}</label>
         <div class="input-wrap">
           <span class="field-icon">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -123,7 +123,7 @@
       </div>
 
       <div class="field-group">
-        <label class="field-label" for="random-lab-exclude">Exclude IDs</label>
+        <label class="field-label" for="random-lab-exclude">{{ 'questions.randomLab.excludeIdsLabel' | translate }}</label>
         <div class="input-wrap textarea-wrap">
           <span class="field-icon field-icon--top">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -137,7 +137,7 @@
             class="field-input field-textarea"
             rows="6"
             [formControl]="form.controls.exclude_ids"
-            placeholder="One id per line or comma separated"></textarea>
+            [placeholder]="'questions.randomLab.excludeIdsPlaceholder' | translate"></textarea>
         </div>
       </div>
     </aside>
@@ -152,17 +152,17 @@
             <path d="M15 15l6 6"></path>
             <path d="M4 4l5 5"></path>
           </svg>
-          <h2 class="section-title">Generated Set</h2>
+          <h2 class="section-title">{{ 'questions.randomLab.generatedSetTitle' | translate }}</h2>
         </div>
       </div>
 
       <div class="question-grid" *ngIf="generatedQuestions.length; else emptyState">
         <article class="stack-item question-card" *ngFor="let question of generatedQuestions">
           <div class="question-top">
-            <span class="chip chip-accent">{{ formatType(question.question_type) }}</span>
+            <span class="chip chip-accent">{{ formatType(question.question_type) | translate }}</span>
             <span class="status-badge" [class.active]="question.is_active" [class.inactive]="!question.is_active">
               <span class="dot" *ngIf="question.is_active"></span>
-              {{ question.is_active ? 'Active' : 'Inactive' }}
+              {{ (question.is_active ? 'questions.activeState.active' : 'questions.activeState.inactive') | translate }}
             </span>
           </div>
           <h3>{{ question.question_text }}</h3>
@@ -170,14 +170,14 @@
           <div class="chip-list">
             <span class="chip" *ngFor="let tag of question.tags">{{ tag.name }}</span>
           </div>
-          <button class="text-action" type="button" (click)="openQuestion(question.id)">Open Detail</button>
+          <button class="text-action" type="button" (click)="openQuestion(question.id)">{{ 'questions.randomLab.openDetailButton' | translate }}</button>
         </article>
       </div>
 
       <ng-template #emptyState>
         <div class="empty-panel compact">
-          <h3>No generated set yet</h3>
-          <p>Choose filters and generate a random set to validate how the backend pool behaves.</p>
+          <h3>{{ 'questions.randomLab.emptyTitle' | translate }}</h3>
+          <p>{{ 'questions.randomLab.emptyBody' | translate }}</p>
         </div>
       </ng-template>
     </section>

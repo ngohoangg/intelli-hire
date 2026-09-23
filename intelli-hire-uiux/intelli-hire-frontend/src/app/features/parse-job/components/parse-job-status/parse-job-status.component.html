@@ -1,15 +1,15 @@
 <div class="job-status-card" *ngIf="job">
   <div class="job-header">
     <div class="job-info">
-      <span class="job-label">AI Parse Job</span>
-      <span class="job-badge" [ngClass]="statusClass">{{ statusLabel }}</span>
+      <span class="job-label">{{ 'resume.parseJobStatus.jobLabel' | translate }}</span>
+      <span class="job-badge" [ngClass]="statusClass">{{ statusLabel | translate }}</span>
     </div>
     <button
       *ngIf="canCancel"
       mat-stroked-button
       class="cancel-btn"
       (click)="cancel()">
-      Cancel
+      {{ 'resume.parseJobStatus.cancelButton' | translate }}
     </button>
   </div>
 
@@ -21,11 +21,11 @@
 
   <div class="job-meta">
     <span *ngIf="job.retry_count > 0" class="retry-info">
-      Retry: {{ job.retry_count }}x
+      {{ 'resume.parseJobStatus.retryInfo' | translate: { count: job.retry_count } }}
     </span>
     <span *ngIf="job.error_message" class="error-msg">{{ job.error_message }}</span>
     <span *ngIf="job.finished_at" class="finish-time">
-      Finished: {{ job.finished_at | date:'short' }}
+      {{ 'resume.parseJobStatus.finishedLabel' | translate }} {{ job.finished_at | date:'short' }}
     </span>
   </div>
 </div>

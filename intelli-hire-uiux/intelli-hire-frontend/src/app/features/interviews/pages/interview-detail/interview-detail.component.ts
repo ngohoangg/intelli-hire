@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { InterviewService } from '../../services/interview.service';
 import { InterviewSessionDetail, SessionStatus } from '../../../../core/models/interview.model';
 import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
@@ -12,7 +13,8 @@ import { ReportResponse } from '../../../../core/models/report.model';
   standalone: true,
   imports: [
     CommonModule,
-    LoadingSpinnerComponent
+    LoadingSpinnerComponent,
+    TranslatePipe
   ],
   templateUrl: './interview-detail.component.html',
   styleUrl: './interview-detail.component.scss'
@@ -57,6 +59,16 @@ export class InterviewDetailComponent implements OnInit {
       [SessionStatus.ACTIVE]: 'status-active',
       [SessionStatus.COMPLETED]: 'status-completed',
       [SessionStatus.EXPIRED]: 'status-expired'
+    };
+    return map[status] ?? '';
+  }
+
+  getStatusLabel(status: string): string {
+    const map: Record<string, string> = {
+      [SessionStatus.CREATED]: 'interviews.status.created',
+      [SessionStatus.ACTIVE]: 'interviews.status.active',
+      [SessionStatus.COMPLETED]: 'interviews.status.completed',
+      [SessionStatus.EXPIRED]: 'interviews.status.expired'
     };
     return map[status] ?? '';
   }

@@ -35,28 +35,29 @@ export const QUESTION_SORT_OPTIONS = [
   { label: 'Question Type', value: 'questionType,asc' }
 ] as const;
 
+/**
+ * Returns a translation KEY for the question type — not display text. Callers
+ * must pipe the result through `| translate` in the template, or
+ * `TranslateService.instant()` when building a string outside a template.
+ */
 export function formatQuestionType(type: QuestionType | string | null | undefined): string {
   if (!type) {
-    return 'Unknown';
+    return 'questions.unknownType';
   }
 
-  return type
-    .toLowerCase()
-    .split('_')
-    .map(part => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(' ');
+  return `questions.questionTypes.${type}`;
 }
 
 export function formatBooleanLabel(value: boolean, positive = 'Active', negative = 'Inactive'): string {
   return value ? positive : negative;
 }
 
-export function formatDateTime(value: string | null | undefined): string {
+export function formatDateTime(value: string | null | undefined, notAvailableLabel = 'N/A'): string {
   if (!value) {
-    return 'N/A';
+    return notAvailableLabel;
   }
 
-  return new Date(value).toLocaleString('en-GB', {
+  return new Date(value).toLocaleString('vi-VN', {
     day: '2-digit',
     month: 'short',
     year: 'numeric',

@@ -5,6 +5,7 @@ import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/materia
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ResumeEducation, ResumeEducationRequest } from '../../../../core/models/education.model';
 
 export interface EducationFormData {
@@ -39,7 +40,8 @@ function yearOrderValidator(group: AbstractControl): ValidationErrors | null {
     MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
-    MatButtonModule
+    MatButtonModule,
+    TranslatePipe
   ],
   templateUrl: './education-form.component.html',
   styleUrl: './education-form.component.scss'

@@ -5,7 +5,7 @@
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <polyline points="15 18 9 12 15 6"/>
     </svg>
-    Back to Interviews
+    {{ 'interviews.interviewDetail.backToInterviews' | translate }}
   </button>
 
   <div *ngIf="session && !loading">
@@ -23,12 +23,12 @@
             <h1>{{ session.topic }}</h1>
             <span class="status-badge" [ngClass]="getStatusClass(session.status)">
               <span class="dot" *ngIf="session.status === 'ACTIVE'"></span>
-              {{ session.status }}
+              {{ getStatusLabel(session.status) | translate }}
             </span>
           </div>
           <div class="meta-row">
             <span class="difficulty-badge difficulty-{{ session.difficulty }}">{{ session.difficulty | uppercase }}</span>
-            <span class="meta-text">{{ session.questions?.length ?? 0 }} questions</span>
+            <span class="meta-text">{{ 'interviews.interviewDetail.questionsCount' | translate: { count: session.questions?.length ?? 0 } }}</span>
             <span class="meta-sep">·</span>
             <span class="meta-text">{{ session.created_at | date:'dd/MM/yyyy HH:mm' }}</span>
           </div>
@@ -44,24 +44,24 @@
         <line x1="16" y1="13" x2="8" y2="13"/>
         <line x1="16" y1="17" x2="8" y2="17"/>
       </svg>
-      View Report
+      {{ 'interviews.interviewDetail.viewReport' | translate }}
     </button>
 
     <!-- Q&A List -->
     <div class="qa-list">
       <div class="qa-item card" *ngFor="let q of session.questions">
         <div class="qa-question">
-          <span class="q-num">Q{{ q.question_order }}</span>
+          <span class="q-num">{{ 'interviews.interviewDetail.questionLabel' | translate: { number: q.question_order } }}</span>
           <p class="q-text">{{ q.question_text }}</p>
         </div>
         <div class="qa-answer">
-          <span class="answer-label">ANSWER</span>
+          <span class="answer-label">{{ 'interviews.interviewDetail.answerLabel' | translate }}</span>
           <p class="answer-text">{{ getAnswerForQuestion(q.question_id) }}</p>
         </div>
       </div>
 
       <div class="empty-state" *ngIf="!session.questions?.length">
-        <p>No questions recorded for this session.</p>
+        <p>{{ 'interviews.interviewDetail.emptyState' | translate }}</p>
       </div>
     </div>
 

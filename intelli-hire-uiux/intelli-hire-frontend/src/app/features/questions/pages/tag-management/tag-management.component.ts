@@ -6,6 +6,7 @@ import { catchError, of } from 'rxjs';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { TagResponse } from '../../../../core/models/question.model';
@@ -21,13 +22,15 @@ import { QuestionTaxonomyService } from '../../services/question-taxonomy.servic
     MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
-    LoadingSpinnerComponent
+    LoadingSpinnerComponent,
+    TranslatePipe
   ],
   templateUrl: './tag-management.component.html',
   styleUrl: './tag-management.component.scss'
 })
 export class TagManagementComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
+  private readonly translate = inject(TranslateService);
 
   loading = false;
   saving = false;
@@ -86,8 +89,8 @@ export class TagManagementComponent implements OnInit {
 
     this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Delete tag',
-        message: 'Deleting a tag can break saved filters and question classification. Continue only if the tag is unused.'
+        title: this.translate.instant('questions.tagManagement.deleteDialog.title'),
+        message: this.translate.instant('questions.tagManagement.deleteDialog.message')
       }
     }).afterClosed().subscribe(confirmed => {
       if (!confirmed) {

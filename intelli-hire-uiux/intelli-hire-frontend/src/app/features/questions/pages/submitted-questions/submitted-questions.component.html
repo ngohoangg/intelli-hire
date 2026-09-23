@@ -3,14 +3,14 @@
     <div class="page-title-group">
       <div class="page-title">
         <span class="ai-dot"></span>
-        <h1>My Submissions</h1>
+        <h1>{{ 'questions.submittedQuestions.title' | translate }}</h1>
         <span class="count-badge" *ngIf="totalElements > 0">{{ totalElements }}</span>
       </div>
-      <p class="page-subtitle">Track and manage questions you have submitted for review.</p>
+      <p class="page-subtitle">{{ 'questions.submittedQuestions.subtitle' | translate }}</p>
     </div>
 
     <div class="header-actions">
-      <a class="btn-primary" routerLink="/questions/create">New Question</a>
+      <a class="btn-primary" routerLink="/questions/create">{{ 'questions.actions.newQuestion' | translate }}</a>
     </div>
   </div>
 
@@ -22,33 +22,33 @@
           <!-- Rejection reason banner -->
           <div class="rejection-banner" *ngIf="q.status === 'REJECTED'">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            <span><strong>Rejected:</strong> {{ q.rejection_reason ?? 'No reason provided.' }}</span>
+            <span><strong>{{ 'questions.submittedQuestions.rejectedLabel' | translate }}</strong> {{ q.rejection_reason || ('questions.placeholders.noReasonProvided' | translate) }}</span>
           </div>
 
           <!-- Archived banner -->
           <div class="archived-banner" *ngIf="q.status === 'ARCHIVED'">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
-            <span>This question has been archived by an admin.</span>
+            <span>{{ 'questions.submittedQuestions.archivedBannerText' | translate }}</span>
           </div>
 
           <div class="card-header">
-            <span class="status-badge" [attr.data-status]="q.status">{{ q.status }}</span>
-            <span class="card-meta">{{ q.topic_name }} · {{ q.question_type }} · {{ q.created_at | date:'dd MMM yyyy' }}</span>
+            <span class="status-badge" [attr.data-status]="q.status">{{ ('questions.statusLabels.' + q.status) | translate }}</span>
+            <span class="card-meta">{{ q.topic_name }} · {{ formatType(q.question_type) | translate }} · {{ q.created_at | date:'dd MMM yyyy' }}</span>
           </div>
 
           <p class="question-text">{{ q.question_text }}</p>
 
           <div class="card-actions">
-            <button class="btn-view" (click)="viewDetail(q.id)">View</button>
+            <button class="btn-view" (click)="viewDetail(q.id)">{{ 'questions.actions.view' | translate }}</button>
             <ng-container *ngIf="q.status === 'PENDING' || q.status === 'REJECTED'">
-              <button class="btn-edit" (click)="edit(q.id)">Edit</button>
+              <button class="btn-edit" (click)="edit(q.id)">{{ 'questions.actions.edit' | translate }}</button>
             </ng-container>
             <ng-container *ngIf="q.status === 'REJECTED'">
               <button
                 class="btn-resubmit"
                 (click)="resubmit(q)"
                 [disabled]="resubmittingId === q.id">
-                {{ resubmittingId === q.id ? 'Submitting...' : 'Resubmit' }}
+                {{ (resubmittingId === q.id ? 'questions.submittedQuestions.submittingButton' : 'questions.submittedQuestions.resubmitButton') | translate }}
               </button>
             </ng-container>
             <ng-container *ngIf="q.status === 'PENDING' || q.status === 'REJECTED'">
@@ -56,7 +56,7 @@
                 class="btn-withdraw"
                 (click)="withdraw(q)"
                 [disabled]="withdrawingId === q.id">
-                {{ withdrawingId === q.id ? 'Deleting...' : 'Delete' }}
+                {{ (withdrawingId === q.id ? 'questions.submittedQuestions.deletingButton' : 'questions.actions.delete') | translate }}
               </button>
             </ng-container>
           </div>
@@ -65,17 +65,17 @@
 
       <ng-template #emptyState>
         <div class="empty-panel">
-          <h3>No submissions yet</h3>
-          <p>You haven't submitted any questions yet.</p>
+          <h3>{{ 'questions.submittedQuestions.emptyTitle' | translate }}</h3>
+          <p>{{ 'questions.submittedQuestions.emptyBody' | translate }}</p>
         </div>
       </ng-template>
     </div>
 
     <!-- Pagination -->
     <div class="pagination" *ngIf="totalElements > size">
-      <button class="page-btn" (click)="prevPage()" [disabled]="page === 0">← Prev</button>
-      <span class="page-info">Page {{ page + 1 }} of {{ Math.ceil(totalElements / size) }}</span>
-      <button class="page-btn" (click)="nextPage()" [disabled]="(page + 1) * size >= totalElements">Next →</button>
+      <button class="page-btn" (click)="prevPage()" [disabled]="page === 0">{{ 'questions.submittedQuestions.prevButton' | translate }}</button>
+      <span class="page-info">{{ 'questions.submittedQuestions.pageInfo' | translate: { page: page + 1, total: Math.ceil(totalElements / size) } }}</span>
+      <button class="page-btn" (click)="nextPage()" [disabled]="(page + 1) * size >= totalElements">{{ 'questions.submittedQuestions.nextButton' | translate }}</button>
     </div>
   </section>
 

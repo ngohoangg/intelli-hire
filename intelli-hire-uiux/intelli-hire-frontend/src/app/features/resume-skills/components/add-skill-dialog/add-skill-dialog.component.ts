@@ -8,6 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Subject, of } from 'rxjs';
 import { debounceTime, switchMap, distinctUntilChanged, takeUntil, catchError } from 'rxjs/operators';
 import { SkillService } from '../../../skills/services/skill.service';
@@ -31,7 +32,8 @@ export interface AddSkillDialogData {
     MatButtonModule,
     MatSelectModule,
     MatAutocompleteModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    TranslatePipe
   ],
   templateUrl: './add-skill-dialog.component.html',
   styleUrl: './add-skill-dialog.component.scss'

@@ -2,6 +2,7 @@ import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ProfileService } from '../../../../core/services/profile.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
@@ -9,12 +10,13 @@ import { LoadingSpinnerComponent } from '../../../../shared/components/loading-s
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, LoadingSpinnerComponent],
+  imports: [CommonModule, ReactiveFormsModule, LoadingSpinnerComponent, TranslatePipe],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss'
 })
 export class ProfileComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
+  private translate = inject(TranslateService);
 
   form: FormGroup;
   loading = false;
@@ -64,8 +66,8 @@ export class ProfileComponent implements OnInit {
       avatar_url: v.avatarUrl || null,
     };
     this.profileService.updateMyProfile(request).subscribe({
-      next: () => { this.success = 'Profile updated successfully.'; this.saving = false; },
-      error: err => { this.error = err?.error?.message ?? 'Update failed'; this.saving = false; }
+      next: () => { this.success = this.translate.instant('account.profile.updateSuccess'); this.saving = false; },
+      error: err => { this.error = err?.error?.message ?? this.translate.instant('account.profile.updateFailed'); this.saving = false; }
     });
   }
 }

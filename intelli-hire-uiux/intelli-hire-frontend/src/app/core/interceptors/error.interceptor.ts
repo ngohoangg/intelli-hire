@@ -1,10 +1,12 @@
 import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { TranslateService } from '@ngx-translate/core';
 import { catchError, throwError } from 'rxjs';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const snackBar = inject(MatSnackBar);
+  const translate = inject(TranslateService);
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
@@ -14,19 +16,19 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         return throwError(() => error);
       }
 
-      let message = 'An unexpected error occurred';
+      let message = translate.instant('common.errorInterceptor.unexpectedError');
 
       if (error.error?.message) {
         message = error.error.message;
       } else if (error.error?.errorCode) {
         message = `Error ${error.error.errorCode}: ${error.error.message ?? error.statusText}`;
       } else if (error.status === 403) {
-        message = 'Access denied. Missing required headers.';
+        message = translate.instant('common.errorInterceptor.accessDenied');
       } else if (error.status === 0) {
-        message = 'Cannot connect to server. Please check if the backend is running.';
+        message = translate.instant('common.errorInterceptor.cannotConnect');
       }
 
-      snackBar.open(message, 'Close', {
+      snackBar.open(message, translate.instant('common.actions.close'), {
         duration: 5000,
         panelClass: ['error-snackbar']
       });

@@ -1,6 +1,7 @@
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
 import { AdminQuestionService } from '../../core/services/admin-question.service';
@@ -8,7 +9,7 @@ import { AdminQuestionService } from '../../core/services/admin-question.service
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule, TranslatePipe],
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.scss'
 })

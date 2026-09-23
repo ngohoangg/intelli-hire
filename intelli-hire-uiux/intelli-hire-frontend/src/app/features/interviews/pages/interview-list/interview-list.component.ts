@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { InterviewService } from '../../services/interview.service';
 import { InterviewSession, SessionStatus } from '../../../../core/models/interview.model';
 import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
@@ -17,7 +18,8 @@ import { ConfirmDialogComponent } from '../../../../shared/components/confirm-di
     MatTableModule,
     MatPaginatorModule,
     MatDialogModule,
-    LoadingSpinnerComponent
+    LoadingSpinnerComponent,
+    TranslatePipe
   ],
   templateUrl: './interview-list.component.html',
   styleUrl: './interview-list.component.scss'
@@ -35,7 +37,8 @@ export class InterviewListComponent implements OnInit {
   constructor(
     private interviewService: InterviewService,
     private router: Router,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -82,8 +85,8 @@ export class InterviewListComponent implements OnInit {
   deleteSession(session: InterviewSession): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Delete Session',
-        message: `Are you sure you want to delete the session "${session.topic}"? This action cannot be undone.`
+        title: this.translate.instant('interviews.interviewList.deleteDialogTitle'),
+        message: this.translate.instant('interviews.interviewList.deleteDialogMessage', { topic: session.topic })
       }
     });
     ref.afterClosed().subscribe(confirmed => {
@@ -102,6 +105,16 @@ export class InterviewListComponent implements OnInit {
       [SessionStatus.ACTIVE]: 'status-active',
       [SessionStatus.COMPLETED]: 'status-completed',
       [SessionStatus.EXPIRED]: 'status-expired'
+    };
+    return map[status] ?? '';
+  }
+
+  getStatusLabel(status: SessionStatus): string {
+    const map: Record<SessionStatus, string> = {
+      [SessionStatus.CREATED]: 'interviews.status.created',
+      [SessionStatus.ACTIVE]: 'interviews.status.active',
+      [SessionStatus.COMPLETED]: 'interviews.status.completed',
+      [SessionStatus.EXPIRED]: 'interviews.status.expired'
     };
     return map[status] ?? '';
   }

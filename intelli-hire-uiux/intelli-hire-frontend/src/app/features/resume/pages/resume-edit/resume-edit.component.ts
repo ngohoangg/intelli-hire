@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ResumeService } from '../../services/resume.service';
 import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
 
@@ -17,7 +18,8 @@ import { LoadingSpinnerComponent } from '../../../../shared/components/loading-s
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    LoadingSpinnerComponent
+    LoadingSpinnerComponent,
+    TranslatePipe
   ],
   templateUrl: './resume-edit.component.html',
   styleUrl: './resume-edit.component.scss'

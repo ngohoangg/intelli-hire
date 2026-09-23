@@ -12,13 +12,13 @@
   <!-- Not Generated Yet -->
   <div class="empty-profile" *ngIf="!loading && notFound">
     <div class="empty-icon">📊</div>
-    <h3>No Skill Profile Yet</h3>
-    <p>Generate a profile based on the skills you've added to this resume.</p>
+    <h3>{{ 'resume.skillProfileCard.notGeneratedTitle' | translate }}</h3>
+    <p>{{ 'resume.skillProfileCard.notGeneratedSubtitle' | translate }}</p>
     <button class="btn-primary" (click)="generate()" [disabled]="generating">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <polygon points="5 3 19 12 5 21 5 3"/>
       </svg>
-      {{ generating ? 'Generating...' : 'Generate Profile' }}
+      {{ (generating ? 'resume.skillProfileCard.generatingButton' : 'resume.skillProfileCard.generateButton') | translate }}
     </button>
   </div>
 
@@ -33,13 +33,13 @@
           <path d="M1 20v-6h6"/>
           <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
         </svg>
-        {{ generating ? 'Generating...' : 'Regenerate' }}
+        {{ (generating ? 'resume.skillProfileCard.generatingButton' : 'resume.skillProfileCard.regenerateButton') | translate }}
       </button>
     </div>
 
     <!-- Top Skills -->
     <div class="section" *ngIf="topSkillEntries().length > 0">
-      <div class="section-label">Top Skills</div>
+      <div class="section-label">{{ 'resume.skillProfileCard.topSkillsLabel' | translate }}</div>
       <div class="top-skills-list">
         <div class="top-skill-item" *ngFor="let entry of topSkillEntries(); let i = index">
           <div class="skill-rank">#{{ i + 1 }}</div>
@@ -60,33 +60,33 @@
 
     <!-- Signals -->
     <div class="section">
-      <div class="section-label">Signals</div>
+      <div class="section-label">{{ 'resume.skillProfileCard.signalsLabel' | translate }}</div>
       <div class="signals-list" *ngIf="signalEntries().length > 0">
         <div class="signal-item" *ngFor="let entry of signalEntries()">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="20 6 9 17 4 12"/>
           </svg>
           <span>{{ entry[1] }}</span>
-          <button class="remove-signal-btn" (click)="removeSignal(entry[0])" title="Remove">
+          <button class="remove-signal-btn" (click)="removeSignal(entry[0])" [title]="'resume.skillProfileCard.removeSignalTitle' | translate">
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
             </svg>
           </button>
         </div>
       </div>
-      <p class="no-content" *ngIf="signalEntries().length === 0">No signals recorded.</p>
+      <p class="no-content" *ngIf="signalEntries().length === 0">{{ 'resume.skillProfileCard.noSignalsMessage' | translate }}</p>
 
       <div class="add-signal-row">
         <input class="signal-input" type="text" [(ngModel)]="newSignal"
-          placeholder="Add a signal (e.g., 'Led team of 5')"
+          [placeholder]="'resume.skillProfileCard.signalPlaceholder' | translate"
           (keydown.enter)="addSignal()">
-        <button class="btn-ghost-sm" (click)="addSignal()" [disabled]="!newSignal.trim()">Add</button>
+        <button class="btn-ghost-sm" (click)="addSignal()" [disabled]="!newSignal.trim()">{{ 'resume.skillProfileCard.addButton' | translate }}</button>
       </div>
     </div>
 
     <!-- Generated At -->
     <div class="generated-at" *ngIf="profile.generated_at">
-      Last generated: {{ formatDate(profile.generated_at!) }}
+      {{ 'resume.skillProfileCard.lastGeneratedLabel' | translate: { date: formatDate(profile.generated_at!) } }}
     </div>
 
   </div>

@@ -1,0 +1,42 @@
+{
+  "loadingSpinner": {
+    "label": "Loading..."
+  },
+  "actions": {
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "close": "Close"
+  },
+  "mainLayout": {
+    "nav": {
+      "resumes": "Resumes",
+      "questions": "Questions",
+      "submittedQuestions": "Submitted Questions",
+      "interviews": "Interviews",
+      "reports": "Reports",
+      "adminSectionLabel": "Admin",
+      "accounts": "Accounts",
+      "adminQuestions": "Questions"
+    },
+    "userMenu": {
+      "profile": "Profile",
+      "security": "Security",
+      "logout": "Logout"
+    },
+    "defaultUsername": "User"
+  },
+  "authLayout": {
+    "footer": "INTELLI-HIRE © 2077 — AI HIRING PLATFORM"
+  },
+  "rejectDialog": {
+    "title": "Reject Question",
+    "reasonLabel": "Rejection Reason",
+    "reasonPlaceholder": "Explain why this question is being rejected...",
+    "rejectAction": "Reject Question"
+  },
+  "errorInterceptor": {
+    "unexpectedError": "An unexpected error occurred",
+    "accessDenied": "Access denied. Missing required headers.",
+    "cannotConnect": "Cannot connect to server. Please check if the backend is running."
+  }
+}

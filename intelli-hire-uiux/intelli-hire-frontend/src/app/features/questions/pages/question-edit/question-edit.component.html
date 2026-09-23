@@ -3,24 +3,23 @@
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <polyline points="15 18 9 12 15 6"></polyline>
     </svg>
-    Back to Question Detail
+    {{ 'questions.actions.backToQuestionDetail' | translate }}
   </button>
 
   <div class="page-header">
     <div class="page-title-group">
       <div class="page-title">
         <span class="ai-dot"></span>
-        <h1>Edit Question</h1>
+        <h1>{{ 'questions.questionEdit.title' | translate }}</h1>
       </div>
       <p class="page-subtitle">
-        Update canonical question text, taxonomy and rubric without breaking alignment
-        between question bank, random lab and client practice flows.
+        {{ 'questions.questionEdit.subtitle' | translate }}
       </p>
     </div>
 
     <div class="header-actions">
-      <a class="btn-ghost" [routerLink]="['/questions', questionId]">Cancel</a>
-      <button class="btn-primary" type="button" (click)="submit()">Save Changes</button>
+      <a class="btn-ghost" [routerLink]="['/questions', questionId]">{{ 'questions.actions.cancel' | translate }}</a>
+      <button class="btn-primary" type="button" (click)="submit()">{{ 'questions.questionEdit.saveChangesButton' | translate }}</button>
     </div>
   </div>
 
@@ -34,12 +33,12 @@
             <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
             <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
           </svg>
-          <h2 class="section-title">Core Information</h2>
+          <h2 class="section-title">{{ 'questions.questionEdit.coreInfoSectionTitle' | translate }}</h2>
         </div>
       </div>
 
       <div class="field-group full-span">
-        <label class="field-label" for="edit-question-text">Question Text</label>
+        <label class="field-label" for="edit-question-text">{{ 'questions.fields.questionText' | translate }}</label>
         <div class="input-wrap textarea-wrap">
           <span class="field-icon field-icon--top">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -61,12 +60,12 @@
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--magenta)" stroke-width="2">
               <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
             </svg>
-            <h2 class="section-title">Classification</h2>
+            <h2 class="section-title">{{ 'questions.questionEdit.classificationSectionTitle' | translate }}</h2>
           </div>
         </div>
 
         <div class="field-group">
-          <label class="field-label" for="edit-question-topic">Topic</label>
+          <label class="field-label" for="edit-question-topic">{{ 'questions.fields.topic' | translate }}</label>
           <div class="input-wrap">
             <span class="field-icon">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -80,14 +79,14 @@
               class="field-input field-select"
               formControlName="topic_id"
               panelClass="question-select-panel">
-              <mat-option value="">Select topic</mat-option>
+              <mat-option value="">{{ 'questions.options.selectTopic' | translate }}</mat-option>
               <mat-option *ngFor="let topic of topicOptions" [value]="topic.id">{{ topic.label }}</mat-option>
             </mat-select>
           </div>
         </div>
 
         <div class="field-group">
-          <label class="field-label" for="edit-question-difficulty">Difficulty</label>
+          <label class="field-label" for="edit-question-difficulty">{{ 'questions.fields.difficulty' | translate }}</label>
           <div class="input-wrap">
             <span class="field-icon">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -101,14 +100,14 @@
               class="field-input field-select"
               formControlName="difficulty_id"
               panelClass="question-select-panel">
-              <mat-option value="">Select difficulty</mat-option>
+              <mat-option value="">{{ 'questions.options.selectDifficulty' | translate }}</mat-option>
               <mat-option *ngFor="let difficulty of difficulties" [value]="difficulty.id">{{ difficulty.name }}</mat-option>
             </mat-select>
           </div>
         </div>
 
         <div class="field-group">
-          <label class="field-label" for="edit-question-type">Question Type</label>
+          <label class="field-label" for="edit-question-type">{{ 'questions.fields.questionType' | translate }}</label>
           <div class="input-wrap">
             <span class="field-icon">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -122,13 +121,13 @@
               class="field-input field-select"
               formControlName="question_type"
               panelClass="question-select-panel">
-              <mat-option *ngFor="let type of questionTypes" [value]="type">{{ formatType(type) }}</mat-option>
+              <mat-option *ngFor="let type of questionTypes" [value]="type">{{ formatType(type) | translate }}</mat-option>
             </mat-select>
           </div>
         </div>
 
-        <mat-checkbox formControlName="is_active">Active in question pool</mat-checkbox>
-        <p class="field-hint">Use inactive when the question should remain in admin history but leave active selection pools.</p>
+        <mat-checkbox formControlName="is_active">{{ 'questions.fields.activeInPool' | translate }}</mat-checkbox>
+        <p class="field-hint">{{ 'questions.questionEdit.inactiveHint' | translate }}</p>
       </section>
 
       <section class="card section-card">
@@ -138,12 +137,12 @@
               <path d="M20.59 13.41L11 3.83a2 2 0 0 0-1.41-.59H4a2 2 0 0 0-2 2v5.59a2 2 0 0 0 .59 1.41L12.17 22a2 2 0 0 0 2.83 0l5.59-5.59a2 2 0 0 0 0-2.83z"></path>
               <line x1="7" y1="7" x2="7.01" y2="7"></line>
             </svg>
-            <h2 class="section-title">Tags</h2>
+            <h2 class="section-title">{{ 'questions.fields.tags' | translate }}</h2>
           </div>
         </div>
 
         <div class="field-group">
-          <label class="field-label" for="edit-question-tags">Select Tags</label>
+          <label class="field-label" for="edit-question-tags">{{ 'questions.questionEdit.selectTagsLabel' | translate }}</label>
           <div class="input-wrap">
             <span class="field-icon">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -168,7 +167,7 @@
 
         <div class="quick-tag-row">
           <div class="field-group">
-            <label class="field-label" for="edit-quick-tag">Quick Create Tag</label>
+            <label class="field-label" for="edit-quick-tag">{{ 'questions.fields.quickCreateTag' | translate }}</label>
             <div class="input-wrap">
               <span class="field-icon">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -180,7 +179,7 @@
             </div>
           </div>
           <button class="btn-ghost" type="button" (click)="createTag()">
-            {{ creatingTag ? 'Creating...' : 'Create Tag' }}
+            {{ (creatingTag ? 'questions.actions.creatingTag' : 'questions.actions.createTag') | translate }}
           </button>
         </div>
       </section>
@@ -195,17 +194,17 @@
             <path d="M9 11l3 3L22 4"></path>
             <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
           </svg>
-          <h2 class="section-title">Rubric Setup</h2>
+          <h2 class="section-title">{{ 'questions.questionEdit.rubricSetupSectionTitle' | translate }}</h2>
         </div>
         <span class="status-badge" [class.success]="rubricExists" [class.warning]="!rubricExists">
           <span class="dot" *ngIf="rubricExists"></span>
-          {{ rubricExists ? 'Existing Rubric' : 'New Rubric' }}
+          {{ (rubricExists ? 'questions.questionEdit.existingRubricBadge' : 'questions.questionEdit.newRubricBadge') | translate }}
         </span>
       </div>
 
       <div class="form-grid">
         <div class="field-group full-span">
-          <label class="field-label" for="edit-criteria">Criteria</label>
+          <label class="field-label" for="edit-criteria">{{ 'questions.fields.criteria' | translate }}</label>
           <div class="input-wrap textarea-wrap">
             <span class="field-icon field-icon--top">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -218,7 +217,7 @@
         </div>
 
         <div class="field-group">
-          <label class="field-label" for="edit-keywords">Keywords</label>
+          <label class="field-label" for="edit-keywords">{{ 'questions.fields.keywords' | translate }}</label>
           <div class="input-wrap textarea-wrap">
             <span class="field-icon field-icon--top">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -227,12 +226,12 @@
                 <path d="M4 17h7"></path>
               </svg>
             </span>
-            <textarea id="edit-keywords" class="field-input field-textarea" rows="4" formControlName="keywords" placeholder="One keyword per line"></textarea>
+            <textarea id="edit-keywords" class="field-input field-textarea" rows="4" formControlName="keywords" [placeholder]="'questions.questionEdit.keywordsPlaceholder' | translate"></textarea>
           </div>
         </div>
 
         <div class="field-group">
-          <label class="field-label" for="edit-max-score">Max Score</label>
+          <label class="field-label" for="edit-max-score">{{ 'questions.fields.maxScore' | translate }}</label>
           <div class="input-wrap">
             <span class="field-icon">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -246,7 +245,7 @@
         </div>
 
         <div class="field-group full-span">
-          <label class="field-label" for="edit-example-answer">Example Answer</label>
+          <label class="field-label" for="edit-example-answer">{{ 'questions.fields.exampleAnswer' | translate }}</label>
           <div class="input-wrap textarea-wrap">
             <span class="field-icon field-icon--top">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -258,7 +257,7 @@
         </div>
 
         <div class="field-group">
-          <label class="field-label" for="edit-common-mistakes">Common Mistakes</label>
+          <label class="field-label" for="edit-common-mistakes">{{ 'questions.fields.commonMistakes' | translate }}</label>
           <div class="input-wrap textarea-wrap">
             <span class="field-icon field-icon--top">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -267,12 +266,12 @@
                 <line x1="12" y1="16" x2="12.01" y2="16"></line>
               </svg>
             </span>
-            <textarea id="edit-common-mistakes" class="field-input field-textarea" rows="4" formControlName="common_mistakes" placeholder="One item per line"></textarea>
+            <textarea id="edit-common-mistakes" class="field-input field-textarea" rows="4" formControlName="common_mistakes" [placeholder]="'questions.placeholders.oneItemPerLine' | translate"></textarea>
           </div>
         </div>
 
         <div class="field-group">
-          <label class="field-label" for="edit-hints">Hints</label>
+          <label class="field-label" for="edit-hints">{{ 'questions.fields.hints' | translate }}</label>
           <div class="input-wrap textarea-wrap">
             <span class="field-icon field-icon--top">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -281,7 +280,7 @@
                 <circle cx="12" cy="12" r="10"></circle>
               </svg>
             </span>
-            <textarea id="edit-hints" class="field-input field-textarea" rows="4" formControlName="hints" placeholder="One item per line"></textarea>
+            <textarea id="edit-hints" class="field-input field-textarea" rows="4" formControlName="hints" [placeholder]="'questions.placeholders.oneItemPerLine' | translate"></textarea>
           </div>
         </div>
       </div>

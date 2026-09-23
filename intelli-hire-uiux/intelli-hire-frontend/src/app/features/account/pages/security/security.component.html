@@ -2,7 +2,7 @@
   <div class="page-header">
     <div class="page-title">
       <span class="ai-dot"></span>
-      <h1>Security Settings</h1>
+      <h1>{{ 'account.security.pageTitle' | translate }}</h1>
     </div>
   </div>
 
@@ -10,18 +10,18 @@
 
   <!-- Change Password -->
   <div class="card settings-card">
-    <div class="section-label">Change Password</div>
+    <div class="section-label">{{ 'account.security.changePasswordSection' | translate }}</div>
 
     <div class="error-banner" *ngIf="pwError">{{ pwError }}</div>
     <div class="success-banner" *ngIf="pwSuccess">{{ pwSuccess }}</div>
 
     <form [formGroup]="pwForm" (ngSubmit)="changePassword()" class="pw-form">
       <div class="field-group">
-        <label class="field-label">Current Password</label>
+        <label class="field-label">{{ 'account.security.currentPassword' | translate }}</label>
         <div class="input-wrapper">
           <input class="field-input" formControlName="currentPassword"
                  [type]="showCurrent ? 'text' : 'password'"
-                 placeholder="Enter current password" />
+                 [placeholder]="'account.security.currentPasswordPlaceholder' | translate" />
           <button type="button" class="eye-btn" (click)="showCurrent = !showCurrent" tabindex="-1">
             <svg *ngIf="!showCurrent" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
@@ -36,11 +36,11 @@
 
       <div class="field-row">
         <div class="field-group">
-          <label class="field-label">New Password</label>
+          <label class="field-label">{{ 'account.security.newPassword' | translate }}</label>
           <div class="input-wrapper">
             <input class="field-input" formControlName="newPassword"
                    [type]="showNew ? 'text' : 'password'"
-                   placeholder="Min. 8 characters" />
+                   [placeholder]="'account.security.newPasswordPlaceholder' | translate" />
             <button type="button" class="eye-btn" (click)="showNew = !showNew" tabindex="-1">
               <svg *ngIf="!showNew" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
@@ -54,11 +54,11 @@
         </div>
 
         <div class="field-group">
-          <label class="field-label">Confirm New Password</label>
+          <label class="field-label">{{ 'account.security.confirmPassword' | translate }}</label>
           <div class="input-wrapper">
             <input class="field-input" formControlName="confirmPassword"
                    [type]="showConfirm ? 'text' : 'password'"
-                   placeholder="Repeat new password" />
+                   [placeholder]="'account.security.confirmPasswordPlaceholder' | translate" />
             <button type="button" class="eye-btn" (click)="showConfirm = !showConfirm" tabindex="-1">
               <svg *ngIf="!showConfirm" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
@@ -74,7 +74,7 @@
 
       <div class="form-actions">
         <button class="btn-primary" type="submit" [disabled]="pwForm.invalid || pwSaving">
-          {{ pwSaving ? 'Saving...' : 'Change Password' }}
+          {{ pwSaving ? ('account.security.saving' | translate) : ('account.security.changePassword' | translate) }}
         </button>
       </div>
     </form>
@@ -85,10 +85,10 @@
     <div class="error-banner" *ngIf="error">{{ error }}</div>
     <div class="success-banner" *ngIf="success">{{ success }}</div>
 
-    <div class="section-label">Linked OAuth Providers</div>
+    <div class="section-label">{{ 'account.security.linkedProvidersSection' | translate }}</div>
 
     <div class="empty-state" *ngIf="linkedProviders.length === 0">
-      <p>No OAuth providers linked to your account.</p>
+      <p>{{ 'account.security.noLinkedProviders' | translate }}</p>
     </div>
 
     <div class="provider-list" *ngIf="linkedProviders.length > 0">
@@ -97,7 +97,7 @@
           <span class="provider-name">{{ p.provider_name }}</span>
           <span class="provider-email">{{ p.provider_email }}</span>
         </div>
-        <button class="btn-danger-outline" (click)="unlink(p.provider_code)">Unlink</button>
+        <button class="btn-danger-outline" (click)="unlink(p.provider_code)">{{ 'account.security.unlink' | translate }}</button>
       </div>
     </div>
   </div>

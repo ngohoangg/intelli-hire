@@ -1,0 +1,42 @@
+{
+  "loadingSpinner": {
+    "label": "Đang tải..."
+  },
+  "actions": {
+    "cancel": "Hủy",
+    "confirm": "Xác nhận",
+    "close": "Đóng"
+  },
+  "mainLayout": {
+    "nav": {
+      "resumes": "Hồ sơ",
+      "questions": "Câu hỏi",
+      "submittedQuestions": "Câu hỏi đã gửi",
+      "interviews": "Phỏng vấn",
+      "reports": "Báo cáo",
+      "adminSectionLabel": "Quản trị",
+      "accounts": "Tài khoản",
+      "adminQuestions": "Câu hỏi"
+    },
+    "userMenu": {
+      "profile": "Hồ sơ cá nhân",
+      "security": "Bảo mật",
+      "logout": "Đăng xuất"
+    },
+    "defaultUsername": "Người dùng"
+  },
+  "authLayout": {
+    "footer": "INTELLI-HIRE © 2077 — NỀN TẢNG TUYỂN DỤNG AI"
+  },
+  "rejectDialog": {
+    "title": "Từ chối câu hỏi",
+    "reasonLabel": "Lý do từ chối",
+    "reasonPlaceholder": "Giải thích lý do câu hỏi này bị từ chối...",
+    "rejectAction": "Từ chối câu hỏi"
+  },
+  "errorInterceptor": {
+    "unexpectedError": "Đã xảy ra lỗi không mong muốn",
+    "accessDenied": "Truy cập bị từ chối. Thiếu tiêu đề bắt buộc.",
+    "cannotConnect": "Không thể kết nối đến máy chủ. Vui lòng kiểm tra xem backend có đang chạy không."
+  }
+}

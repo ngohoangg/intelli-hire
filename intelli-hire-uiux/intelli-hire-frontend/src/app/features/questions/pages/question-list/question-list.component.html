@@ -3,18 +3,17 @@
     <div class="page-title-group">
       <div class="page-title">
         <span class="ai-dot"></span>
-        <h1>Questions</h1>
+        <h1>{{ 'questions.questionList.title' | translate }}</h1>
         <span class="count-badge" *ngIf="totalElements > 0">{{ totalElements }}</span>
       </div>
       <p class="page-subtitle">
-        Manage interview questions with direct CRUD actions and filter by topic, difficulty,
-        type, tags and active state.
+        {{ 'questions.questionList.subtitle' | translate }}
       </p>
     </div>
 
     <div class="header-actions">
-      <a class="btn-ghost" routerLink="/questions/bulk-import">Bulk Import</a>
-      <a class="btn-primary" routerLink="/questions/create">New Question</a>
+      <a class="btn-ghost" routerLink="/questions/bulk-import">{{ 'questions.actions.bulkImport' | translate }}</a>
+      <a class="btn-primary" routerLink="/questions/create">{{ 'questions.actions.newQuestion' | translate }}</a>
     </div>
   </div>
 
@@ -24,13 +23,13 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2">
           <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
         </svg>
-        <h2 class="section-title">Filters</h2>
+        <h2 class="section-title">{{ 'questions.questionList.filtersSectionTitle' | translate }}</h2>
       </div>
     </div>
 
     <div class="filter-grid">
       <div class="field-group">
-        <label class="field-label" for="question-filter-keyword">Keyword</label>
+        <label class="field-label" for="question-filter-keyword">{{ 'questions.questionList.keywordLabel' | translate }}</label>
         <div class="input-wrap">
           <span class="field-icon">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -42,12 +41,12 @@
             id="question-filter-keyword"
             class="field-input"
             [formControl]="filterForm.controls.keyword"
-            placeholder="Search question text" />
+            [placeholder]="'questions.questionList.keywordPlaceholder' | translate" />
         </div>
       </div>
 
       <div class="field-group">
-        <label class="field-label" for="question-filter-topic">Topic</label>
+        <label class="field-label" for="question-filter-topic">{{ 'questions.fields.topic' | translate }}</label>
         <div class="input-wrap">
           <span class="field-icon">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -61,7 +60,7 @@
             class="field-input field-select"
             [formControl]="filterForm.controls.topicId"
             panelClass="filter-select-panel">
-            <mat-option value="">All topics</mat-option>
+            <mat-option value="">{{ 'questions.options.allTopics' | translate }}</mat-option>
             <mat-option *ngFor="let topic of topicOptions" [value]="topic.id">
               {{ topic.label }}
             </mat-option>
@@ -70,7 +69,7 @@
       </div>
 
       <div class="field-group">
-        <label class="field-label" for="question-filter-difficulty">Difficulty</label>
+        <label class="field-label" for="question-filter-difficulty">{{ 'questions.fields.difficulty' | translate }}</label>
         <div class="input-wrap">
           <span class="field-icon">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -84,7 +83,7 @@
             class="field-input field-select"
             [formControl]="filterForm.controls.difficultyId"
             panelClass="filter-select-panel">
-            <mat-option value="">All levels</mat-option>
+            <mat-option value="">{{ 'questions.options.allLevels' | translate }}</mat-option>
             <mat-option *ngFor="let difficulty of difficulties" [value]="difficulty.id">
               {{ difficulty.name }}
             </mat-option>
@@ -93,7 +92,7 @@
       </div>
 
       <div class="field-group">
-        <label class="field-label" for="question-filter-type">Type</label>
+        <label class="field-label" for="question-filter-type">{{ 'questions.fields.type' | translate }}</label>
         <div class="input-wrap">
           <span class="field-icon">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -107,16 +106,16 @@
             class="field-input field-select"
             [formControl]="filterForm.controls.type"
             panelClass="filter-select-panel">
-            <mat-option value="">All types</mat-option>
+            <mat-option value="">{{ 'questions.options.allTypes' | translate }}</mat-option>
             <mat-option *ngFor="let type of questionTypes" [value]="type">
-              {{ formatType(type) }}
+              {{ formatType(type) | translate }}
             </mat-option>
           </mat-select>
         </div>
       </div>
 
       <div class="field-group">
-        <label class="field-label" for="question-filter-tags">Tags</label>
+        <label class="field-label" for="question-filter-tags">{{ 'questions.fields.tags' | translate }}</label>
         <div class="input-wrap input-wrap--multiple">
           <span class="field-icon">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -136,7 +135,7 @@
       </div>
 
       <div class="field-group" *ngIf="isAdmin">
-        <label class="field-label" for="question-filter-status">Status</label>
+        <label class="field-label" for="question-filter-status">{{ 'questions.fields.status' | translate }}</label>
         <div class="input-wrap">
           <span class="field-icon">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -149,15 +148,15 @@
             class="field-input field-select"
             [formControl]="filterForm.controls.isActive"
             panelClass="filter-select-panel">
-            <mat-option value="">All</mat-option>
-            <mat-option [value]="true">Active</mat-option>
-            <mat-option [value]="false">Inactive</mat-option>
+            <mat-option value="">{{ 'questions.options.all' | translate }}</mat-option>
+            <mat-option [value]="true">{{ 'questions.activeState.active' | translate }}</mat-option>
+            <mat-option [value]="false">{{ 'questions.activeState.inactive' | translate }}</mat-option>
           </mat-select>
         </div>
       </div>
 
       <div class="field-group">
-        <label class="field-label" for="question-filter-sort">Sort</label>
+        <label class="field-label" for="question-filter-sort">{{ 'questions.questionList.sortLabel' | translate }}</label>
         <div class="input-wrap">
           <span class="field-icon">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -182,8 +181,8 @@
     </div>
 
     <div class="filter-actions">
-      <button class="btn-ghost" type="button" (click)="resetFilters()">Reset</button>
-      <button class="btn-primary" type="button" (click)="applyFilters()">Apply Filters</button>
+      <button class="btn-ghost" type="button" (click)="resetFilters()">{{ 'questions.actions.reset' | translate }}</button>
+      <button class="btn-primary" type="button" (click)="applyFilters()">{{ 'questions.questionList.applyFiltersButton' | translate }}</button>
     </div>
   </section>
 
@@ -191,7 +190,7 @@
     <div class="table-wrapper" *ngIf="questions.length; else emptyState">
       <table mat-table [dataSource]="questions" class="ih-table">
         <ng-container matColumnDef="question_text">
-          <th mat-header-cell *matHeaderCellDef>Question</th>
+          <th mat-header-cell *matHeaderCellDef>{{ 'questions.questionList.tableHeaderQuestion' | translate }}</th>
           <td mat-cell *matCellDef="let question">
             <div class="table-title">
               <span class="table-primary">{{ question.question_text }}</span>
@@ -201,24 +200,24 @@
         </ng-container>
 
         <ng-container matColumnDef="topic">
-          <th mat-header-cell *matHeaderCellDef>Topic</th>
+          <th mat-header-cell *matHeaderCellDef>{{ 'questions.fields.topic' | translate }}</th>
           <td mat-cell *matCellDef="let question">{{ question.topic_name }}</td>
         </ng-container>
 
         <ng-container matColumnDef="difficulty">
-          <th mat-header-cell *matHeaderCellDef>Difficulty</th>
+          <th mat-header-cell *matHeaderCellDef>{{ 'questions.fields.difficulty' | translate }}</th>
           <td mat-cell *matCellDef="let question">{{ question.difficulty_name }}</td>
         </ng-container>
 
         <ng-container matColumnDef="type">
-          <th mat-header-cell *matHeaderCellDef>Type</th>
+          <th mat-header-cell *matHeaderCellDef>{{ 'questions.fields.type' | translate }}</th>
           <td mat-cell *matCellDef="let question">
-            <span class="chip chip-accent">{{ formatType(question.question_type) }}</span>
+            <span class="chip chip-accent">{{ formatType(question.question_type) | translate }}</span>
           </td>
         </ng-container>
 
         <ng-container matColumnDef="tags">
-          <th mat-header-cell *matHeaderCellDef>Tags</th>
+          <th mat-header-cell *matHeaderCellDef>{{ 'questions.fields.tags' | translate }}</th>
           <td mat-cell *matCellDef="let question">
             <div class="chip-list">
               <span class="chip" *ngFor="let tag of question.tags.slice(0, 2)">{{ tag.name }}</span>
@@ -228,27 +227,27 @@
         </ng-container>
 
         <ng-container matColumnDef="status">
-          <th mat-header-cell *matHeaderCellDef>Status</th>
+          <th mat-header-cell *matHeaderCellDef>{{ 'questions.fields.status' | translate }}</th>
           <td mat-cell *matCellDef="let question">
             <span class="status-badge" [ngClass]="getStatusClass(question)">
               <span class="dot" *ngIf="question.is_active"></span>
-              {{ question.is_active ? 'Active' : 'Inactive' }}
+              {{ (question.is_active ? 'questions.activeState.active' : 'questions.activeState.inactive') | translate }}
             </span>
           </td>
         </ng-container>
 
         <ng-container matColumnDef="updated">
-          <th mat-header-cell *matHeaderCellDef>Updated</th>
+          <th mat-header-cell *matHeaderCellDef>{{ 'questions.fields.updated' | translate }}</th>
           <td mat-cell *matCellDef="let question">{{ formatDate(question.last_updated_at) }}</td>
         </ng-container>
 
         <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <th mat-header-cell *matHeaderCellDef>{{ 'questions.questionList.tableHeaderActions' | translate }}</th>
           <td mat-cell *matCellDef="let question" (click)="$event.stopPropagation()">
             <div class="row-actions">
-              <button type="button" class="text-action" (click)="openQuestion(question.id)">View</button>
-              <button type="button" class="text-action" (click)="editQuestion($event, question.id)" *ngIf="isAdmin">Edit</button>
-              <button type="button" class="text-action danger" (click)="archiveQuestion($event, question)" *ngIf="isAdmin">Archive</button>
+              <button type="button" class="text-action" (click)="openQuestion(question.id)">{{ 'questions.actions.view' | translate }}</button>
+              <button type="button" class="text-action" (click)="editQuestion($event, question.id)" *ngIf="isAdmin">{{ 'questions.actions.edit' | translate }}</button>
+              <button type="button" class="text-action danger" (click)="archiveQuestion($event, question)" *ngIf="isAdmin">{{ 'questions.actions.archive' | translate }}</button>
             </div>
           </td>
         </ng-container>
@@ -259,16 +258,16 @@
 
       <div class="table-footer">
         <span class="footer-info">
-          <span class="result-count">{{ totalElements }}</span> result{{ totalElements === 1 ? '' : 's' }}
+          <span class="result-count">{{ totalElements }}</span> {{ (totalElements === 1 ? 'questions.questionList.resultSingular' : 'questions.questionList.resultPlural') | translate }}
         </span>
-        <span class="footer-note">Topic filter is applied via backend search API.</span>
+        <span class="footer-note">{{ 'questions.questionList.footerNote' | translate }}</span>
       </div>
     </div>
 
     <ng-template #emptyState>
       <div class="empty-panel compact">
-        <h3>No questions found</h3>
-        <p>Try widening the filters or create a new question to seed this list.</p>
+        <h3>{{ 'questions.questionList.emptyTitle' | translate }}</h3>
+        <p>{{ 'questions.questionList.emptyBody' | translate }}</p>
       </div>
     </ng-template>
 

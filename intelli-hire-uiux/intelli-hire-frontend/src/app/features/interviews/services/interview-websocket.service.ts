@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Client, IMessage, StompHeaders } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { Subject } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
 import { AnswerMessage, QuestionMessage } from '../../../core/models/interview.model';
 
 @Injectable({ providedIn: 'root' })
@@ -13,6 +14,8 @@ export class InterviewWebSocketService {
   readonly question$ = new Subject<QuestionMessage>();
   readonly error$ = new Subject<string>();
   readonly connected$ = new Subject<boolean>();
+
+  constructor(private translate: TranslateService) {}
 
   connect(sessionId: number, userId: string): void {
     if (this.client) {
@@ -36,12 +39,12 @@ export class InterviewWebSocketService {
         );
       },
       onStompError: (frame) => {
-        this.error$.next(frame.headers['message'] ?? 'WebSocket error');
+        this.error$.next(frame.headers['message'] ?? this.translate.instant('interviews.interviewRoom.websocketError'));
       },
       onWebSocketClose: () => {
         this.connected$.next(false);
         if (!this.hasConnected) {
-          this.error$.next('Could not connect to interview server. Please ensure the service is running.');
+          this.error$.next(this.translate.instant('interviews.interviewRoom.connectFailed'));
         }
       }
     });

@@ -3,16 +3,18 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { EMPTY, Subscription, interval } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
+import { TranslatePipe } from '@ngx-translate/core';
 import { QuestionSubmissionService } from '../../services/question-submission.service';
 import { QuestionResponse } from '../../../../core/models/question.model';
 import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
+import { formatQuestionType } from '../../questions.utils';
 
 const POLL_INTERVAL_MS = 10_000;
 
 @Component({
   selector: 'app-submitted-questions',
   standalone: true,
-  imports: [CommonModule, RouterLink, LoadingSpinnerComponent],
+  imports: [CommonModule, RouterLink, LoadingSpinnerComponent, TranslatePipe],
   templateUrl: './submitted-questions.component.html',
   styleUrl: './submitted-questions.component.scss'
 })
@@ -36,6 +38,10 @@ export class SubmittedQuestionsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.load();
+  }
+
+  formatType(value: string): string {
+    return formatQuestionType(value);
   }
 
   ngOnDestroy(): void {

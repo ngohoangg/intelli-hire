@@ -1,6 +1,6 @@
 <div class="dialog-wrapper">
   <div class="dialog-header">
-    <h2>{{ isEdit ? 'Edit Skill' : 'Add Skill' }}</h2>
+    <h2>{{ (isEdit ? 'resume.addSkillDialog.titleEdit' : 'resume.addSkillDialog.titleAdd') | translate }}</h2>
     <button class="close-btn" (click)="cancel()">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
@@ -12,11 +12,11 @@
 
     <!-- Skill Search -->
     <mat-form-field appearance="outline" floatLabel="always" class="ih-field full-width">
-      <mat-label>Skill *</mat-label>
+      <mat-label>{{ 'resume.addSkillDialog.skillLabel' | translate }}</mat-label>
       <input
         matInput
         formControlName="skillSearch"
-        placeholder="Search skill catalog..."
+        [placeholder]="'resume.addSkillDialog.skillSearchPlaceholder' | translate"
         [matAutocomplete]="auto"
         (input)="onSearchInput($any($event.target).value)"
         [disabled]="isEdit">
@@ -27,9 +27,9 @@
             <span class="skill-option-cat">{{ skill.category }}</span>
           </div>
         </mat-option>
-        <mat-option *ngIf="searching" disabled>Searching...</mat-option>
+        <mat-option *ngIf="searching" disabled>{{ 'resume.addSkillDialog.searchingOption' | translate }}</mat-option>
       </mat-autocomplete>
-      <mat-error *ngIf="form.get('skillSearch')?.hasError('required')">Please select a skill</mat-error>
+      <mat-error *ngIf="form.get('skillSearch')?.hasError('required')">{{ 'resume.addSkillDialog.skillRequiredError' | translate }}</mat-error>
     </mat-form-field>
 
     <div *ngIf="selectedSkill" class="selected-skill-badge">
@@ -39,31 +39,31 @@
 
     <!-- Proficiency Level -->
     <mat-form-field appearance="outline" floatLabel="always" class="ih-field full-width">
-      <mat-label>Proficiency Level *</mat-label>
+      <mat-label>{{ 'resume.addSkillDialog.proficiencyLabel' | translate }}</mat-label>
       <mat-select formControlName="proficiency_level">
-        <mat-option *ngFor="let level of proficiencyLevels" [value]="level">{{ level }}</mat-option>
+        <mat-option *ngFor="let level of proficiencyLevels" [value]="level">{{ ('resume.addSkillDialog.proficiency.' + level.toLowerCase()) | translate }}</mat-option>
       </mat-select>
-      <mat-error *ngIf="form.get('proficiency_level')?.hasError('required')">Required</mat-error>
+      <mat-error *ngIf="form.get('proficiency_level')?.hasError('required')">{{ 'resume.addSkillDialog.requiredError' | translate }}</mat-error>
     </mat-form-field>
 
     <!-- Years Experience -->
     <mat-form-field appearance="outline" floatLabel="always" class="ih-field full-width">
-      <mat-label>Years of Experience *</mat-label>
+      <mat-label>{{ 'resume.addSkillDialog.yearsLabel' | translate }}</mat-label>
       <input matInput type="number" formControlName="years_experience" min="0" max="50" step="0.5">
-      <mat-error *ngIf="form.get('years_experience')?.hasError('required')">Required</mat-error>
-      <mat-error *ngIf="form.get('years_experience')?.hasError('min')">Must be 0 or more</mat-error>
-      <mat-error *ngIf="form.get('years_experience')?.hasError('max')">Max 50 years</mat-error>
+      <mat-error *ngIf="form.get('years_experience')?.hasError('required')">{{ 'resume.addSkillDialog.requiredError' | translate }}</mat-error>
+      <mat-error *ngIf="form.get('years_experience')?.hasError('min')">{{ 'resume.addSkillDialog.yearsMinError' | translate }}</mat-error>
+      <mat-error *ngIf="form.get('years_experience')?.hasError('max')">{{ 'resume.addSkillDialog.yearsMaxError' | translate }}</mat-error>
     </mat-form-field>
 
     <!-- Primary Skill -->
     <div class="checkbox-row">
-      <mat-checkbox formControlName="is_primary" color="primary">Mark as primary skill</mat-checkbox>
+      <mat-checkbox formControlName="is_primary" color="primary">{{ 'resume.addSkillDialog.primaryCheckbox' | translate }}</mat-checkbox>
     </div>
 
     <div class="dialog-actions">
-      <button type="button" class="btn-ghost" (click)="cancel()">Cancel</button>
+      <button type="button" class="btn-ghost" (click)="cancel()">{{ 'resume.actions.cancel' | translate }}</button>
       <button type="submit" class="btn-primary" [disabled]="!selectedSkill">
-        {{ isEdit ? 'Save Changes' : 'Add Skill' }}
+        {{ (isEdit ? 'resume.actions.saveChanges' : 'resume.addSkillDialog.addButton') | translate }}
       </button>
     </div>
 

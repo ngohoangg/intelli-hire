@@ -6,6 +6,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ResumeService } from '../../services/resume.service';
 import { Resume } from '../../../../core/models/resume.model';
 import { ResumeStatusBadgeComponent } from '../../components/resume-status-badge/resume-status-badge.component';
@@ -22,7 +23,8 @@ import { ConfirmDialogComponent } from '../../../../shared/components/confirm-di
     MatIconModule,
     MatDialogModule,
     ResumeStatusBadgeComponent,
-    LoadingSpinnerComponent
+    LoadingSpinnerComponent,
+    TranslatePipe
   ],
   templateUrl: './resume-list.component.html',
   styleUrl: './resume-list.component.scss'
@@ -37,7 +39,8 @@ export class ResumeListComponent implements OnInit {
   constructor(
     private resumeService: ResumeService,
     public router: Router,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -70,8 +73,8 @@ export class ResumeListComponent implements OnInit {
     event.stopPropagation();
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Delete Resume',
-        message: `Delete "${resume.title}"? This action cannot be undone.`
+        title: this.translate.instant('resume.resumeList.deleteDialogTitle'),
+        message: this.translate.instant('resume.resumeList.deleteDialogMessage', { title: resume.title })
       }
     });
     dialogRef.afterClosed().subscribe(confirmed => {
@@ -82,7 +85,7 @@ export class ResumeListComponent implements OnInit {
   }
 
   formatDate(date: string): string {
-    return new Date(date).toLocaleDateString('en-US', {
+    return new Date(date).toLocaleDateString('vi-VN', {
       year: 'numeric', month: 'short', day: 'numeric'
     });
   }

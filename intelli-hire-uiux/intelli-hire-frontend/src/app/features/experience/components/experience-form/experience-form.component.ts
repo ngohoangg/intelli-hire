@@ -8,6 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ResumeExperience, ResumeExperienceRequest } from '../../../../core/models/experience.model';
 
 export interface ExperienceFormData {
@@ -35,7 +36,8 @@ function dateRangeValidator(group: AbstractControl): ValidationErrors | null {
     MatButtonModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    TranslatePipe
   ],
   templateUrl: './experience-form.component.html',
   styleUrl: './experience-form.component.scss'

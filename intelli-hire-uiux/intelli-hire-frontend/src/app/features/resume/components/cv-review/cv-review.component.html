@@ -3,7 +3,7 @@
   <!-- Loading -->
   <div class="state-center" *ngIf="state === 'loading'">
     <div class="spinner-ring"></div>
-    <p class="state-msg">Checking your CV…</p>
+    <p class="state-msg">{{ 'resume.cvReview.loadingMessage' | translate }}</p>
   </div>
 
   <!-- No file -->
@@ -16,8 +16,8 @@
         <line x1="16" y1="17" x2="8" y2="17"/>
       </svg>
     </div>
-    <h3 class="empty-title">No CV Uploaded</h3>
-    <p class="empty-subtitle">Upload a CV file in the <strong>File</strong> tab first, then come back to analyze it.</p>
+    <h3 class="empty-title">{{ 'resume.cvReview.noFileTitle' | translate }}</h3>
+    <p class="empty-subtitle" [innerHTML]="'resume.cvReview.noFileSubtitle' | translate"></p>
   </div>
 
   <!-- No review yet -->
@@ -28,21 +28,21 @@
         <path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/>
       </svg>
     </div>
-    <h3 class="empty-title">Ready to Analyze</h3>
-    <p class="empty-subtitle">Let AI review your CV and provide a detailed scorecard with actionable feedback.</p>
+    <h3 class="empty-title">{{ 'resume.cvReview.noReviewTitle' | translate }}</h3>
+    <p class="empty-subtitle">{{ 'resume.cvReview.noReviewSubtitle' | translate }}</p>
     <button class="btn-analyze" (click)="analyze()">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <polygon points="5 3 19 12 5 21 5 3"/>
       </svg>
-      Analyze My CV
+      {{ 'resume.cvReview.analyzeButton' | translate }}
     </button>
   </div>
 
   <!-- Generating -->
   <div class="state-center" *ngIf="state === 'generating'">
     <div class="spinner-ring cyan"></div>
-    <p class="state-msg cyan-text">AI is analyzing your CV…</p>
-    <p class="state-sub">This may take up to 15 seconds</p>
+    <p class="state-msg cyan-text">{{ 'resume.cvReview.generatingMessage' | translate }}</p>
+    <p class="state-sub">{{ 'resume.cvReview.generatingSubtext' | translate }}</p>
   </div>
 
   <!-- Error -->
@@ -54,9 +54,9 @@
         <line x1="12" y1="16" x2="12.01" y2="16"/>
       </svg>
     </div>
-    <h3 class="empty-title">Analysis Failed</h3>
+    <h3 class="empty-title">{{ 'resume.cvReview.errorTitle' | translate }}</h3>
     <p class="empty-subtitle">{{ errorMessage }}</p>
-    <button class="btn-analyze secondary" (click)="retry()">Retry</button>
+    <button class="btn-analyze secondary" (click)="retry()">{{ 'resume.cvReview.retryButton' | translate }}</button>
   </div>
 
   <!-- Scorecard -->
@@ -65,12 +65,12 @@
     <!-- Header -->
     <div class="scorecard-header">
       <div class="overall-block">
-        <span class="overall-label">OVERALL SCORE</span>
+        <span class="overall-label">{{ 'resume.cvReview.overallScoreLabel' | translate }}</span>
         <span class="overall-score" [ngClass]="scoreClass(review.overall_score)">
           {{ review.overall_score | number:'1.1-1' }}
           <span class="overall-denom">/ 10</span>
         </span>
-        <span class="generated-at">Generated: {{ formatDate(review.generated_at) }}</span>
+        <span class="generated-at">{{ 'resume.cvReview.generatedAtLabel' | translate: { date: formatDate(review.generated_at) } }}</span>
       </div>
       <button class="btn-reanalyze" (click)="analyze()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -78,7 +78,7 @@
           <path d="M1 20v-6h6"/>
           <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
         </svg>
-        Re-analyze
+        {{ 'resume.cvReview.reanalyzeButton' | translate }}
       </button>
     </div>
 
@@ -86,7 +86,7 @@
     <div class="section-grid">
       <div class="section-card" *ngFor="let entry of sectionEntries()">
         <div class="section-top">
-          <span class="section-name">{{ sectionLabels[entry[0]] ?? entry[0] }}</span>
+          <span class="section-name">{{ (sectionLabels[entry[0]] ?? entry[0]) | translate }}</span>
           <span class="section-score" [ngClass]="scoreClass(entry[1].score)">
             {{ entry[1].score | number:'1.1-1' }}
           </span>
@@ -104,13 +104,13 @@
     <!-- Strengths & Weaknesses -->
     <div class="sw-grid">
       <div class="sw-block strengths-block">
-        <h4 class="sw-title">Strengths</h4>
+        <h4 class="sw-title">{{ 'resume.cvReview.strengthsTitle' | translate }}</h4>
         <ul class="sw-list">
           <li *ngFor="let item of review.strengths">{{ item }}</li>
         </ul>
       </div>
       <div class="sw-block weaknesses-block">
-        <h4 class="sw-title">Weaknesses</h4>
+        <h4 class="sw-title">{{ 'resume.cvReview.weaknessesTitle' | translate }}</h4>
         <ul class="sw-list">
           <li *ngFor="let item of review.weaknesses">{{ item }}</li>
         </ul>
@@ -119,7 +119,7 @@
 
     <!-- Priority Actions -->
     <div class="priority-block">
-      <h4 class="priority-title">Priority Actions</h4>
+      <h4 class="priority-title">{{ 'resume.cvReview.priorityActionsTitle' | translate }}</h4>
       <ol class="priority-list">
         <li *ngFor="let action of review.priority_actions">{{ action }}</li>
       </ol>

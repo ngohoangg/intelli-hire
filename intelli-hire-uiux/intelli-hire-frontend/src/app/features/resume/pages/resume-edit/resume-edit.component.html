@@ -4,7 +4,7 @@
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <polyline points="15 18 9 12 15 6"/>
     </svg>
-    Back to Detail
+    {{ 'resume.resumeEdit.backButton' | translate }}
   </button>
 
   <div class="form-card card" *ngIf="!loading">
@@ -16,24 +16,24 @@
         </svg>
       </div>
       <div>
-        <h2>Edit Resume</h2>
-        <p class="form-subtitle">Update the resume title</p>
+        <h2>{{ 'resume.resumeEdit.headerTitle' | translate }}</h2>
+        <p class="form-subtitle">{{ 'resume.resumeEdit.headerSubtitle' | translate }}</p>
       </div>
     </div>
 
     <form [formGroup]="form" (ngSubmit)="submit()" class="form-body">
       <mat-form-field appearance="outline" floatLabel="always" class="ih-field full-width">
-        <mat-label>Resume Title *</mat-label>
+        <mat-label>{{ 'resume.resumeEdit.titleLabel' | translate }}</mat-label>
         <input matInput formControlName="title">
-        <mat-error *ngIf="title.hasError('required')">Title is required</mat-error>
-        <mat-error *ngIf="title.hasError('minlength')">Title must be at least 3 characters</mat-error>
+        <mat-error *ngIf="title.hasError('required')">{{ 'resume.resumeEdit.titleRequiredError' | translate }}</mat-error>
+        <mat-error *ngIf="title.hasError('minlength')">{{ 'resume.resumeEdit.titleMinLengthError' | translate }}</mat-error>
       </mat-form-field>
 
 <div class="form-actions">
-        <button type="button" class="btn-ghost" (click)="router.navigate(['/resumes', resumeId])">Cancel</button>
+        <button type="button" class="btn-ghost" (click)="router.navigate(['/resumes', resumeId])">{{ 'resume.actions.cancel' | translate }}</button>
         <button type="submit" class="btn-primary" [disabled]="loading">
-          <span *ngIf="!loading">Save Changes</span>
-          <span *ngIf="loading">Saving…</span>
+          <span *ngIf="!loading">{{ 'resume.actions.saveChanges' | translate }}</span>
+          <span *ngIf="loading">{{ 'resume.resumeEdit.savingButton' | translate }}</span>
         </button>
       </div>
     </form>

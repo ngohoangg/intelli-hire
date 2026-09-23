@@ -2,6 +2,7 @@ import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ProfileService } from '../../../../core/services/profile.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { LinkedOAuthProvider } from '../../../../core/models/auth.model';
@@ -10,12 +11,13 @@ import { LoadingSpinnerComponent } from '../../../../shared/components/loading-s
 @Component({
   selector: 'app-security',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, LoadingSpinnerComponent],
+  imports: [CommonModule, ReactiveFormsModule, LoadingSpinnerComponent, TranslatePipe],
   templateUrl: './security.component.html',
   styleUrl: './security.component.scss'
 })
 export class SecurityComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
+  private translate = inject(TranslateService);
 
   linkedProviders: LinkedOAuthProvider[] = [];
   loading = false;
@@ -54,8 +56,8 @@ export class SecurityComponent implements OnInit {
 
   unlink(providerCode: string): void {
     this.profileService.unlinkProvider(providerCode).subscribe({
-      next: () => { this.linkedProviders = this.linkedProviders.filter(p => p.provider_code !== providerCode); this.success = 'Provider unlinked.'; },
-      error: err => { this.error = err?.error?.message ?? 'Failed to unlink provider'; }
+      next: () => { this.linkedProviders = this.linkedProviders.filter(p => p.provider_code !== providerCode); this.success = this.translate.instant('account.security.unlinkSuccess'); },
+      error: err => { this.error = err?.error?.message ?? this.translate.instant('account.security.unlinkFailed'); }
     });
   }
 
@@ -63,7 +65,7 @@ export class SecurityComponent implements OnInit {
     if (this.pwForm.invalid) return;
     const { currentPassword, newPassword, confirmPassword } = this.pwForm.value;
     if (newPassword !== confirmPassword) {
-      this.pwError = 'New password and confirm password do not match.';
+      this.pwError = this.translate.instant('account.security.passwordMismatch');
       return;
     }
     this.pwSaving = true;
@@ -71,7 +73,7 @@ export class SecurityComponent implements OnInit {
     this.pwSuccess = '';
     this.auth.changePassword(currentPassword, newPassword, confirmPassword).subscribe({
       next: () => {
-        this.pwSuccess = 'Password changed successfully.';
+        this.pwSuccess = this.translate.instant('account.security.changeSuccess');
         this.pwForm.reset();
         this.pwSaving = false;
       },
@@ -80,7 +82,7 @@ export class SecurityComponent implements OnInit {
         if (body?.fieldErrors) {
           this.pwError = Object.values(body.fieldErrors).join(', ');
         } else {
-          this.pwError = body?.message ?? `[${err.status}] Failed to change password.`;
+          this.pwError = body?.message ?? this.translate.instant('account.security.changeFailedWithStatus', { status: err.status });
         }
         this.pwSaving = false;
       }

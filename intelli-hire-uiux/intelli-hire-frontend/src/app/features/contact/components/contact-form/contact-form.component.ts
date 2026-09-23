@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ResumeContactService } from '../../services/resume-contact.service';
 import { ResumeContact } from '../../../../core/models/contact.model';
 
@@ -11,7 +12,8 @@ import { ResumeContact } from '../../../../core/models/contact.model';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    TranslatePipe
   ],
   templateUrl: './contact-form.component.html',
   styleUrl: './contact-form.component.scss'
@@ -26,7 +28,8 @@ export class ContactFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private contactService: ResumeContactService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private translate: TranslateService
   ) {
     this.form = this.fb.group({
       fullName: ['', [Validators.required, Validators.maxLength(200)]],
@@ -77,7 +80,11 @@ export class ContactFormComponent implements OnInit {
     }).subscribe({
       next: () => {
         this.saving = false;
-        this.snackBar.open('Contact saved.', 'Close', { duration: 3000 });
+        this.snackBar.open(
+          this.translate.instant('resume.contactForm.saveSuccessSnackbar'),
+          this.translate.instant('resume.actions.close'),
+          { duration: 3000 }
+        );
       },
       error: () => { this.saving = false; }
     });

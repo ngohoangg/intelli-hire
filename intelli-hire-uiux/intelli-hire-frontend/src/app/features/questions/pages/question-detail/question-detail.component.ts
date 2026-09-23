@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { catchError, forkJoin, of, switchMap } from 'rxjs';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import {
@@ -23,11 +24,13 @@ import {
 @Component({
   selector: 'app-question-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, MatDialogModule, LoadingSpinnerComponent],
+  imports: [CommonModule, RouterLink, MatDialogModule, LoadingSpinnerComponent, TranslatePipe],
   templateUrl: './question-detail.component.html',
   styleUrl: './question-detail.component.scss'
 })
 export class QuestionDetailComponent implements OnInit {
+  private readonly translate = inject(TranslateService);
+
   question: QuestionDetail | null = null;
   rubric: RubricResponse | null = null;
   relatedArticles: StudyArticleResponse[] = [];
@@ -64,7 +67,7 @@ export class QuestionDetailComponent implements OnInit {
   }
 
   formatDate(value: string): string {
-    return formatDateTime(value);
+    return formatDateTime(value, this.translate.instant('questions.placeholders.notAvailable'));
   }
 
   formatType(value: string): string {
@@ -90,8 +93,8 @@ export class QuestionDetailComponent implements OnInit {
 
     this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Archive question',
-        message: 'The question will be soft deleted from Question Service and removed from active catalog usage.'
+        title: this.translate.instant('questions.questionDetail.archiveDialog.title'),
+        message: this.translate.instant('questions.questionDetail.archiveDialog.message')
       }
     }).afterClosed().subscribe(confirmed => {
       if (!confirmed || !this.question) {

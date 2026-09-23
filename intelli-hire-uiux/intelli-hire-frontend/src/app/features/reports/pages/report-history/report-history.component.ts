@@ -6,6 +6,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ReportService } from '../../services/report.service';
 import { ReportSummary, ReportStatus } from '../../../../core/models/report.model';
 import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
@@ -19,7 +20,8 @@ import { ConfirmDialogComponent } from '../../../../shared/components/confirm-di
     MatTableModule,
     MatPaginatorModule,
     MatSnackBarModule,
-    LoadingSpinnerComponent
+    LoadingSpinnerComponent,
+    TranslatePipe
   ],
   templateUrl: './report-history.component.html',
   styleUrl: './report-history.component.scss'
@@ -27,6 +29,7 @@ import { ConfirmDialogComponent } from '../../../../shared/components/confirm-di
 export class ReportHistoryComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private snackBar = inject(MatSnackBar);
+  private translate = inject(TranslateService);
 
   reports: ReportSummary[] = [];
   loading = false;
@@ -60,7 +63,7 @@ export class ReportHistoryComponent implements OnInit {
       },
       error: () => {
         this.loading = false;
-        this.snackBar.open('Failed to load report history', 'Close', { duration: 4000 });
+        this.snackBar.open(this.translate.instant('reports.history.loadError'), 'Close', { duration: 4000 });
       }
     });
   }
@@ -83,10 +86,11 @@ export class ReportHistoryComponent implements OnInit {
 
   deleteReport(report: ReportSummary, event: Event): void {
     event.stopPropagation();
+    const topic = report.topic || this.translate.instant('reports.history.untitled');
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Delete Report',
-        message: `Delete report for "${report.topic || 'Untitled'}"? This cannot be undone.`
+        title: this.translate.instant('reports.history.deleteDialogTitle'),
+        message: this.translate.instant('reports.history.deleteDialogMessage', { topic })
       }
     });
     ref.afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(confirmed => {
@@ -94,11 +98,11 @@ export class ReportHistoryComponent implements OnInit {
         this.reportService.deleteBySessionId(report.session_id)
           .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
           next: () => {
-            this.snackBar.open('Report deleted', 'Close', { duration: 3000 });
+            this.snackBar.open(this.translate.instant('reports.history.deleteSuccess'), 'Close', { duration: 3000 });
             this.loadReports();
           },
           error: () => {
-            this.snackBar.open('Failed to delete report', 'Close', { duration: 4000 });
+            this.snackBar.open(this.translate.instant('reports.history.deleteError'), 'Close', { duration: 4000 });
           }
         });
       }

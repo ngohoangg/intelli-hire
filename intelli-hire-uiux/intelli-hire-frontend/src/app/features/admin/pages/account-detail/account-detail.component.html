@@ -1,10 +1,10 @@
 <div class="page-container">
   <div class="page-header">
     <div class="page-title">
-      <button class="back-btn" routerLink="/admin/accounts">← Accounts</button>
+      <button class="back-btn" routerLink="/admin/accounts">{{ 'admin.accountDetail.backLink' | translate }}</button>
       <span class="ai-dot"></span>
-      <h1>{{ account?.username ?? 'Account Detail' }}</h1>
-      <span class="status-badge" *ngIf="account" [class]="'status-' + account.status.toLowerCase()">{{ account.status }}</span>
+      <h1>{{ account?.username ?? ('admin.accountDetail.defaultTitle' | translate) }}</h1>
+      <span class="status-badge" *ngIf="account" [class]="'status-' + account.status.toLowerCase()">{{ statusLabelKey(account.status) | translate }}</span>
     </div>
   </div>
 
@@ -15,33 +15,33 @@
       <div class="error-banner" *ngIf="error">{{ error }}</div>
       <div class="success-banner" *ngIf="success">{{ success }}</div>
 
-      <span class="section-label">Account Info</span>
+      <span class="section-label">{{ 'admin.accountDetail.sectionAccountInfo' | translate }}</span>
       <div class="detail-grid">
-        <div class="detail-item"><span class="detail-label">Username</span><span class="detail-value">{{ account.username }}</span></div>
-        <div class="detail-item"><span class="detail-label">Email</span><span class="detail-value">{{ account.email }}</span></div>
-        <div class="detail-item"><span class="detail-label">Failed Logins</span><span class="detail-value mono">{{ account.failed_login_attempts }}</span></div>
-        <div class="detail-item" *ngIf="account.locked_reason"><span class="detail-label">Lock Reason</span><span class="detail-value">{{ account.locked_reason }}</span></div>
+        <div class="detail-item"><span class="detail-label">{{ 'admin.accountDetail.username' | translate }}</span><span class="detail-value">{{ account.username }}</span></div>
+        <div class="detail-item"><span class="detail-label">{{ 'admin.accountDetail.email' | translate }}</span><span class="detail-value">{{ account.email }}</span></div>
+        <div class="detail-item"><span class="detail-label">{{ 'admin.accountDetail.failedLogins' | translate }}</span><span class="detail-value mono">{{ account.failed_login_attempts }}</span></div>
+        <div class="detail-item" *ngIf="account.locked_reason"><span class="detail-label">{{ 'admin.accountDetail.lockReason' | translate }}</span><span class="detail-value">{{ account.locked_reason }}</span></div>
       </div>
     </div>
 
     <div class="card roles-card">
-      <span class="section-label">Assigned Roles</span>
+      <span class="section-label">{{ 'admin.accountDetail.sectionAssignedRoles' | translate }}</span>
 
       <div class="protected-notice" *ngIf="isSuperAdmin">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        Super Admin account — role management is restricted
+        {{ 'admin.accountDetail.superAdminNotice' | translate }}
       </div>
 
       <div class="role-list">
         <div class="role-row" *ngFor="let r of roles">
           <span class="role-name">{{ r.role_name }}</span>
-          <button class="btn-danger-outline small" (click)="removeRole(r.role_id)" *ngIf="!isSuperAdmin">Remove</button>
+          <button class="btn-danger-outline small" (click)="removeRole(r.role_id)" *ngIf="!isSuperAdmin">{{ 'admin.accountDetail.remove' | translate }}</button>
         </div>
-        <p class="empty-text" *ngIf="roles.length === 0">No roles assigned.</p>
+        <p class="empty-text" *ngIf="roles.length === 0">{{ 'admin.accountDetail.noRolesAssigned' | translate }}</p>
       </div>
 
       <div class="assign-section" *ngIf="!isSuperAdmin && unassignedRoles.length > 0">
-        <span class="section-label">Add Role</span>
+        <span class="section-label">{{ 'admin.accountDetail.addRole' | translate }}</span>
         <div class="role-chips">
           <button class="chip-btn" *ngFor="let r of unassignedRoles" (click)="assignRole(r.id)">+ {{ r.name }}</button>
         </div>

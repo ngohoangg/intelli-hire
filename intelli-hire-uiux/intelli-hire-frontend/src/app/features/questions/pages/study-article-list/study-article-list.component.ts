@@ -6,6 +6,7 @@ import { catchError, forkJoin, of } from 'rxjs';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import {
@@ -28,13 +29,15 @@ type ArticleActiveFilter = 'ALL' | 'ACTIVE' | 'INACTIVE';
     MatDialogModule,
     MatCheckboxModule,
     MatSelectModule,
-    LoadingSpinnerComponent
+    LoadingSpinnerComponent,
+    TranslatePipe
   ],
   templateUrl: './study-article-list.component.html',
   styleUrl: './study-article-list.component.scss'
 })
 export class StudyArticleListComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
+  private readonly translate = inject(TranslateService);
 
   loading = false;
   saving = false;
@@ -157,8 +160,8 @@ export class StudyArticleListComponent implements OnInit {
 
     this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Delete article',
-        message: 'Deleting a study article removes it from admin recommendations and related learning surfaces.'
+        title: this.translate.instant('questions.studyArticleList.deleteDialog.title'),
+        message: this.translate.instant('questions.studyArticleList.deleteDialog.message')
       }
     }).afterClosed().subscribe(confirmed => {
       if (!confirmed) {

@@ -2,7 +2,7 @@
   <div class="page-header">
     <div class="page-title">
       <span class="ai-dot"></span>
-      <h1>Profile Settings</h1>
+      <h1>{{ 'account.profile.pageTitle' | translate }}</h1>
     </div>
   </div>
 
@@ -14,49 +14,49 @@
 
     <form [formGroup]="form" (ngSubmit)="submit()" class="settings-form">
       <div class="form-section">
-        <span class="section-label">Personal Info</span>
+        <span class="section-label">{{ 'account.profile.personalInfoSection' | translate }}</span>
         <div class="field-row-3">
-          <div class="field-group"><label class="field-label">First Name</label><input class="field-input" formControlName="firstName" /></div>
-          <div class="field-group"><label class="field-label">Middle Name</label><input class="field-input" formControlName="middleName" /></div>
-          <div class="field-group"><label class="field-label">Last Name</label><input class="field-input" formControlName="lastName" /></div>
+          <div class="field-group"><label class="field-label">{{ 'account.profile.firstName' | translate }}</label><input class="field-input" formControlName="firstName" /></div>
+          <div class="field-group"><label class="field-label">{{ 'account.profile.middleName' | translate }}</label><input class="field-input" formControlName="middleName" /></div>
+          <div class="field-group"><label class="field-label">{{ 'account.profile.lastName' | translate }}</label><input class="field-input" formControlName="lastName" /></div>
         </div>
         <div class="field-row">
           <div class="field-group">
-            <label class="field-label">Phone</label>
+            <label class="field-label">{{ 'account.profile.phone' | translate }}</label>
             <input class="field-input" formControlName="phone"
               [class.field-input--error]="form.get('phone')?.invalid && form.get('phone')?.dirty"
-              placeholder="+84901234567" />
+              [placeholder]="'account.profile.phonePlaceholder' | translate" />
             <span class="field-error" *ngIf="form.get('phone')?.hasError('pattern') && form.get('phone')?.dirty">
-              Only digits allowed; if using country code, start with +
+              {{ 'account.profile.phoneError' | translate }}
             </span>
           </div>
-          <div class="field-group"><label class="field-label">Date of Birth</label><input class="field-input" formControlName="birthOfDate" type="date" /></div>
+          <div class="field-group"><label class="field-label">{{ 'account.profile.dateOfBirth' | translate }}</label><input class="field-input" formControlName="birthOfDate" type="date" /></div>
           <div class="field-group">
-            <label class="field-label">Gender</label>
+            <label class="field-label">{{ 'account.profile.gender' | translate }}</label>
             <select class="field-select" formControlName="gender">
-              <option value="">-- Select --</option>
-              <option value="MALE">Male</option>
-              <option value="FEMALE">Female</option>
-              <option value="OTHER">Other</option>
-              <option value="PREFER_NOT_TO_SAY">Prefer not to say</option>
+              <option value="">{{ 'account.profile.genderPlaceholder' | translate }}</option>
+              <option value="MALE">{{ 'account.profile.genderMale' | translate }}</option>
+              <option value="FEMALE">{{ 'account.profile.genderFemale' | translate }}</option>
+              <option value="OTHER">{{ 'account.profile.genderOther' | translate }}</option>
+              <option value="PREFER_NOT_TO_SAY">{{ 'account.profile.genderPreferNotToSay' | translate }}</option>
             </select>
           </div>
         </div>
-        <div class="field-group"><label class="field-label">Address</label><input class="field-input" formControlName="address" /></div>
+        <div class="field-group"><label class="field-label">{{ 'account.profile.address' | translate }}</label><input class="field-input" formControlName="address" /></div>
       </div>
 
       <div class="form-section" *ngIf="!auth.isAdmin">
-        <span class="section-label">Social Links</span>
+        <span class="section-label">{{ 'account.profile.socialLinksSection' | translate }}</span>
         <div class="field-row">
-          <div class="field-group"><label class="field-label">GitHub URL</label><input class="field-input" formControlName="githubUrl" placeholder="https://github.com/..." /></div>
-          <div class="field-group"><label class="field-label">LinkedIn URL</label><input class="field-input" formControlName="linkedInUrl" placeholder="https://linkedin.com/in/..." /></div>
+          <div class="field-group"><label class="field-label">{{ 'account.profile.githubUrl' | translate }}</label><input class="field-input" formControlName="githubUrl" [placeholder]="'account.profile.githubUrlPlaceholder' | translate" /></div>
+          <div class="field-group"><label class="field-label">{{ 'account.profile.linkedInUrl' | translate }}</label><input class="field-input" formControlName="linkedInUrl" [placeholder]="'account.profile.linkedInUrlPlaceholder' | translate" /></div>
         </div>
-        <div class="field-group"><label class="field-label">Avatar URL</label><input class="field-input" formControlName="avatarUrl" placeholder="https://..." /></div>
+        <div class="field-group"><label class="field-label">{{ 'account.profile.avatarUrl' | translate }}</label><input class="field-input" formControlName="avatarUrl" [placeholder]="'account.profile.avatarUrlPlaceholder' | translate" /></div>
       </div>
 
       <div class="form-actions">
         <button class="btn-primary" type="submit" [disabled]="saving || form.invalid">
-          {{ saving ? 'Saving...' : 'Save Changes' }}
+          {{ saving ? ('account.profile.saving' | translate) : ('account.profile.saveChanges' | translate) }}
         </button>
       </div>
     </form>

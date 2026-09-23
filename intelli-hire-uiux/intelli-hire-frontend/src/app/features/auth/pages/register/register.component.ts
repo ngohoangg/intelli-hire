@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../../../core/services/auth.service';
 
 const passwordMatchValidator: ValidatorFn = (group: AbstractControl): ValidationErrors | null => {
@@ -13,7 +14,7 @@ const passwordMatchValidator: ValidatorFn = (group: AbstractControl): Validation
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslatePipe],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss'
 })
@@ -25,7 +26,12 @@ export class RegisterComponent {
   showPassword = false;
   showConfirm = false;
 
-  constructor(private fb: FormBuilder, private auth: AuthService, private router: Router) {
+  constructor(
+    private fb: FormBuilder,
+    private auth: AuthService,
+    private router: Router,
+    private translate: TranslateService
+  ) {
     this.form = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       username: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
@@ -40,8 +46,8 @@ export class RegisterComponent {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     this.loading = true; this.error = '';
     this.auth.register(this.form.value).subscribe({
-      next: res => { this.success = res.message || 'Registration successful! Please verify your email.'; this.loading = false; },
-      error: err => { this.error = err?.error?.message ?? 'Registration failed'; this.loading = false; }
+      next: res => { this.success = res.message || this.translate.instant('auth.register.registrationSuccess'); this.loading = false; },
+      error: err => { this.error = err?.error?.message ?? this.translate.instant('auth.register.registrationFailed'); this.loading = false; }
     });
   }
 

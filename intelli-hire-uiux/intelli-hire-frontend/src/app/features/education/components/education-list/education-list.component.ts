@@ -4,6 +4,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ResumeEducationService } from '../../services/resume-education.service';
 import { ResumeEducation } from '../../../../core/models/education.model';
 import { EducationFormComponent, EducationFormData } from '../education-form/education-form.component';
@@ -17,7 +18,8 @@ import { ConfirmDialogComponent } from '../../../../shared/components/confirm-di
     MatExpansionModule,
     MatButtonModule,
     MatIconModule,
-    MatDialogModule
+    MatDialogModule,
+    TranslatePipe
   ],
   templateUrl: './education-list.component.html',
   styleUrl: './education-list.component.scss'
@@ -30,7 +32,8 @@ export class EducationListComponent implements OnInit {
 
   constructor(
     private eduService: ResumeEducationService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -67,7 +70,10 @@ export class EducationListComponent implements OnInit {
 
   delete(edu: ResumeEducation): void {
     this.dialog.open(ConfirmDialogComponent, {
-      data: { title: 'Delete Education', message: `Delete "${edu.school}"?` }
+      data: {
+        title: this.translate.instant('resume.educationList.deleteDialogTitle'),
+        message: this.translate.instant('resume.educationList.deleteDialogMessage', { school: edu.school })
+      }
     }).afterClosed().subscribe(confirmed => {
       if (confirmed) {
         this.eduService.delete(this.resumeId, edu.id).subscribe(() => this.load());

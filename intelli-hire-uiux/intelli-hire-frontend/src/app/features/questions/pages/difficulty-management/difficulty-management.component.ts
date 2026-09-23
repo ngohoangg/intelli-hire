@@ -6,6 +6,7 @@ import { catchError, of } from 'rxjs';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { DifficultyLevelResponse } from '../../../../core/models/question.model';
@@ -21,13 +22,15 @@ import { QuestionTaxonomyService } from '../../services/question-taxonomy.servic
     MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
-    LoadingSpinnerComponent
+    LoadingSpinnerComponent,
+    TranslatePipe
   ],
   templateUrl: './difficulty-management.component.html',
   styleUrl: './difficulty-management.component.scss'
 })
 export class DifficultyManagementComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
+  private readonly translate = inject(TranslateService);
 
   loading = false;
   saving = false;
@@ -104,8 +107,8 @@ export class DifficultyManagementComponent implements OnInit {
 
     this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Delete difficulty level',
-        message: 'Removing a difficulty level affects question scoring and study article classification. Continue only when it is unused.'
+        title: this.translate.instant('questions.difficultyManagement.deleteDialog.title'),
+        message: this.translate.instant('questions.difficultyManagement.deleteDialog.message')
       }
     }).afterClosed().subscribe(confirmed => {
       if (!confirmed) {

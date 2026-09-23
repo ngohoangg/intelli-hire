@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { forkJoin } from 'rxjs';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ReportService } from '../../services/report.service';
 import { UserStatsResponse, UserProgressResponse } from '../../../../core/models/report.model';
 import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
@@ -11,13 +12,14 @@ import { LoadingSpinnerComponent } from '../../../../shared/components/loading-s
 @Component({
   selector: 'app-report-dashboard',
   standalone: true,
-  imports: [CommonModule, LoadingSpinnerComponent, MatSnackBarModule],
+  imports: [CommonModule, LoadingSpinnerComponent, MatSnackBarModule, TranslatePipe],
   templateUrl: './report-dashboard.component.html',
   styleUrl: './report-dashboard.component.scss'
 })
 export class ReportDashboardComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private snackBar = inject(MatSnackBar);
+  private translate = inject(TranslateService);
 
   stats: UserStatsResponse | null = null;
   progressList: UserProgressResponse[] = [];
@@ -41,7 +43,7 @@ export class ReportDashboardComponent implements OnInit {
       },
       error: (err) => {
         this.loading = false;
-        this.snackBar.open('Failed to load dashboard data', 'Close', { duration: 4000 });
+        this.snackBar.open(this.translate.instant('reports.dashboard.loadError'), 'Close', { duration: 4000 });
       }
     });
   }

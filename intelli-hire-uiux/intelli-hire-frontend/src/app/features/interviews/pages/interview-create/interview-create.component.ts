@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { InterviewService } from '../../services/interview.service';
 import { ResumeService } from '../../../resume/services/resume.service';
 import { CreateSessionRequest, Difficulty } from '../../../../core/models/interview.model';
@@ -22,7 +23,8 @@ type QuestionSource = 'bank' | 'resume';
     MatSelectModule,
     MatSliderModule,
     MatSnackBarModule,
-    LoadingSpinnerComponent
+    LoadingSpinnerComponent,
+    TranslatePipe
   ],
   templateUrl: './interview-create.component.html',
   styleUrl: './interview-create.component.scss'
@@ -34,21 +36,31 @@ export class InterviewCreateComponent implements OnInit {
   questionSource: QuestionSource = 'bank';
   resumes: Resume[] = [];
 
+  // `labelKey` drives the UI display only (translated via the pipe in the
+  // template). `apiLabels` below is a separate, untranslated map used to
+  // build the `difficulty_name` value sent to the backend, so switching the
+  // UI language never changes the data the API receives.
   readonly difficulties = [
-    { value: Difficulty.JUNIOR, label: 'Junior' },
-    { value: Difficulty.MID, label: 'Mid' },
-    { value: Difficulty.SENIOR, label: 'Senior' }
+    { value: Difficulty.JUNIOR, labelKey: 'interviews.interviewCreate.difficultyJunior' },
+    { value: Difficulty.MID, labelKey: 'interviews.interviewCreate.difficultyMid' },
+    { value: Difficulty.SENIOR, labelKey: 'interviews.interviewCreate.difficultySenior' }
   ];
 
+  private readonly difficultyApiLabels: Record<Difficulty, string> = {
+    [Difficulty.JUNIOR]: 'Junior',
+    [Difficulty.MID]: 'Mid',
+    [Difficulty.SENIOR]: 'Senior'
+  };
+
   readonly questionTypes = [
-    { value: 'technical', label: 'Technical' },
-    { value: 'behavioral', label: 'Behavioral' },
-    { value: 'mixed', label: 'Mixed' }
+    { value: 'technical', labelKey: 'interviews.interviewCreate.questionTypeTechnical' },
+    { value: 'behavioral', labelKey: 'interviews.interviewCreate.questionTypeBehavioral' },
+    { value: 'mixed', labelKey: 'interviews.interviewCreate.questionTypeMixed' }
   ];
 
   readonly languages = [
-    { value: 'English', label: 'English' },
-    { value: 'Vietnamese', label: 'Tiếng Việt' }
+    { value: 'English', labelKey: 'interviews.interviewCreate.languageEnglish' },
+    { value: 'Vietnamese', labelKey: 'interviews.interviewCreate.languageVietnamese' }
   ];
 
   constructor(
@@ -56,7 +68,8 @@ export class InterviewCreateComponent implements OnInit {
     private interviewService: InterviewService,
     private resumeService: ResumeService,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private translate: TranslateService
   ) {
     this.form = this.fb.group({
       // Bank fields
@@ -123,7 +136,7 @@ export class InterviewCreateComponent implements OnInit {
       };
     } else {
       const selectedResume = this.resumes.find(r => r.id === v.resume_id);
-      const diffLabel = this.difficulties.find(d => d.value === v.difficulty_name)?.label ?? 'Mid';
+      const diffLabel = this.difficultyApiLabels[v.difficulty_name as Difficulty] ?? 'Mid';
       request = {
         topic: selectedResume?.title ?? '',
         difficulty: v.difficulty_name,
@@ -143,8 +156,8 @@ export class InterviewCreateComponent implements OnInit {
       },
       error: (err) => {
         this.saving = false;
-        const msg = err?.error?.message ?? 'Failed to create session. Please check that the interview service is running.';
-        this.snackBar.open(msg, 'Close', { duration: 5000 });
+        const msg = err?.error?.message ?? this.translate.instant('interviews.interviewCreate.createErrorFallback');
+        this.snackBar.open(msg, this.translate.instant('interviews.interviewCreate.snackbarClose'), { duration: 5000 });
       }
     });
   }

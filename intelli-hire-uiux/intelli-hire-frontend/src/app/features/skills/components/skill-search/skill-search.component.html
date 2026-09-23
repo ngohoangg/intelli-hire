@@ -1,10 +1,10 @@
 <div class="skill-search-wrapper">
   <mat-form-field appearance="outline" class="skill-search-field">
-    <mat-label>{{ label }}</mat-label>
+    <mat-label>{{ label | translate }}</mat-label>
     <input
       matInput
       [formControl]="searchControl"
-      [placeholder]="placeholder"
+      [placeholder]="placeholder | translate"
       [matAutocomplete]="skillAuto">
 
     <button
@@ -13,7 +13,7 @@
       class="clear-btn"
       type="button"
       (click)="clear()"
-      title="Clear">
+      [title]="'resume.skillSearch.clearTitle' | translate">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
         <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
       </svg>
@@ -25,7 +25,7 @@
       (optionSelected)="onOptionSelected($event.option.value)">
 
       <mat-option *ngIf="searching" disabled class="searching-option">
-        <span class="searching-text">Searching...</span>
+        <span class="searching-text">{{ 'resume.skillSearch.searchingOption' | translate }}</span>
       </mat-option>
 
       <mat-option
@@ -42,7 +42,7 @@
         *ngIf="!searching && results.length === 0 && searchControl.value && searchControl.value.length > 0"
         disabled
         class="no-results-option">
-        <span class="no-results-text">No skills found</span>
+        <span class="no-results-text">{{ 'resume.skillSearch.noResultsOption' | translate }}</span>
       </mat-option>
 
     </mat-autocomplete>

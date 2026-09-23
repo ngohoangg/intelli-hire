@@ -9,8 +9,8 @@
       </svg>
     </div>
     <div class="header-text">
-      <h3 class="section-title">Contact Information</h3>
-      <p class="section-desc">Auto-filled from parsed resume — edit as needed.</p>
+      <h3 class="section-title">{{ 'resume.contactForm.sectionTitle' | translate }}</h3>
+      <p class="section-desc">{{ 'resume.contactForm.sectionDesc' | translate }}</p>
     </div>
   </div>
 
@@ -29,7 +29,7 @@
     <!-- Full Name -->
     <div class="field-group full-width">
       <label class="field-label" for="cf-fullName">
-        Full Name <span class="required-star">*</span>
+        {{ 'resume.contactForm.fullNameLabel' | translate }} <span class="required-star">*</span>
       </label>
       <div class="input-wrap" [class.has-error]="fullName.touched && fullName.invalid" [class.focused]="false">
         <span class="field-icon">
@@ -42,18 +42,18 @@
           id="cf-fullName"
           class="field-input"
           formControlName="fullName"
-          placeholder="e.g. Jane Doe"
+          [placeholder]="'resume.contactForm.fullNamePlaceholder' | translate"
           autocomplete="name"
         >
       </div>
-      <span class="field-error" *ngIf="fullName.touched && fullName.hasError('required')">Full name is required</span>
-      <span class="field-error" *ngIf="fullName.touched && fullName.hasError('maxlength')">Max 200 characters</span>
+      <span class="field-error" *ngIf="fullName.touched && fullName.hasError('required')">{{ 'resume.contactForm.fullNameRequiredError' | translate }}</span>
+      <span class="field-error" *ngIf="fullName.touched && fullName.hasError('maxlength')">{{ 'resume.contactForm.fullNameMaxLengthError' | translate }}</span>
     </div>
 
     <!-- Email + Phone -->
     <div class="two-col">
       <div class="field-group">
-        <label class="field-label" for="cf-email">Email</label>
+        <label class="field-label" for="cf-email">{{ 'resume.contactForm.emailLabel' | translate }}</label>
         <div class="input-wrap" [class.has-error]="email.touched && email.invalid">
           <span class="field-icon">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -66,15 +66,15 @@
             class="field-input"
             formControlName="email"
             type="email"
-            placeholder="jane@example.com"
+            [placeholder]="'resume.contactForm.emailPlaceholder' | translate"
             autocomplete="email"
           >
         </div>
-        <span class="field-error" *ngIf="email.touched && email.hasError('email')">Enter a valid email</span>
+        <span class="field-error" *ngIf="email.touched && email.hasError('email')">{{ 'resume.contactForm.emailInvalidError' | translate }}</span>
       </div>
 
       <div class="field-group">
-        <label class="field-label" for="cf-phone">Phone</label>
+        <label class="field-label" for="cf-phone">{{ 'resume.contactForm.phoneLabel' | translate }}</label>
         <div class="input-wrap" [class.has-error]="phone.touched && phone.invalid">
           <span class="field-icon">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -85,17 +85,17 @@
             id="cf-phone"
             class="field-input"
             formControlName="phone"
-            placeholder="+84 912 345 678"
+            [placeholder]="'resume.contactForm.phonePlaceholder' | translate"
             autocomplete="tel"
           >
         </div>
-        <span class="field-error" *ngIf="phone.touched && phone.hasError('pattern')">Enter a valid phone number</span>
+        <span class="field-error" *ngIf="phone.touched && phone.hasError('pattern')">{{ 'resume.contactForm.phoneInvalidError' | translate }}</span>
       </div>
     </div>
 
     <!-- Location -->
     <div class="field-group full-width">
-      <label class="field-label" for="cf-location">Location</label>
+      <label class="field-label" for="cf-location">{{ 'resume.contactForm.locationLabel' | translate }}</label>
       <div class="input-wrap">
         <span class="field-icon">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -107,7 +107,7 @@
           id="cf-location"
           class="field-input"
           formControlName="location"
-          placeholder="e.g. Ho Chi Minh City, Vietnam"
+          [placeholder]="'resume.contactForm.locationPlaceholder' | translate"
           autocomplete="address-level1"
         >
       </div>
@@ -115,7 +115,7 @@
 
     <!-- LinkedIn URL -->
     <div class="field-group full-width">
-      <label class="field-label" for="cf-linkedin">LinkedIn URL</label>
+      <label class="field-label" for="cf-linkedin">{{ 'resume.contactForm.linkedinLabel' | translate }}</label>
       <div class="input-wrap" [class.has-error]="linkedinUrl.touched && linkedinUrl.invalid">
         <span class="field-icon">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -128,15 +128,15 @@
           id="cf-linkedin"
           class="field-input"
           formControlName="linkedinUrl"
-          placeholder="linkedin.com/in/janedoe"
+          [placeholder]="'resume.contactForm.linkedinPlaceholder' | translate"
         >
       </div>
-      <span class="field-error" *ngIf="linkedinUrl.touched && linkedinUrl.hasError('pattern')">Enter a valid LinkedIn URL</span>
+      <span class="field-error" *ngIf="linkedinUrl.touched && linkedinUrl.hasError('pattern')">{{ 'resume.contactForm.linkedinInvalidError' | translate }}</span>
     </div>
 
     <!-- Other Info -->
     <div class="field-group full-width">
-      <label class="field-label" for="cf-other">Other Info</label>
+      <label class="field-label" for="cf-other">{{ 'resume.contactForm.otherInfoLabel' | translate }}</label>
       <div class="input-wrap textarea-wrap">
         <span class="field-icon field-icon--top">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -150,7 +150,7 @@
           class="field-input field-textarea"
           formControlName="otherInfo"
           rows="3"
-          placeholder="GitHub, portfolio, personal website…"
+          [placeholder]="'resume.contactForm.otherInfoPlaceholder' | translate"
         ></textarea>
       </div>
     </div>
@@ -159,7 +159,7 @@
     <div class="form-actions">
       <span class="save-status" *ngIf="saving">
         <span class="status-dot"></span>
-        Saving…
+        {{ 'resume.contactForm.savingStatus' | translate }}
       </span>
       <button type="submit" class="save-btn" [disabled]="saving || form.invalid">
         <svg class="save-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
@@ -167,7 +167,7 @@
           <polyline points="17,21 17,13 7,13 7,21"/>
           <polyline points="7,3 7,8 15,8"/>
         </svg>
-        Save Contact
+        {{ 'resume.contactForm.saveButton' | translate }}
       </button>
     </div>
 

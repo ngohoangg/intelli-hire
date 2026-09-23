@@ -4,6 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import {
   DifficultyLevelResponse,
   GenerateQuestionsFromResumeResponse,
@@ -22,21 +23,23 @@ import { QuestionTaxonomyService } from '../../services/question-taxonomy.servic
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule
+    MatSelectModule,
+    TranslatePipe
   ],
   templateUrl: './resume-question-generator.component.html',
   styleUrl: './resume-question-generator.component.scss'
 })
 export class ResumeQuestionGeneratorComponent implements OnInit, OnChanges {
   private readonly fb = inject(FormBuilder);
+  private readonly translate = inject(TranslateService);
 
   @Input({ required: true }) resumeId!: string;
   @Input() profile: ResumeSkillProfile | null = null;
 
   readonly questionTypes = QUESTION_TYPE_OPTIONS;
   readonly languageOptions = [
-    { value: 'en', label: 'English' },
-    { value: 'vi', label: 'Vietnamese' }
+    { value: 'en', label: 'questions.resumeGenerator.languageEn' },
+    { value: 'vi', label: 'questions.resumeGenerator.languageVi' }
   ] as const;
 
   loading = false;
@@ -92,7 +95,7 @@ export class ResumeQuestionGeneratorComponent implements OnInit, OnChanges {
   }
 
   formatGeneratedAt(value: string | null | undefined): string {
-    return formatDateTime(value);
+    return formatDateTime(value, this.translate.instant('questions.placeholders.notAvailable'));
   }
 
   generate(): void {
@@ -119,7 +122,7 @@ export class ResumeQuestionGeneratorComponent implements OnInit, OnChanges {
       error: () => {
         this.result = null;
         this.loading = false;
-        this.errorMessage = 'Unable to generate a resume-based question set right now.';
+        this.errorMessage = this.translate.instant('questions.resumeGenerator.errorMessage');
       }
     });
   }

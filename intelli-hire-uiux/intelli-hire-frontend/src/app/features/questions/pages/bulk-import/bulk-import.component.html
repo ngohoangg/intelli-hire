@@ -3,23 +3,23 @@
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <polyline points="15 18 9 12 15 6"></polyline>
     </svg>
-    Back
+    {{ 'questions.actions.back' | translate }}
   </button>
 
   <div class="page-header">
     <div class="page-title-group">
       <div class="page-title">
         <span class="ai-dot"></span>
-        <h1>Bulk Import</h1>
+        <h1>{{ 'questions.bulkImport.title' | translate }}</h1>
       </div>
       <p class="page-subtitle">
-        Paste a JSON payload, validate structure and inspect row-level failures before seeding the question bank at scale.
+        {{ 'questions.bulkImport.subtitle' | translate }}
       </p>
     </div>
 
     <div class="header-actions">
-      <button class="btn-ghost" type="button" (click)="useSample()">Use Sample</button>
-      <button class="btn-primary" type="button" (click)="submit()">Run Import</button>
+      <button class="btn-ghost" type="button" (click)="useSample()">{{ 'questions.bulkImport.useSample' | translate }}</button>
+      <button class="btn-primary" type="button" (click)="submit()">{{ 'questions.bulkImport.runImport' | translate }}</button>
     </div>
   </div>
 
@@ -32,12 +32,12 @@
             <polyline points="7 10 12 15 17 10"></polyline>
             <line x1="12" y1="15" x2="12" y2="3"></line>
           </svg>
-          <h2 class="section-title">Bulk Payload</h2>
+          <h2 class="section-title">{{ 'questions.bulkImport.payloadSectionTitle' | translate }}</h2>
         </div>
       </div>
 
       <mat-form-field appearance="outline" class="full-span">
-        <mat-label>JSON payload</mat-label>
+        <mat-label>{{ 'questions.bulkImport.jsonPayloadLabel' | translate }}</mat-label>
         <textarea matInput rows="22" [formControl]="form.controls.payload"></textarea>
       </mat-form-field>
 
@@ -51,36 +51,36 @@
             <path d="M9 11l3 3L22 4"></path>
             <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
           </svg>
-          <h2 class="section-title">Import Result</h2>
+          <h2 class="section-title">{{ 'questions.bulkImport.resultSectionTitle' | translate }}</h2>
         </div>
       </div>
 
       <div class="metric-grid" *ngIf="result as data; else waitingState">
         <article class="card metric-card compact-card">
-          <p class="metric-label">Total Rows</p>
+          <p class="metric-label">{{ 'questions.bulkImport.totalRows' | translate }}</p>
           <h3 class="metric-value">{{ data.total }}</h3>
         </article>
         <article class="card metric-card compact-card">
-          <p class="metric-label">Created</p>
+          <p class="metric-label">{{ 'questions.bulkImport.created' | translate }}</p>
           <h3 class="metric-value">{{ data.created }}</h3>
         </article>
         <article class="card metric-card compact-card">
-          <p class="metric-label">Failed</p>
+          <p class="metric-label">{{ 'questions.bulkImport.failed' | translate }}</p>
           <h3 class="metric-value">{{ data.failed }}</h3>
         </article>
       </div>
 
       <div class="stack-list" *ngIf="result?.errors?.length">
         <article class="stack-item" *ngFor="let error of result?.errors">
-          <span class="status-badge danger">Row {{ error.index }}</span>
+          <span class="status-badge danger">{{ 'questions.bulkImport.rowLabel' | translate: { index: error.index } }}</span>
           <p class="support-copy">{{ error.error }}</p>
         </article>
       </div>
 
       <ng-template #waitingState>
         <div class="empty-panel compact">
-          <h3>No import run yet</h3>
-          <p>The result summary will appear here after the backend validates and processes the payload.</p>
+          <h3>{{ 'questions.bulkImport.emptyTitle' | translate }}</h3>
+          <p>{{ 'questions.bulkImport.emptyBody' | translate }}</p>
         </div>
       </ng-template>
     </section>

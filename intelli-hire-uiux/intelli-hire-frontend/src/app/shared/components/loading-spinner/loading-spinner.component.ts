@@ -1,10 +1,11 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-loading-spinner',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslatePipe],
   template: `
     <div class="loader-overlay" *ngIf="isLoading">
       <div class="loader-core">
@@ -13,7 +14,7 @@ import { CommonModule } from '@angular/common';
         <div class="ring ring-inner"></div>
         <div class="loader-dot"></div>
       </div>
-      <span class="loader-label">Loading...</span>
+      <span class="loader-label">{{ 'common.loadingSpinner.label' | translate }}</span>
     </div>
   `,
   styles: [`

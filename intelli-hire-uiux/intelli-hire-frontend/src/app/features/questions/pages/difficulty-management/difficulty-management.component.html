@@ -3,36 +3,36 @@
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <polyline points="15 18 9 12 15 6"></polyline>
     </svg>
-    Back
+    {{ 'questions.actions.back' | translate }}
   </button>
 
   <div class="page-header">
     <div class="page-title-group">
       <div class="page-title">
         <span class="ai-dot"></span>
-        <h1>Difficulty Levels</h1>
+        <h1>{{ 'questions.difficultyManagement.title' | translate }}</h1>
         <span class="count-badge">{{ difficulties.length }}</span>
       </div>
       <p class="page-subtitle">
-        Keep difficulty naming, weighting and descriptions consistent across question bank and study resources.
+        {{ 'questions.difficultyManagement.subtitle' | translate }}
       </p>
     </div>
 
     <div class="header-actions">
-      <button class="btn-ghost" type="button" (click)="startCreate()">New Difficulty</button>
+      <button class="btn-ghost" type="button" (click)="startCreate()">{{ 'questions.difficultyManagement.newDifficulty' | translate }}</button>
     </div>
   </div>
 
   <div class="metric-grid">
     <article class="card metric-card">
-      <p class="metric-label">Total Levels</p>
+      <p class="metric-label">{{ 'questions.difficultyManagement.totalLevels' | translate }}</p>
       <h2 class="metric-value">{{ difficulties.length }}</h2>
-      <p class="metric-detail">Distinct difficulty records available for classification.</p>
+      <p class="metric-detail">{{ 'questions.difficultyManagement.totalLevelsDetail' | translate }}</p>
     </article>
     <article class="card metric-card">
-      <p class="metric-label">Highest Weight</p>
+      <p class="metric-label">{{ 'questions.difficultyManagement.highestWeight' | translate }}</p>
       <h2 class="metric-value">{{ maxWeight }}</h2>
-      <p class="metric-detail">Current max weighting used by the difficulty catalog.</p>
+      <p class="metric-detail">{{ 'questions.difficultyManagement.highestWeightDetail' | translate }}</p>
     </article>
   </div>
 
@@ -45,7 +45,7 @@
             <path d="M18 20V4"></path>
             <path d="M6 20v-4"></path>
           </svg>
-          <h2 class="section-title">Difficulty Catalog</h2>
+          <h2 class="section-title">{{ 'questions.difficultyManagement.catalogTitle' | translate }}</h2>
         </div>
       </div>
 
@@ -57,17 +57,17 @@
           (click)="selectDifficulty(difficulty)">
           <div class="difficulty-top">
             <span class="table-primary">{{ difficulty.name }}</span>
-            <span class="chip chip-accent">Weight {{ difficulty.weight }}</span>
+            <span class="chip chip-accent">{{ 'questions.difficultyManagement.weightChip' | translate: { weight: difficulty.weight } }}</span>
           </div>
-          <p class="difficulty-description">{{ difficulty.description || 'No description provided.' }}</p>
-          <button class="text-action danger" type="button" (click)="deleteDifficulty(difficulty, $event)">Delete</button>
+          <p class="difficulty-description">{{ difficulty.description || ('questions.placeholders.noDescriptionProvided' | translate) }}</p>
+          <button class="text-action danger" type="button" (click)="deleteDifficulty(difficulty, $event)">{{ 'questions.actions.delete' | translate }}</button>
         </article>
       </div>
 
       <ng-template #emptyState>
         <div class="empty-panel compact">
-          <h3>No difficulty levels yet</h3>
-          <p>Create at least one level before categorizing question difficulty.</p>
+          <h3>{{ 'questions.difficultyManagement.emptyTitle' | translate }}</h3>
+          <p>{{ 'questions.difficultyManagement.emptyBody' | translate }}</p>
         </div>
       </ng-template>
     </section>
@@ -81,30 +81,30 @@
             <path d="M4 9h16"></path>
             <path d="M4 15h16"></path>
           </svg>
-          <h2 class="section-title">{{ selectedDifficulty ? 'Edit Difficulty' : 'Create Difficulty' }}</h2>
+          <h2 class="section-title">{{ (selectedDifficulty ? 'questions.difficultyManagement.editHeaderEdit' : 'questions.difficultyManagement.editHeaderCreate') | translate }}</h2>
         </div>
       </div>
 
       <form [formGroup]="form" class="stack-list">
         <mat-form-field appearance="outline">
-          <mat-label>Name</mat-label>
-          <input matInput formControlName="name" placeholder="Mid" />
+          <mat-label>{{ 'questions.fields.name' | translate }}</mat-label>
+          <input matInput formControlName="name" [placeholder]="'questions.difficultyManagement.namePlaceholder' | translate" />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Weight</mat-label>
+          <mat-label>{{ 'questions.fields.weight' | translate }}</mat-label>
           <input matInput type="number" formControlName="weight" />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Description</mat-label>
+          <mat-label>{{ 'questions.fields.description' | translate }}</mat-label>
           <textarea matInput rows="4" formControlName="description"></textarea>
         </mat-form-field>
 
         <div class="editor-actions">
-          <button class="btn-ghost" type="button" (click)="startCreate()">Reset</button>
+          <button class="btn-ghost" type="button" (click)="startCreate()">{{ 'questions.actions.reset' | translate }}</button>
           <button class="btn-primary" type="button" (click)="submit()">
-            {{ selectedDifficulty ? 'Save Difficulty' : 'Create Difficulty' }}
+            {{ (selectedDifficulty ? 'questions.difficultyManagement.submitEdit' : 'questions.difficultyManagement.submitCreate') | translate }}
           </button>
         </div>
       </form>
@@ -112,7 +112,7 @@
       <div class="divider"></div>
 
       <button class="text-action" type="button" [disabled]="!selectedDifficulty" (click)="openQuestionBank()">
-        Open question bank with this difficulty
+        {{ 'questions.difficultyManagement.openQuestionBankLink' | translate }}
       </button>
     </aside>
   </div>

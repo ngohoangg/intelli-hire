@@ -1,14 +1,15 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ResumeStatus } from '../../../../core/models/resume.model';
 
 @Component({
   selector: 'app-resume-status-badge',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslatePipe],
   template: `
     <span class="badge" [ngClass]="cssClass">
-      <span class="dot"></span>{{ label }}
+      <span class="dot"></span>{{ label | translate }}
     </span>
   `,
   styles: [`
@@ -53,11 +54,11 @@ export class ResumeStatusBadgeComponent {
 
   get label(): string {
     const map: Record<ResumeStatus, string> = {
-      [ResumeStatus.UPLOADED]: 'Uploaded',
-      [ResumeStatus.PARSING]: 'Parsing…',
-      [ResumeStatus.COMPLETED]: 'Completed',
-      [ResumeStatus.FAILED]: 'Failed',
-      [ResumeStatus.DELETED]: 'Deleted'
+      [ResumeStatus.UPLOADED]: 'resume.resumeStatusBadge.uploaded',
+      [ResumeStatus.PARSING]: 'resume.resumeStatusBadge.parsing',
+      [ResumeStatus.COMPLETED]: 'resume.resumeStatusBadge.completed',
+      [ResumeStatus.FAILED]: 'resume.resumeStatusBadge.failed',
+      [ResumeStatus.DELETED]: 'resume.resumeStatusBadge.deleted'
     };
     return map[this.status] ?? this.status;
   }

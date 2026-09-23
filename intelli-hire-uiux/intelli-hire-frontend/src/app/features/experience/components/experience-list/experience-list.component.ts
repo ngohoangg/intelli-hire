@@ -4,6 +4,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ResumeExperienceService } from '../../services/resume-experience.service';
 import { ResumeExperience } from '../../../../core/models/experience.model';
 import { ExperienceFormComponent, ExperienceFormData } from '../experience-form/experience-form.component';
@@ -17,7 +18,8 @@ import { ConfirmDialogComponent } from '../../../../shared/components/confirm-di
     MatExpansionModule,
     MatButtonModule,
     MatIconModule,
-    MatDialogModule
+    MatDialogModule,
+    TranslatePipe
   ],
   templateUrl: './experience-list.component.html',
   styleUrl: './experience-list.component.scss'
@@ -30,7 +32,8 @@ export class ExperienceListComponent implements OnInit {
 
   constructor(
     private expService: ResumeExperienceService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -75,7 +78,10 @@ export class ExperienceListComponent implements OnInit {
 
   delete(exp: ResumeExperience): void {
     this.dialog.open(ConfirmDialogComponent, {
-      data: { title: 'Delete Experience', message: `Delete "${exp.title}" at ${exp.company}?` }
+      data: {
+        title: this.translate.instant('resume.experienceList.deleteDialogTitle'),
+        message: this.translate.instant('resume.experienceList.deleteDialogMessage', { title: exp.title, company: exp.company })
+      }
     }).afterClosed().subscribe(confirmed => {
       if (confirmed) {
         this.expService.delete(this.resumeId, exp.id).subscribe(() => this.load());
@@ -83,13 +89,15 @@ export class ExperienceListComponent implements OnInit {
     });
   }
 
-  formatDateRange(exp: ResumeExperience): string {
-    const start = this.formatMonth(exp.start_date);
-    const end = exp.is_current ? 'Present' : (exp.end_date ? this.formatMonth(exp.end_date) : '—');
-    return `${start} – ${end}`;
+  formatStart(exp: ResumeExperience): string {
+    return this.formatMonth(exp.start_date);
+  }
+
+  formatEnd(exp: ResumeExperience): string {
+    return exp.end_date ? this.formatMonth(exp.end_date) : '—';
   }
 
   private formatMonth(dateStr: string): string {
-    return new Date(dateStr).toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
+    return new Date(dateStr).toLocaleDateString('vi-VN', { year: 'numeric', month: 'short' });
   }
 }

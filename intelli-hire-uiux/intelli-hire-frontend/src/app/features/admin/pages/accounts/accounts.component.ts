@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AdminService } from '../../../../core/services/admin.service';
 import { AdminAccount, AccountStatus } from '../../../../core/models/admin.model';
 import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
@@ -9,7 +10,7 @@ import { LoadingSpinnerComponent } from '../../../../shared/components/loading-s
 @Component({
   selector: 'app-admin-accounts',
   standalone: true,
-  imports: [CommonModule, FormsModule, LoadingSpinnerComponent],
+  imports: [CommonModule, FormsModule, LoadingSpinnerComponent, TranslatePipe],
   templateUrl: './accounts.component.html',
   styleUrl: './accounts.component.scss'
 })
@@ -52,6 +53,10 @@ export class AdminAccountsComponent implements OnInit {
 
   formatDate(d: string | null): string {
     if (!d) return '—';
-    return new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    return new Date(d).toLocaleDateString('vi-VN', { year: 'numeric', month: 'short', day: 'numeric' });
+  }
+
+  statusLabelKey(status: AccountStatus): string {
+    return 'admin.accounts.status.' + status.toLowerCase();
   }
 }

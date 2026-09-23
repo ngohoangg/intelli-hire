@@ -1,12 +1,12 @@
 <div class="skill-list-wrapper">
 
   <div class="list-header">
-    <h3 class="section-title">Skills</h3>
+    <h3 class="section-title">{{ 'resume.resumeSkillList.sectionTitle' | translate }}</h3>
     <button class="add-btn" (click)="openAdd()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
         <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
       </svg>
-      Add Skill
+      {{ 'resume.resumeSkillList.addButton' | translate }}
     </button>
   </div>
 
@@ -18,8 +18,8 @@
   <!-- Empty -->
   <div class="empty-state" *ngIf="!loading && skills.length === 0">
     <div class="empty-icon">⚡</div>
-    <p>No skills added yet.</p>
-    <button class="add-btn" (click)="openAdd()">Add First Skill</button>
+    <p>{{ 'resume.resumeSkillList.emptyMessage' | translate }}</p>
+    <button class="add-btn" (click)="openAdd()">{{ 'resume.resumeSkillList.addFirstButton' | translate }}</button>
   </div>
 
   <!-- Skills Grid -->
@@ -31,20 +31,20 @@
         <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
           <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
         </svg>
-        Primary Skills
+        {{ 'resume.resumeSkillList.primarySkillsLabel' | translate }}
       </div>
       <div class="skill-cards">
         <div class="skill-card primary" *ngFor="let skill of primarySkills">
           <div class="skill-card-header">
             <div class="skill-name">{{ skillName(skill) }}</div>
             <div class="skill-actions">
-              <button class="icon-btn" (click)="openEdit(skill)" title="Edit">
+              <button class="icon-btn" (click)="openEdit(skill)" [title]="'resume.resumeSkillList.editTitle' | translate">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                   <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                 </svg>
               </button>
-              <button class="icon-btn danger" (click)="delete(skill)" title="Remove">
+              <button class="icon-btn danger" (click)="delete(skill)" [title]="'resume.resumeSkillList.removeTitle' | translate">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
                 </svg>
@@ -53,11 +53,11 @@
           </div>
           <div class="skill-meta">
             <span class="skill-category">{{ skillCategory(skill) }}</span>
-            <span class="skill-years" *ngIf="skill.years_experience">{{ skill.years_experience }}yr</span>
+            <span class="skill-years" *ngIf="skill.years_experience">{{ 'resume.resumeSkillList.yearsSuffix' | translate: { years: skill.years_experience } }}</span>
           </div>
           <div class="skill-confidence" *ngIf="skill.confidence_score != null">
             <div class="confidence-header">
-              <span class="confidence-label">AI Confidence</span>
+              <span class="confidence-label">{{ 'resume.resumeSkillList.aiConfidenceLabel' | translate }}</span>
               <span class="confidence-value">{{ (skill.confidence_score * 100) | number:'1.0-0' }}%</span>
             </div>
             <div class="confidence-track">
@@ -89,19 +89,19 @@
 
     <!-- Other Skills -->
     <div *ngIf="otherSkills.length > 0" class="skills-section">
-      <div class="skills-section-label" *ngIf="primarySkills.length > 0">Other Skills</div>
+      <div class="skills-section-label" *ngIf="primarySkills.length > 0">{{ 'resume.resumeSkillList.otherSkillsLabel' | translate }}</div>
       <div class="skill-cards">
         <div class="skill-card" *ngFor="let skill of otherSkills">
           <div class="skill-card-header">
             <div class="skill-name">{{ skillName(skill) }}</div>
             <div class="skill-actions">
-              <button class="icon-btn" (click)="openEdit(skill)" title="Edit">
+              <button class="icon-btn" (click)="openEdit(skill)" [title]="'resume.resumeSkillList.editTitle' | translate">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                   <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                 </svg>
               </button>
-              <button class="icon-btn danger" (click)="delete(skill)" title="Remove">
+              <button class="icon-btn danger" (click)="delete(skill)" [title]="'resume.resumeSkillList.removeTitle' | translate">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
                 </svg>
@@ -110,11 +110,11 @@
           </div>
           <div class="skill-meta">
             <span class="skill-category">{{ skillCategory(skill) }}</span>
-            <span class="skill-years" *ngIf="skill.years_experience">{{ skill.years_experience }}yr</span>
+            <span class="skill-years" *ngIf="skill.years_experience">{{ 'resume.resumeSkillList.yearsSuffix' | translate: { years: skill.years_experience } }}</span>
           </div>
           <div class="skill-confidence" *ngIf="skill.confidence_score != null">
             <div class="confidence-header">
-              <span class="confidence-label">AI Confidence</span>
+              <span class="confidence-label">{{ 'resume.resumeSkillList.aiConfidenceLabel' | translate }}</span>
               <span class="confidence-value">{{ (skill.confidence_score * 100) | number:'1.0-0' }}%</span>
             </div>
             <div class="confidence-track">

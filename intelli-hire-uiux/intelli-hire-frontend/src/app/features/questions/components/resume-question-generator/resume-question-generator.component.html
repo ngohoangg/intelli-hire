@@ -3,31 +3,30 @@
     <div class="hero-copy">
       <div class="hero-kicker">
         <span class="ai-dot"></span>
-        <span>Resume-driven interview prep</span>
+        <span>{{ 'questions.resumeGenerator.heroKicker' | translate }}</span>
       </div>
-      <h2>Generate a question pack from this resume</h2>
+      <h2>{{ 'questions.resumeGenerator.heroTitle' | translate }}</h2>
       <p>
-        Pull candidate context from the resume profile, refine the focus areas, then let Question Service
-        produce a tailored set for practice or interviewer preparation.
+        {{ 'questions.resumeGenerator.heroDescription' | translate }}
       </p>
     </div>
 
     <div class="hero-metrics">
       <div class="hero-metric">
-        <span class="metric-label">Resume</span>
+        <span class="metric-label">{{ 'questions.resumeGenerator.resumeLabel' | translate }}</span>
         <strong>{{ resumeId }}</strong>
       </div>
       <div class="hero-metric">
-        <span class="metric-label">Suggested focus</span>
+        <span class="metric-label">{{ 'questions.resumeGenerator.suggestedFocusLabel' | translate }}</span>
         <strong>{{ suggestedFocusAreas.length || 0 }}</strong>
       </div>
       <div class="hero-metric" *ngIf="profile?.seniority">
-        <span class="metric-label">Seniority</span>
+        <span class="metric-label">{{ 'questions.resumeGenerator.seniorityLabel' | translate }}</span>
         <strong>{{ profile?.seniority }}</strong>
       </div>
       <div class="hero-metric" *ngIf="profile?.years_estimated != null">
-        <span class="metric-label">Experience</span>
-        <strong>{{ profile?.years_estimated }} yrs</strong>
+        <span class="metric-label">{{ 'questions.resumeGenerator.experienceLabel' | translate }}</span>
+        <strong>{{ profile?.years_estimated }} {{ 'questions.resumeGenerator.yearsSuffix' | translate }}</strong>
       </div>
     </div>
   </section>
@@ -40,42 +39,42 @@
             <path d="M12 3v18"></path>
             <path d="M3 12h18"></path>
           </svg>
-          <h3>Generator Controls</h3>
+          <h3>{{ 'questions.resumeGenerator.generatorControlsTitle' | translate }}</h3>
         </div>
-        <button class="btn-ghost" type="button" (click)="resetForm()">Reset</button>
+        <button class="btn-ghost" type="button" (click)="resetForm()">{{ 'questions.actions.reset' | translate }}</button>
       </div>
 
       <div class="field-grid">
         <mat-form-field appearance="outline">
-          <mat-label>Question Count</mat-label>
+          <mat-label>{{ 'questions.resumeGenerator.questionCountLabel' | translate }}</mat-label>
           <input matInput type="number" formControlName="count" />
-          <mat-hint>1 to 20 questions</mat-hint>
+          <mat-hint>{{ 'questions.resumeGenerator.questionCountHint' | translate }}</mat-hint>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Question Type</mat-label>
+          <mat-label>{{ 'questions.fields.questionType' | translate }}</mat-label>
           <mat-select formControlName="question_type">
-            <mat-option value="">Adaptive mix</mat-option>
-            <mat-option *ngFor="let type of questionTypes" [value]="type">{{ formatType(type) }}</mat-option>
+            <mat-option value="">{{ 'questions.options.adaptiveMix' | translate }}</mat-option>
+            <mat-option *ngFor="let type of questionTypes" [value]="type">{{ formatType(type) | translate }}</mat-option>
           </mat-select>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Difficulty</mat-label>
+          <mat-label>{{ 'questions.fields.difficulty' | translate }}</mat-label>
           <mat-select formControlName="difficulty_name" [disabled]="loadingDifficulties">
-            <mat-option value="">Let the service adapt</mat-option>
+            <mat-option value="">{{ 'questions.options.letServiceAdapt' | translate }}</mat-option>
             <mat-option *ngFor="let difficulty of difficulties" [value]="difficulty.name">
               {{ difficulty.name }}
             </mat-option>
           </mat-select>
-          <mat-hint>Optional explicit target difficulty</mat-hint>
+          <mat-hint>{{ 'questions.resumeGenerator.difficultyHint' | translate }}</mat-hint>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Language</mat-label>
+          <mat-label>{{ 'questions.fields.language' | translate }}</mat-label>
           <mat-select formControlName="language">
             <mat-option *ngFor="let language of languageOptions" [value]="language.value">
-              {{ language.label }}
+              {{ language.label | translate }}
             </mat-option>
           </mat-select>
         </mat-form-field>
@@ -84,10 +83,10 @@
       <div class="suggestion-block" *ngIf="suggestedFocusAreas.length">
         <div class="block-head">
           <div>
-            <p class="block-label">Suggested Focus Areas</p>
-            <p class="block-copy">Pulled from the current resume skill profile.</p>
+            <p class="block-label">{{ 'questions.resumeGenerator.suggestedFocusAreasLabel' | translate }}</p>
+            <p class="block-copy">{{ 'questions.resumeGenerator.suggestedFocusAreasBody' | translate }}</p>
           </div>
-          <button class="text-action" type="button" (click)="applySuggestedFocusAreas()">Use All</button>
+          <button class="text-action" type="button" (click)="applySuggestedFocusAreas()">{{ 'questions.resumeGenerator.useAllButton' | translate }}</button>
         </div>
 
         <div class="chip-list">
@@ -103,19 +102,19 @@
       </div>
 
       <mat-form-field appearance="outline" class="full-span">
-        <mat-label>Focus Areas</mat-label>
+        <mat-label>{{ 'questions.resumeGenerator.focusAreasLabel' | translate }}</mat-label>
         <textarea
           matInput
           rows="6"
           formControlName="focus_areas"
-          placeholder="One focus area per line. Example: Spring Boot&#10;REST APIs&#10;Microservices">
+          [placeholder]="'questions.resumeGenerator.focusAreasPlaceholder' | translate">
         </textarea>
-        <mat-hint>Leave empty to let the backend derive all focus areas from the resume.</mat-hint>
+        <mat-hint>{{ 'questions.resumeGenerator.focusAreasHint' | translate }}</mat-hint>
       </mat-form-field>
 
       <div class="action-row">
         <button class="btn-primary" type="button" (click)="generate()" [disabled]="loading">
-          {{ loading ? 'Generating…' : 'Generate Question Pack' }}
+          {{ (loading ? 'questions.resumeGenerator.generatingButton' : 'questions.resumeGenerator.generateButton') | translate }}
         </button>
       </div>
 
@@ -129,13 +128,13 @@
             <path d="M5 12h14"></path>
             <path d="M12 5v14"></path>
           </svg>
-          <h3>Generated Output</h3>
+          <h3>{{ 'questions.resumeGenerator.generatedOutputTitle' | translate }}</h3>
         </div>
         <span class="count-badge" *ngIf="generatedCount">{{ generatedCount }}</span>
       </div>
 
       <p class="result-caption">
-        Question pack stays in the same visual lane as the resume profile so reviewers can scan quickly without a hard white break.
+        {{ 'questions.resumeGenerator.resultCaption' | translate }}
       </p>
 
       <div class="loading-state" *ngIf="loading">
@@ -145,10 +144,10 @@
 
       <ng-container *ngIf="!loading && result; else emptyState">
         <div class="summary-panel" *ngIf="result.candidate_summary">
-          <p class="summary-label">Candidate Summary</p>
+          <p class="summary-label">{{ 'questions.resumeGenerator.candidateSummaryLabel' | translate }}</p>
           <p class="summary-text">{{ result.candidate_summary }}</p>
           <p class="summary-meta" *ngIf="result.generated_at">
-            Generated {{ formatGeneratedAt(result.generated_at) }}
+            {{ 'questions.resumeGenerator.generatedAtLabel' | translate: { date: formatGeneratedAt(result.generated_at) } }}
           </p>
         </div>
 
@@ -159,7 +158,7 @@
             [ngClass]="'type-' + (question.question_type || 'technical').toLowerCase()">
             <div class="question-meta">
               <span class="question-index">Q{{ index + 1 }}</span>
-              <span class="chip chip-accent">{{ formatType(question.question_type) }}</span>
+              <span class="chip chip-accent">{{ formatType(question.question_type) | translate }}</span>
               <span class="chip" *ngIf="question.topic_name">{{ question.topic_name }}</span>
               <span class="chip" *ngIf="question.difficulty_name">{{ question.difficulty_name }}</span>
             </div>
@@ -168,7 +167,7 @@
               <h4>{{ question.question_text }}</h4>
 
               <div class="question-rationale-block" *ngIf="question.rationale">
-                <span class="rationale-label">Why this appears</span>
+                <span class="rationale-label">{{ 'questions.resumeGenerator.rationaleLabel' | translate }}</span>
                 <p class="question-rationale">
                   {{ question.rationale }}
                 </p>
@@ -180,9 +179,9 @@
 
       <ng-template #emptyState>
         <div class="empty-panel">
-          <h4>No generated set yet</h4>
+          <h4>{{ 'questions.resumeGenerator.emptyTitle' | translate }}</h4>
           <p>
-            Configure the generator on the left and create a resume-tailored question pack here.
+            {{ 'questions.resumeGenerator.emptyBody' | translate }}
           </p>
         </div>
       </ng-template>

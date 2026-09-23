@@ -1,10 +1,11 @@
 <div class="auth-page">
-  <h1>Authenticating...</h1>
+  <h1>{{ 'auth.oauthCallback.title' | translate }}</h1>
 
-  <div class="status-block" *ngIf="!error">
+  <div class="status-block" *ngIf="!error && !errorKey">
     <div class="spinner"></div>
-    <p>Completing OAuth sign-in...</p>
+    <p>{{ 'auth.oauthCallback.completing' | translate }}</p>
   </div>
 
   <div class="error-banner" *ngIf="error">{{ error }}</div>
+  <div class="error-banner" *ngIf="errorKey">{{ errorKey | translate }}</div>
 </div>

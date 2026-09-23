@@ -10,6 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import {
@@ -45,13 +46,15 @@ import {
     MatPaginatorModule,
     MatSelectModule,
     MatTableModule,
-    LoadingSpinnerComponent
+    LoadingSpinnerComponent,
+    TranslatePipe
   ],
   templateUrl: './question-list.component.html',
   styleUrl: './question-list.component.scss'
 })
 export class QuestionListComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
+  private readonly translate = inject(TranslateService);
 
   readonly displayedColumns = [
     'question_text',
@@ -106,7 +109,7 @@ export class QuestionListComponent implements OnInit {
   }
 
   formatDate(value: string): string {
-    return formatDateTime(value);
+    return formatDateTime(value, this.translate.instant('questions.placeholders.notAvailable'));
   }
 
   formatType(value: string | QuestionType | null | undefined): string {
@@ -116,7 +119,7 @@ export class QuestionListComponent implements OnInit {
   getTagPreview(question: QuestionResponse): string {
     return question.tags.length
       ? question.tags.map(tag => tag.name).join(', ')
-      : 'No tags';
+      : this.translate.instant('questions.placeholders.noTags');
   }
 
   getStatusClass(question: QuestionResponse): string {
@@ -161,8 +164,8 @@ export class QuestionListComponent implements OnInit {
 
     this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Archive question',
-        message: 'This action performs a soft delete in Question Service and removes the question from the active pool.'
+        title: this.translate.instant('questions.questionList.archiveDialog.title'),
+        message: this.translate.instant('questions.questionList.archiveDialog.message')
       }
     }).afterClosed().subscribe(confirmed => {
       if (!confirmed) {

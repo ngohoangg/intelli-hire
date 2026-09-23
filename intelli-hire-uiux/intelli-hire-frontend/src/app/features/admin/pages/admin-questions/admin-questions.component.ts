@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { EMPTY, Subscription, interval } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AdminQuestionService, AdminQuestionSearchParams } from '../../../../core/services/admin-question.service';
 import { QuestionModerationStatus, QuestionResponse, QuestionType } from '../../../../core/models/question.model';
 import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
@@ -15,7 +16,7 @@ const POLL_INTERVAL_MS = 10_000;
 @Component({
   selector: 'app-admin-questions',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatDialogModule, LoadingSpinnerComponent],
+  imports: [CommonModule, FormsModule, MatDialogModule, LoadingSpinnerComponent, TranslatePipe],
   templateUrl: './admin-questions.component.html',
   styleUrl: './admin-questions.component.scss'
 })
@@ -36,24 +37,25 @@ export class AdminQuestionsComponent implements OnInit, OnDestroy {
   private pollSub: Subscription | null = null;
 
   readonly statusTabs: Array<{ label: string; value: QuestionModerationStatus | '' }> = [
-    { label: 'All', value: '' },
-    { label: 'Pending', value: 'PENDING' },
-    { label: 'Approved', value: 'APPROVED' },
-    { label: 'Rejected', value: 'REJECTED' },
-    { label: 'Archived', value: 'ARCHIVED' }
+    { label: 'admin.adminQuestions.tabAll', value: '' },
+    { label: 'admin.adminQuestions.tabPending', value: 'PENDING' },
+    { label: 'admin.adminQuestions.tabApproved', value: 'APPROVED' },
+    { label: 'admin.adminQuestions.tabRejected', value: 'REJECTED' },
+    { label: 'admin.adminQuestions.tabArchived', value: 'ARCHIVED' }
   ];
 
   readonly questionTypeOptions: Array<{ label: string; value: QuestionType | '' }> = [
-    { label: 'All Types', value: '' },
-    { label: 'Technical', value: QuestionType.TECHNICAL },
-    { label: 'Coding', value: QuestionType.CODING },
-    { label: 'Behavioral', value: QuestionType.BEHAVIORAL }
+    { label: 'admin.adminQuestions.typeAllOption', value: '' },
+    { label: 'admin.adminQuestions.type.technical', value: QuestionType.TECHNICAL },
+    { label: 'admin.adminQuestions.type.coding', value: QuestionType.CODING },
+    { label: 'admin.adminQuestions.type.behavioral', value: QuestionType.BEHAVIORAL }
   ];
 
   constructor(
     private adminQuestionService: AdminQuestionService,
     private dialog: MatDialog,
-    private router: Router
+    private router: Router,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -105,7 +107,7 @@ export class AdminQuestionsComponent implements OnInit, OnDestroy {
         this.replaceInList(updated);
         this.adminQuestionService.refreshPendingCount();
       },
-      error: err => { this.actionError = err?.error?.message ?? 'Action failed. Please try again.'; }
+      error: err => { this.actionError = err?.error?.message ?? this.translate.instant('admin.adminQuestions.actionFailed'); }
     });
   }
 
@@ -120,7 +122,7 @@ export class AdminQuestionsComponent implements OnInit, OnDestroy {
           this.replaceInList(updated);
           this.adminQuestionService.refreshPendingCount();
         },
-        error: err => { this.actionError = err?.error?.message ?? 'Rejection failed. Please try again.'; }
+        error: err => { this.actionError = err?.error?.message ?? this.translate.instant('admin.adminQuestions.rejectionFailed'); }
       });
     });
   }
@@ -132,7 +134,7 @@ export class AdminQuestionsComponent implements OnInit, OnDestroy {
         this.replaceInList(updated);
         this.adminQuestionService.refreshPendingCount();
       },
-      error: err => { this.actionError = err?.error?.message ?? 'Action failed. Please try again.'; }
+      error: err => { this.actionError = err?.error?.message ?? this.translate.instant('admin.adminQuestions.actionFailed'); }
     });
   }
 
@@ -143,7 +145,7 @@ export class AdminQuestionsComponent implements OnInit, OnDestroy {
         this.replaceInList(updated);
         this.adminQuestionService.refreshPendingCount();
       },
-      error: err => { this.actionError = err?.error?.message ?? 'Action failed. Please try again.'; }
+      error: err => { this.actionError = err?.error?.message ?? this.translate.instant('admin.adminQuestions.actionFailed'); }
     });
   }
 
@@ -153,6 +155,14 @@ export class AdminQuestionsComponent implements OnInit, OnDestroy {
 
   getStatusClass(status: QuestionModerationStatus): string {
     return status.toLowerCase();
+  }
+
+  statusLabelKey(status: QuestionModerationStatus): string {
+    return 'admin.adminQuestions.status.' + status.toLowerCase();
+  }
+
+  typeLabelKey(type: QuestionType): string {
+    return 'admin.adminQuestions.type.' + type.toLowerCase();
   }
 
   truncate(text: string, max = 80): string {

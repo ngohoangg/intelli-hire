@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Subscription, interval } from 'rxjs';
 import { switchMap, takeWhile } from 'rxjs/operators';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ResumeService } from '../../services/resume.service';
 import { Resume, ResumeStatus } from '../../../../core/models/resume.model';
 import { ResumeSkillProfileService } from '../../../skill-profile/services/resume-skill-profile.service';
@@ -42,7 +43,8 @@ import { CvReviewComponent } from '../../components/cv-review/cv-review.componen
     EducationListComponent,
     ResumeSkillListComponent,
     SkillProfileCardComponent,
-    CvReviewComponent
+    CvReviewComponent,
+    TranslatePipe
   ],
   templateUrl: './resume-detail.component.html',
   styleUrl: './resume-detail.component.scss'
@@ -65,7 +67,8 @@ export class ResumeDetailComponent implements OnInit, OnDestroy {
     public router: Router,
     private resumeService: ResumeService,
     private skillProfileService: ResumeSkillProfileService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -160,8 +163,8 @@ export class ResumeDetailComponent implements OnInit, OnDestroy {
     if (!this.resume) return;
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Delete Resume',
-        message: `Delete "${this.resume.title}"? This action cannot be undone.`
+        title: this.translate.instant('resume.resumeDetail.deleteDialogTitle'),
+        message: this.translate.instant('resume.resumeDetail.deleteDialogMessage', { title: this.resume.title })
       }
     });
     dialogRef.afterClosed().subscribe(confirmed => {
@@ -174,7 +177,7 @@ export class ResumeDetailComponent implements OnInit, OnDestroy {
   }
 
   formatDate(date: string): string {
-    return new Date(date).toLocaleDateString('en-US', {
+    return new Date(date).toLocaleDateString('vi-VN', {
       year: 'numeric', month: 'long', day: 'numeric',
       hour: '2-digit', minute: '2-digit'
     });

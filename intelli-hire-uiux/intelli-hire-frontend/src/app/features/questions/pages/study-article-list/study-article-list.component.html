@@ -3,48 +3,48 @@
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <polyline points="15 18 9 12 15 6"></polyline>
     </svg>
-    Back
+    {{ 'questions.actions.back' | translate }}
   </button>
 
   <div class="page-header">
     <div class="page-title-group">
       <div class="page-title">
         <span class="ai-dot"></span>
-        <h1>Study Articles</h1>
+        <h1>{{ 'questions.studyArticleList.title' | translate }}</h1>
         <span class="count-badge">{{ filteredArticles.length }}</span>
       </div>
       <p class="page-subtitle">
-        Curate learning resources by topic and difficulty so setup previews and post-session recommendations stay coherent.
+        {{ 'questions.studyArticleList.subtitle' | translate }}
       </p>
     </div>
 
     <div class="header-actions">
-      <button class="btn-ghost" type="button" (click)="startCreate()">New Article</button>
+      <button class="btn-ghost" type="button" (click)="startCreate()">{{ 'questions.studyArticleList.newArticleButton' | translate }}</button>
     </div>
   </div>
 
   <div class="metric-grid">
     <article class="card metric-card">
-      <p class="metric-label">Loaded Resources</p>
+      <p class="metric-label">{{ 'questions.studyArticleList.loadedResourcesLabel' | translate }}</p>
       <h2 class="metric-value">{{ articles.length }}</h2>
-      <p class="metric-detail">Articles matching the current topic and difficulty query.</p>
+      <p class="metric-detail">{{ 'questions.studyArticleList.loadedResourcesDetail' | translate }}</p>
     </article>
     <article class="card metric-card">
-      <p class="metric-label">Active</p>
+      <p class="metric-label">{{ 'questions.activeState.active' | translate }}</p>
       <h2 class="metric-value">{{ activeCount }}</h2>
-      <p class="metric-detail">Currently enabled resources available for recommendation flows.</p>
+      <p class="metric-detail">{{ 'questions.studyArticleList.activeDetail' | translate }}</p>
     </article>
     <article class="card metric-card">
-      <p class="metric-label">Sources</p>
+      <p class="metric-label">{{ 'questions.studyArticleList.sourcesLabel' | translate }}</p>
       <h2 class="metric-value">{{ uniqueSources }}</h2>
-      <p class="metric-detail">Distinct article sources represented in the loaded library slice.</p>
+      <p class="metric-detail">{{ 'questions.studyArticleList.sourcesDetail' | translate }}</p>
     </article>
   </div>
 
   <div class="layout-grid">
     <aside class="filter-panel">
       <div class="field-group">
-        <label class="field-label" for="study-filter-topic">Topic</label>
+        <label class="field-label" for="study-filter-topic">{{ 'questions.fields.topic' | translate }}</label>
         <div class="input-wrap">
           <span class="field-icon">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -54,14 +54,14 @@
             </svg>
           </span>
           <mat-select id="study-filter-topic" class="field-input field-select" [formControl]="filterForm.controls.topicId" panelClass="study-select-panel">
-            <mat-option value="">All topics</mat-option>
+            <mat-option value="">{{ 'questions.options.allTopics' | translate }}</mat-option>
             <mat-option *ngFor="let topic of topicOptions" [value]="topic.id">{{ topic.label }}</mat-option>
           </mat-select>
         </div>
       </div>
 
       <div class="field-group">
-        <label class="field-label" for="study-filter-difficulty">Difficulty</label>
+        <label class="field-label" for="study-filter-difficulty">{{ 'questions.fields.difficulty' | translate }}</label>
         <div class="input-wrap">
           <span class="field-icon">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -71,14 +71,14 @@
             </svg>
           </span>
           <mat-select id="study-filter-difficulty" class="field-input field-select" [formControl]="filterForm.controls.difficultyId" panelClass="study-select-panel">
-            <mat-option value="">All levels</mat-option>
+            <mat-option value="">{{ 'questions.options.allLevels' | translate }}</mat-option>
             <mat-option *ngFor="let difficulty of difficulties" [value]="difficulty.id">{{ difficulty.name }}</mat-option>
           </mat-select>
         </div>
       </div>
 
       <div class="field-group">
-        <label class="field-label" for="study-filter-active">Active State</label>
+        <label class="field-label" for="study-filter-active">{{ 'questions.studyArticleList.activeStateLabel' | translate }}</label>
         <div class="input-wrap">
           <span class="field-icon">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -87,16 +87,16 @@
             </svg>
           </span>
           <mat-select id="study-filter-active" class="field-input field-select" [formControl]="filterForm.controls.activeState" panelClass="study-select-panel">
-            <mat-option value="ALL">All</mat-option>
-            <mat-option value="ACTIVE">Active</mat-option>
-            <mat-option value="INACTIVE">Inactive</mat-option>
+            <mat-option value="ALL">{{ 'questions.options.all' | translate }}</mat-option>
+            <mat-option value="ACTIVE">{{ 'questions.activeState.active' | translate }}</mat-option>
+            <mat-option value="INACTIVE">{{ 'questions.activeState.inactive' | translate }}</mat-option>
           </mat-select>
         </div>
       </div>
 
       <div class="editor-actions">
-        <button class="btn-ghost" type="button" (click)="resetFilters()">Reset</button>
-        <button class="btn-primary" type="button" (click)="applyFilters()">Apply</button>
+        <button class="btn-ghost" type="button" (click)="resetFilters()">{{ 'questions.actions.reset' | translate }}</button>
+        <button class="btn-primary" type="button" (click)="applyFilters()">{{ 'questions.actions.apply' | translate }}</button>
       </div>
     </aside>
 
@@ -108,7 +108,7 @@
               <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
               <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
             </svg>
-            <h2 class="section-title">Article Library</h2>
+            <h2 class="section-title">{{ 'questions.studyArticleList.articleLibraryTitle' | translate }}</h2>
           </div>
         </div>
 
@@ -117,24 +117,24 @@
             <div class="article-top">
               <span class="status-badge" [class.active]="article.is_active" [class.inactive]="!article.is_active">
                 <span class="dot" *ngIf="article.is_active"></span>
-                {{ article.is_active ? 'Active' : 'Inactive' }}
+                {{ (article.is_active ? 'questions.activeState.active' : 'questions.activeState.inactive') | translate }}
               </span>
-              <span class="table-secondary">{{ article.source || 'Unknown source' }}</span>
+              <span class="table-secondary">{{ article.source || ('questions.placeholders.unknownSource' | translate) }}</span>
             </div>
             <h3>{{ article.title }}</h3>
             <p class="article-taxonomy">{{ article.topic_name }} • {{ article.difficulty_name }}</p>
-            <p class="article-description">{{ article.description || 'No description provided.' }}</p>
+            <p class="article-description">{{ article.description || ('questions.placeholders.noDescriptionProvided' | translate) }}</p>
             <div class="article-actions">
-              <a class="text-action" [href]="article.url" target="_blank" rel="noreferrer">Open Article</a>
-              <button class="text-action danger" type="button" (click)="deleteArticle(article, $event)">Delete</button>
+              <a class="text-action" [href]="article.url" target="_blank" rel="noreferrer">{{ 'questions.actions.openArticle' | translate }}</a>
+              <button class="text-action danger" type="button" (click)="deleteArticle(article, $event)">{{ 'questions.actions.delete' | translate }}</button>
             </div>
           </article>
         </div>
 
         <ng-template #emptyState>
           <div class="empty-panel compact">
-            <h3>No study articles found</h3>
-            <p>Try widening the taxonomy filters or create a new resource in the editor panel.</p>
+            <h3>{{ 'questions.studyArticleList.emptyTitle' | translate }}</h3>
+            <p>{{ 'questions.studyArticleList.emptyBody' | translate }}</p>
           </div>
         </ng-template>
       </section>
@@ -148,13 +148,13 @@
               <path d="M4 9h16"></path>
               <path d="M4 15h16"></path>
             </svg>
-            <h2 class="section-title">{{ selectedArticle ? 'Edit Article' : 'Create Article' }}</h2>
+            <h2 class="section-title">{{ (selectedArticle ? 'questions.studyArticleList.editHeaderEdit' : 'questions.studyArticleList.editHeaderCreate') | translate }}</h2>
           </div>
         </div>
 
         <form [formGroup]="editorForm" class="stack-list">
           <div class="field-group">
-            <label class="field-label" for="study-editor-topic">Topic</label>
+            <label class="field-label" for="study-editor-topic">{{ 'questions.fields.topic' | translate }}</label>
             <div class="input-wrap">
               <span class="field-icon">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -164,14 +164,14 @@
                 </svg>
               </span>
               <mat-select id="study-editor-topic" class="field-input field-select" formControlName="topic_id" panelClass="study-select-panel">
-                <mat-option value="">Select topic</mat-option>
+                <mat-option value="">{{ 'questions.options.selectTopic' | translate }}</mat-option>
                 <mat-option *ngFor="let topic of topicOptions" [value]="topic.id">{{ topic.label }}</mat-option>
               </mat-select>
             </div>
           </div>
 
           <div class="field-group">
-            <label class="field-label" for="study-editor-difficulty">Difficulty</label>
+            <label class="field-label" for="study-editor-difficulty">{{ 'questions.fields.difficulty' | translate }}</label>
             <div class="input-wrap">
               <span class="field-icon">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -181,14 +181,14 @@
                 </svg>
               </span>
               <mat-select id="study-editor-difficulty" class="field-input field-select" formControlName="difficulty_id" panelClass="study-select-panel">
-                <mat-option value="">Select difficulty</mat-option>
+                <mat-option value="">{{ 'questions.options.selectDifficulty' | translate }}</mat-option>
                 <mat-option *ngFor="let difficulty of difficulties" [value]="difficulty.id">{{ difficulty.name }}</mat-option>
               </mat-select>
             </div>
           </div>
 
           <div class="field-group">
-            <label class="field-label" for="study-editor-title">Title</label>
+            <label class="field-label" for="study-editor-title">{{ 'questions.fields.title' | translate }}</label>
             <div class="input-wrap">
               <span class="field-icon">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -202,7 +202,7 @@
           </div>
 
           <div class="field-group">
-            <label class="field-label" for="study-editor-url">URL</label>
+            <label class="field-label" for="study-editor-url">{{ 'questions.fields.url' | translate }}</label>
             <div class="input-wrap">
               <span class="field-icon">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -215,7 +215,7 @@
           </div>
 
           <div class="field-group">
-            <label class="field-label" for="study-editor-source">Source</label>
+            <label class="field-label" for="study-editor-source">{{ 'questions.fields.source' | translate }}</label>
             <div class="input-wrap">
               <span class="field-icon">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -231,7 +231,7 @@
           </div>
 
           <div class="field-group">
-            <label class="field-label" for="study-editor-description">Description</label>
+            <label class="field-label" for="study-editor-description">{{ 'questions.fields.description' | translate }}</label>
             <div class="input-wrap textarea-wrap">
               <span class="field-icon field-icon--top">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -242,12 +242,12 @@
             </div>
           </div>
 
-          <mat-checkbox formControlName="is_active">Active recommendation resource</mat-checkbox>
+          <mat-checkbox formControlName="is_active">{{ 'questions.studyArticleList.activeRecommendationLabel' | translate }}</mat-checkbox>
 
           <div class="editor-actions">
-            <button class="btn-ghost" type="button" (click)="startCreate()">Reset</button>
+            <button class="btn-ghost" type="button" (click)="startCreate()">{{ 'questions.actions.reset' | translate }}</button>
             <button class="btn-primary" type="button" (click)="submit()">
-              {{ selectedArticle ? 'Save Article' : 'Create Article' }}
+              {{ (selectedArticle ? 'questions.studyArticleList.submitEdit' : 'questions.studyArticleList.submitCreate') | translate }}
             </button>
           </div>
         </form>

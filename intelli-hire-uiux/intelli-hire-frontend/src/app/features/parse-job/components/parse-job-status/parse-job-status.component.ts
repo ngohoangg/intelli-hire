@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angu
 import { CommonModule } from '@angular/common';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
+import { TranslatePipe } from '@ngx-translate/core';
 import { interval, Subscription } from 'rxjs';
 import { switchMap, takeWhile } from 'rxjs/operators';
 import { ParseJob, JobStatus } from '../../../../core/models/parse-job.model';
@@ -10,7 +11,7 @@ import { ParseJobService } from '../../services/parse-job.service';
 @Component({
   selector: 'app-parse-job-status',
   standalone: true,
-  imports: [CommonModule, MatProgressBarModule, MatButtonModule],
+  imports: [CommonModule, MatProgressBarModule, MatButtonModule, TranslatePipe],
   templateUrl: './parse-job-status.component.html',
   styleUrl: './parse-job-status.component.scss'
 })
@@ -88,11 +89,11 @@ export class ParseJobStatusComponent implements OnInit, OnDestroy {
   get statusLabel(): string {
     if (!this.job) return '';
     const map: Record<JobStatus, string> = {
-      [JobStatus.QUEUED]:    '⏳ Queued',
-      [JobStatus.RUNNING]:   '⚡ Processing',
-      [JobStatus.SUCCEEDED]: '✓ Completed',
-      [JobStatus.FAILED]:    '✗ Failed',
-      [JobStatus.CANCELED]: '⊗ Cancelled'
+      [JobStatus.QUEUED]:    'resume.parseJobStatus.statusQueued',
+      [JobStatus.RUNNING]:   'resume.parseJobStatus.statusRunning',
+      [JobStatus.SUCCEEDED]: 'resume.parseJobStatus.statusSucceeded',
+      [JobStatus.FAILED]:    'resume.parseJobStatus.statusFailed',
+      [JobStatus.CANCELED]: 'resume.parseJobStatus.statusCanceled'
     };
     return map[this.job.status] ?? this.job.status;
   }

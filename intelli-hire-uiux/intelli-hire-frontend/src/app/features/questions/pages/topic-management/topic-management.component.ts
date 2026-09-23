@@ -8,6 +8,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { TopicResponse } from '../../../../core/models/question.model';
@@ -31,13 +32,15 @@ interface TopicListItem extends TopicResponse {
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    LoadingSpinnerComponent
+    LoadingSpinnerComponent,
+    TranslatePipe
   ],
   templateUrl: './topic-management.component.html',
   styleUrl: './topic-management.component.scss'
 })
 export class TopicManagementComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
+  private readonly translate = inject(TranslateService);
 
   loading = false;
   saving = false;
@@ -74,7 +77,7 @@ export class TopicManagementComponent implements OnInit {
   }
 
   formatDate(value: string): string {
-    return formatDateTime(value);
+    return formatDateTime(value, this.translate.instant('questions.placeholders.notAvailable'));
   }
 
   isSelected(topic: TopicListItem): boolean {
@@ -139,8 +142,8 @@ export class TopicManagementComponent implements OnInit {
 
     this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Delete topic',
-        message: 'Deleting a topic can affect question taxonomy and related study articles. Continue only if the topic is no longer in use.'
+        title: this.translate.instant('questions.topicManagement.deleteDialog.title'),
+        message: this.translate.instant('questions.topicManagement.deleteDialog.message')
       }
     }).afterClosed().subscribe(confirmed => {
       if (!confirmed) {

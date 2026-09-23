@@ -20,7 +20,7 @@
             <line x1="16" y1="17" x2="8" y2="17"/>
             <polyline points="10,9 9,9 8,9"/>
           </svg>
-          <span>Resumes</span>
+          <span>{{ 'common.mainLayout.nav.resumes' | translate }}</span>
         </a>
 
         <a class="nav-item" routerLink="/questions" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
@@ -29,7 +29,7 @@
             <path d="M12 17h.01"/>
             <path d="M4 4h16v16H4z"/>
           </svg>
-          <span>Questions</span>
+          <span>{{ 'common.mainLayout.nav.questions' | translate }}</span>
         </a>
         <a class="nav-item nav-sub-item" routerLink="/questions/submitted" routerLinkActive="active">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
@@ -38,7 +38,7 @@
             <line x1="12" y1="13" x2="8" y2="13"/>
             <line x1="12" y1="17" x2="8" y2="17"/>
           </svg>
-          <span>Submitted Questions</span>
+          <span>{{ 'common.mainLayout.nav.submittedQuestions' | translate }}</span>
         </a>
 
         <a class="nav-item" routerLink="/interviews" routerLinkActive="active">
@@ -47,7 +47,7 @@
             <line x1="9" y1="9" x2="15" y2="9"/>
             <line x1="9" y1="13" x2="13" y2="13"/>
           </svg>
-          <span>Interviews</span>
+          <span>{{ 'common.mainLayout.nav.interviews' | translate }}</span>
         </a>
 
         <a class="nav-item" routerLink="/reports" routerLinkActive="active">
@@ -57,12 +57,12 @@
             <path d="M15 19V5"/>
             <rect x="3" y="3" width="18" height="18" rx="2"/>
           </svg>
-          <span>Reports</span>
+          <span>{{ 'common.mainLayout.nav.reports' | translate }}</span>
         </a>
       </ng-container>
 
       <ng-container *ngIf="auth.isAdmin">
-        <div class="nav-section-label">Admin</div>
+        <div class="nav-section-label">{{ 'common.mainLayout.nav.adminSectionLabel' | translate }}</div>
         <a class="nav-item" routerLink="/admin/accounts" routerLinkActive="active">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
@@ -70,14 +70,14 @@
             <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
             <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
           </svg>
-          <span>Accounts</span>
+          <span>{{ 'common.mainLayout.nav.accounts' | translate }}</span>
         </a>
         <a class="nav-item" routerLink="/admin/questions" routerLinkActive="active">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
             <rect x="3" y="3" width="18" height="18" rx="2"/>
             <path d="M9 9h6M9 13h4"/>
           </svg>
-          <span>Questions</span>
+          <span>{{ 'common.mainLayout.nav.adminQuestions' | translate }}</span>
           <span class="pending-badge" *ngIf="pendingCount > 0">{{ pendingCount }}</span>
         </a>
       </ng-container>
@@ -95,13 +95,13 @@
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                 <circle cx="12" cy="7" r="4"/>
               </svg>
-              <span>Profile</span>
+              <span>{{ 'common.mainLayout.userMenu.profile' | translate }}</span>
             </a>
             <a class="user-menu-item" routerLink="/account/security" (click)="closeMenu()">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
               </svg>
-              <span>Security</span>
+              <span>{{ 'common.mainLayout.userMenu.security' | translate }}</span>
             </a>
             <div class="user-menu-divider"></div>
             <button class="user-menu-item danger" (click)="logout()">
@@ -110,7 +110,7 @@
                 <polyline points="16,17 21,12 16,7"/>
                 <line x1="21" y1="12" x2="9" y2="12"/>
               </svg>
-              <span>Logout</span>
+              <span>{{ 'common.mainLayout.userMenu.logout' | translate }}</span>
             </button>
           </div>
         }
@@ -119,7 +119,7 @@
         <div class="user-chip" (click)="toggleMenu($event)" [class.open]="menuOpen">
           <div class="user-avatar">{{ (auth.currentUser?.username ?? 'U')[0].toUpperCase() }}</div>
           <div class="user-info">
-            <span class="user-name">{{ auth.currentUser?.username ?? 'User' }}</span>
+            <span class="user-name">{{ auth.currentUser?.username || ('common.mainLayout.defaultUsername' | translate) }}</span>
             <span class="user-role">{{ auth.currentUser?.roles?.[0] ?? 'ROLE_USER' }}</span>
           </div>
           <svg class="menu-chevron" [class.rotated]="menuOpen" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">

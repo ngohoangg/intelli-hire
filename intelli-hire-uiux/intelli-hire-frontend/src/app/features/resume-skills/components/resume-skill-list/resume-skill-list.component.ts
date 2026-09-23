@@ -4,6 +4,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { forkJoin } from 'rxjs';
 import { ResumeSkillService } from '../../services/resume-skill.service';
 import { SkillService } from '../../../skills/services/skill.service';
@@ -20,7 +21,8 @@ import { ConfirmDialogComponent } from '../../../../shared/components/confirm-di
     MatDialogModule,
     MatButtonModule,
     MatIconModule,
-    MatChipsModule
+    MatChipsModule,
+    TranslatePipe
   ],
   templateUrl: './resume-skill-list.component.html',
   styleUrl: './resume-skill-list.component.scss'
@@ -35,7 +37,8 @@ export class ResumeSkillListComponent implements OnInit {
   constructor(
     private skillService: ResumeSkillService,
     private catalogService: SkillService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -89,7 +92,10 @@ export class ResumeSkillListComponent implements OnInit {
   delete(skill: ResumeSkill): void {
     const name = this.skillName(skill);
     this.dialog.open(ConfirmDialogComponent, {
-      data: { title: 'Remove Skill', message: `Remove "${name}" from this resume?` }
+      data: {
+        title: this.translate.instant('resume.resumeSkillList.deleteDialogTitle'),
+        message: this.translate.instant('resume.resumeSkillList.deleteDialogMessage', { name })
+      }
     }).afterClosed().subscribe(confirmed => {
       if (confirmed) {
         this.skillService.delete(this.resumeId, skill.id).subscribe(() => this.load());

@@ -2,14 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { switchMap } from 'rxjs';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AdminService } from '../../../../core/services/admin.service';
-import { AdminAccount, AccountRole, AdminRole } from '../../../../core/models/admin.model';
+import { AdminAccount, AccountRole, AdminRole, AccountStatus } from '../../../../core/models/admin.model';
 import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-account-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, LoadingSpinnerComponent],
+  imports: [CommonModule, RouterLink, LoadingSpinnerComponent, TranslatePipe],
   templateUrl: './account-detail.component.html',
   styleUrl: './account-detail.component.scss'
 })
@@ -21,7 +22,11 @@ export class AccountDetailComponent implements OnInit {
   error = '';
   success = '';
 
-  constructor(private route: ActivatedRoute, private adminService: AdminService) {}
+  constructor(
+    private route: ActivatedRoute,
+    private adminService: AdminService,
+    private translate: TranslateService
+  ) {}
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -47,16 +52,20 @@ export class AccountDetailComponent implements OnInit {
     this.adminService.assignRole(this.account.id, roleId).pipe(
       switchMap(() => this.adminService.getAccountRoles(this.account!.id))
     ).subscribe({
-      next: r => { this.roles = r; this.success = 'Role assigned.'; },
-      error: err => { this.error = err?.error?.message ?? 'Failed to assign role'; }
+      next: r => { this.roles = r; this.success = this.translate.instant('admin.accountDetail.roleAssignedSuccess'); },
+      error: err => { this.error = err?.error?.message ?? this.translate.instant('admin.accountDetail.assignRoleFailed'); }
     });
   }
 
   removeRole(roleId: number): void {
     if (!this.account) return;
     this.adminService.removeRole(this.account.id, roleId).subscribe({
-      next: () => { this.roles = this.roles.filter(r => r.role_id !== roleId); this.success = 'Role removed.'; },
-      error: err => { this.error = err?.error?.message ?? 'Failed to remove role'; }
+      next: () => { this.roles = this.roles.filter(r => r.role_id !== roleId); this.success = this.translate.instant('admin.accountDetail.roleRemovedSuccess'); },
+      error: err => { this.error = err?.error?.message ?? this.translate.instant('admin.accountDetail.removeRoleFailed'); }
     });
+  }
+
+  statusLabelKey(status: AccountStatus): string {
+    return 'admin.accounts.status.' + status.toLowerCase();
   }
 }

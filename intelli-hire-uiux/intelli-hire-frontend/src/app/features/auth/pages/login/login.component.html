@@ -1,29 +1,29 @@
 <div class="auth-page">
-  <h1>Sign In</h1>
-  <p class="subtitle">Access your IntelliHire workspace</p>
+  <h1>{{ 'auth.login.title' | translate }}</h1>
+  <p class="subtitle">{{ 'auth.login.subtitle' | translate }}</p>
 
   <div class="error-banner" *ngIf="error">{{ error }}</div>
 
   <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form">
     <div class="field-group">
-      <label class="field-label">Email or Username</label>
-      <input class="field-input" formControlName="identifier" placeholder="you@example.com" autocomplete="username" />
+      <label class="field-label">{{ 'auth.login.identifierLabel' | translate }}</label>
+      <input class="field-input" formControlName="identifier" [placeholder]="'auth.login.identifierPlaceholder' | translate" autocomplete="username" />
     </div>
 
     <div class="field-group">
-      <label class="field-label">Password</label>
-      <input class="field-input" formControlName="password" type="password" placeholder="••••••••" autocomplete="current-password" />
-      <a class="forgot-link" routerLink="/auth/forgot-password">Forgot password?</a>
+      <label class="field-label">{{ 'auth.login.passwordLabel' | translate }}</label>
+      <input class="field-input" formControlName="password" type="password" [placeholder]="'auth.login.passwordPlaceholder' | translate" autocomplete="current-password" />
+      <a class="forgot-link" routerLink="/auth/forgot-password">{{ 'auth.login.forgotPasswordLink' | translate }}</a>
     </div>
 
     <button class="btn-primary full-width" type="submit" [disabled]="loading">
-      <span *ngIf="!loading">Sign In</span>
-      <span *ngIf="loading">Authenticating...</span>
+      <span *ngIf="!loading">{{ 'auth.login.submit' | translate }}</span>
+      <span *ngIf="loading">{{ 'auth.login.submitting' | translate }}</span>
     </button>
   </form>
 
   <div class="oauth-divider" *ngIf="oauthProviders.length > 0">
-    <span>or continue with</span>
+    <span>{{ 'auth.login.oauthDivider' | translate }}</span>
   </div>
 
   <div class="oauth-buttons" *ngIf="oauthProviders.length > 0">
@@ -33,5 +33,5 @@
     </button>
   </div>
 
-  <p class="auth-link">No account? <a routerLink="/auth/register">Create one</a></p>
+  <p class="auth-link">{{ 'auth.login.noAccount' | translate }} <a routerLink="/auth/register">{{ 'auth.login.createOne' | translate }}</a></p>
 </div>

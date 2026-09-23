@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { HttpErrorResponse } from '@angular/common/http';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ResumeFileService } from '../../../file/services/resume-file.service';
 import { ResumeReviewService } from '../../services/resume-review.service';
 import { ResumeReview, SectionScore } from '../../../../core/models/resume-review.model';
@@ -11,7 +12,7 @@ type ReviewState = 'loading' | 'no-file' | 'no-review' | 'generating' | 'done' |
 @Component({
   selector: 'app-cv-review',
   standalone: true,
-  imports: [CommonModule, MatButtonModule],
+  imports: [CommonModule, MatButtonModule, TranslatePipe],
   templateUrl: './cv-review.component.html',
   styleUrl: './cv-review.component.scss'
 })
@@ -23,16 +24,17 @@ export class CvReviewComponent implements OnInit {
   errorMessage = '';
 
   readonly sectionLabels: Record<string, string> = {
-    contact: 'Contact',
-    experience: 'Experience',
-    education: 'Education',
-    skills: 'Skills',
-    presentation: 'Presentation'
+    contact: 'resume.cvReview.sections.contact',
+    experience: 'resume.cvReview.sections.experience',
+    education: 'resume.cvReview.sections.education',
+    skills: 'resume.cvReview.sections.skills',
+    presentation: 'resume.cvReview.sections.presentation'
   };
 
   constructor(
     private fileService: ResumeFileService,
-    private reviewService: ResumeReviewService
+    private reviewService: ResumeReviewService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -45,7 +47,7 @@ export class CvReviewComponent implements OnInit {
       next: () => this.loadReview(),
       error: (err: HttpErrorResponse) => {
         this.state = err.status === 404 ? 'no-file' : 'error';
-        if (err.status !== 404) this.errorMessage = 'Failed to check file status.';
+        if (err.status !== 404) this.errorMessage = this.translate.instant('resume.cvReview.loadFileError');
       }
     });
   }
@@ -55,7 +57,7 @@ export class CvReviewComponent implements OnInit {
       next: review => { this.review = review; this.state = 'done'; },
       error: (err: HttpErrorResponse) => {
         this.state = err.status === 404 ? 'no-review' : 'error';
-        if (err.status !== 404) this.errorMessage = 'Failed to load review.';
+        if (err.status !== 404) this.errorMessage = this.translate.instant('resume.cvReview.loadReviewError');
       }
     });
   }
@@ -67,7 +69,7 @@ export class CvReviewComponent implements OnInit {
       next: review => { this.review = review; this.state = 'done'; },
       error: () => {
         this.state = 'error';
-        this.errorMessage = 'AI review failed. Please try again.';
+        this.errorMessage = this.translate.instant('resume.cvReview.analyzeError');
       }
     });
   }
@@ -92,7 +94,7 @@ export class CvReviewComponent implements OnInit {
   }
 
   formatDate(date: string): string {
-    return new Date(date).toLocaleDateString('en-US', {
+    return new Date(date).toLocaleDateString('vi-VN', {
       year: 'numeric', month: 'short', day: 'numeric'
     });
   }

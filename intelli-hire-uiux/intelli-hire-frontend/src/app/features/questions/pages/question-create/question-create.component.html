@@ -3,17 +3,17 @@
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <polyline points="15 18 9 12 15 6"></polyline>
     </svg>
-    Back to Question Bank
+    {{ 'questions.actions.backToQuestionBank' | translate }}
   </button>
 
   <div class="page-header">
     <div class="page-title-group">
       <div class="page-title">
         <span class="ai-dot"></span>
-        <h1>New Question</h1>
+        <h1>{{ 'questions.questionCreate.title' | translate }}</h1>
       </div>
       <p class="page-subtitle">
-        Create canonical interview questions with taxonomy and reusable tags.
+        {{ 'questions.questionCreate.subtitle' | translate }}
       </p>
     </div>
   </div>
@@ -32,12 +32,12 @@
             <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
             <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
           </svg>
-          <h2 class="section-title">Question Text</h2>
+          <h2 class="section-title">{{ 'questions.questionCreate.questionTextSectionTitle' | translate }}</h2>
         </div>
       </div>
 
       <div class="field-group">
-        <label class="field-label" for="question-text">Question *</label>
+        <label class="field-label" for="question-text">{{ 'questions.questionCreate.questionLabel' | translate }}</label>
         <div class="input-wrap textarea-wrap">
           <span class="field-icon field-icon--top">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -50,10 +50,10 @@
             class="field-input field-textarea"
             rows="8"
             formControlName="question_text"
-            placeholder="Explain dependency injection in Spring and why it improves maintainability."></textarea>
+            [placeholder]="'questions.questionCreate.questionPlaceholder' | translate"></textarea>
         </div>
-        <span class="field-error" *ngIf="form.get('question_text')?.touched && form.get('question_text')?.hasError('required')">Question text is required.</span>
-        <span class="field-hint">Up to 5 000 characters. Focus on one canonical prompt per question.</span>
+        <span class="field-error" *ngIf="form.get('question_text')?.touched && form.get('question_text')?.hasError('required')">{{ 'questions.questionCreate.questionRequiredError' | translate }}</span>
+        <span class="field-hint">{{ 'questions.questionCreate.questionHint' | translate }}</span>
       </div>
     </section>
 
@@ -63,13 +63,13 @@
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--magenta)" stroke-width="2">
             <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
           </svg>
-          <h2 class="section-title">Classification &amp; Tags</h2>
+          <h2 class="section-title">{{ 'questions.questionCreate.classificationSectionTitle' | translate }}</h2>
         </div>
       </div>
 
       <div class="form-grid">
         <div class="field-group">
-          <label class="field-label" for="question-topic">Topic *</label>
+          <label class="field-label" for="question-topic">{{ 'questions.questionCreate.topicLabel' | translate }}</label>
           <div class="input-wrap">
             <span class="field-icon">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -77,15 +77,15 @@
               </svg>
             </span>
             <mat-select id="question-topic" class="field-input field-select" formControlName="topic_id" panelClass="question-select-panel">
-              <mat-option value="">Select topic</mat-option>
+              <mat-option value="">{{ 'questions.options.selectTopic' | translate }}</mat-option>
               <mat-option *ngFor="let topic of topicOptions" [value]="topic.id">{{ topic.label }}</mat-option>
             </mat-select>
           </div>
-          <span class="field-error" *ngIf="form.get('topic_id')?.touched && form.get('topic_id')?.hasError('required')">Topic is required.</span>
+          <span class="field-error" *ngIf="form.get('topic_id')?.touched && form.get('topic_id')?.hasError('required')">{{ 'questions.questionCreate.topicRequiredError' | translate }}</span>
         </div>
 
         <div class="field-group">
-          <label class="field-label" for="question-difficulty">Difficulty *</label>
+          <label class="field-label" for="question-difficulty">{{ 'questions.questionCreate.difficultyLabel' | translate }}</label>
           <div class="input-wrap">
             <span class="field-icon">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -94,15 +94,15 @@
               </svg>
             </span>
             <mat-select id="question-difficulty" class="field-input field-select" formControlName="difficulty_id" panelClass="question-select-panel">
-              <mat-option value="">Select difficulty</mat-option>
+              <mat-option value="">{{ 'questions.options.selectDifficulty' | translate }}</mat-option>
               <mat-option *ngFor="let difficulty of difficulties" [value]="difficulty.id">{{ difficulty.name }}</mat-option>
             </mat-select>
           </div>
-          <span class="field-error" *ngIf="form.get('difficulty_id')?.touched && form.get('difficulty_id')?.hasError('required')">Difficulty is required.</span>
+          <span class="field-error" *ngIf="form.get('difficulty_id')?.touched && form.get('difficulty_id')?.hasError('required')">{{ 'questions.questionCreate.difficultyRequiredError' | translate }}</span>
         </div>
 
         <div class="field-group">
-          <label class="field-label" for="question-type">Question Type *</label>
+          <label class="field-label" for="question-type">{{ 'questions.questionCreate.questionTypeLabel' | translate }}</label>
           <div class="input-wrap">
             <span class="field-icon">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -110,14 +110,14 @@
               </svg>
             </span>
             <mat-select id="question-type" class="field-input field-select" formControlName="question_type" panelClass="question-select-panel">
-              <mat-option *ngFor="let type of questionTypes" [value]="type">{{ formatType(type) }}</mat-option>
+              <mat-option *ngFor="let type of questionTypes" [value]="type">{{ formatType(type) | translate }}</mat-option>
             </mat-select>
           </div>
-          <span class="field-error" *ngIf="form.get('question_type')?.touched && form.get('question_type')?.hasError('required')">Question type is required.</span>
+          <span class="field-error" *ngIf="form.get('question_type')?.touched && form.get('question_type')?.hasError('required')">{{ 'questions.questionCreate.questionTypeRequiredError' | translate }}</span>
         </div>
 
         <div class="field-group">
-          <label class="field-label" for="question-tags">Tags</label>
+          <label class="field-label" for="question-tags">{{ 'questions.questionCreate.tagsLabel' | translate }}</label>
           <div class="input-wrap">
             <span class="field-icon">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -143,7 +143,7 @@
 
       <div class="quick-tag-row">
         <div class="field-group">
-          <label class="field-label" for="quick-tag">Quick Create Tag</label>
+          <label class="field-label" for="quick-tag">{{ 'questions.fields.quickCreateTag' | translate }}</label>
           <div class="input-wrap">
             <span class="field-icon">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -154,21 +154,21 @@
           </div>
         </div>
         <button class="btn-ghost" type="button" (click)="createTag()">
-          {{ creatingTag ? 'Creating...' : 'Create Tag' }}
+          {{ (creatingTag ? 'questions.actions.creatingTag' : 'questions.actions.createTag') | translate }}
         </button>
       </div>
 
       <div class="toggle-row">
-        <mat-checkbox formControlName="is_active">Active in question pool</mat-checkbox>
-        <p class="field-hint">Inactive questions are excluded from active catalog flows.</p>
+        <mat-checkbox formControlName="is_active">{{ 'questions.fields.activeInPool' | translate }}</mat-checkbox>
+        <p class="field-hint">{{ 'questions.questionCreate.inactiveHint' | translate }}</p>
       </div>
     </section>
 
     <div class="wizard-actions">
-      <a class="btn-ghost" routerLink="/questions">Cancel</a>
+      <a class="btn-ghost" routerLink="/questions">{{ 'questions.actions.cancel' | translate }}</a>
       <div class="wizard-actions-right">
         <button class="btn-primary" type="submit">
-          Save
+          {{ 'questions.actions.save' | translate }}
         </button>
       </div>
     </div>

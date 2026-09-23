@@ -4,6 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
 import { BulkImportRequest, BulkImportResponse } from '../../../../core/models/question.model';
 import { QuestionBankService } from '../../services/question-bank.service';
@@ -18,13 +19,15 @@ import { buildBulkImportSample } from '../../questions.utils';
     RouterLink,
     MatFormFieldModule,
     MatInputModule,
-    LoadingSpinnerComponent
+    LoadingSpinnerComponent,
+    TranslatePipe
   ],
   templateUrl: './bulk-import.component.html',
   styleUrl: './bulk-import.component.scss'
 })
 export class BulkImportComponent {
   private readonly fb = inject(FormBuilder);
+  private readonly translate = inject(TranslateService);
 
   loading = false;
   result: BulkImportResponse | null = null;
@@ -54,10 +57,12 @@ export class BulkImportComponent {
     try {
       request = JSON.parse(this.form.value.payload ?? '') as BulkImportRequest;
       if (!Array.isArray(request.questions)) {
-        throw new Error('Payload must contain a "questions" array.');
+        throw new Error(this.translate.instant('questions.bulkImport.errors.missingArray'));
       }
     } catch (error) {
-      this.parseError = error instanceof Error ? error.message : 'Invalid JSON payload.';
+      this.parseError = error instanceof Error
+        ? error.message
+        : this.translate.instant('questions.bulkImport.errors.invalidJson');
       return;
     }
 

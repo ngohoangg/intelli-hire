@@ -1,14 +1,14 @@
 <div class="reject-dialog">
-  <h2 class="dialog-title">Reject Question</h2>
+  <h2 class="dialog-title">{{ 'common.rejectDialog.title' | translate }}</h2>
 
   <p class="dialog-preview">{{ data.questionText | slice:0:120 }}{{ data.questionText.length > 120 ? '...' : '' }}</p>
 
   <div class="field-group">
-    <label class="field-label">Rejection Reason <span class="required">*</span></label>
+    <label class="field-label">{{ 'common.rejectDialog.reasonLabel' | translate }} <span class="required">*</span></label>
     <textarea
       class="field-textarea"
       [(ngModel)]="reason"
-      placeholder="Explain why this question is being rejected..."
+      [placeholder]="'common.rejectDialog.reasonPlaceholder' | translate"
       rows="4"
       maxlength="500"
     ></textarea>
@@ -16,9 +16,9 @@
   </div>
 
   <div class="dialog-actions">
-    <button class="btn-cancel" (click)="cancel()">Cancel</button>
+    <button class="btn-cancel" (click)="cancel()">{{ 'common.actions.cancel' | translate }}</button>
     <button class="btn-reject" (click)="confirm()" [disabled]="!reason.trim()">
-      Reject Question
+      {{ 'common.rejectDialog.rejectAction' | translate }}
     </button>
   </div>
 </div>

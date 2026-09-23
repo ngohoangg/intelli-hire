@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { ResumeSkillProfileService } from '../../services/resume-skill-profile.service';
 import { ResumeSkillProfile } from '../../../../core/models/skill.model';
@@ -18,7 +19,8 @@ import { ResumeSkillProfile } from '../../../../core/models/skill.model';
     MatButtonModule,
     MatIconModule,
     MatInputModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    TranslatePipe
   ],
   templateUrl: './skill-profile-card.component.html',
   styleUrl: './skill-profile-card.component.scss'
@@ -123,6 +125,6 @@ export class SkillProfileCardComponent implements OnInit, OnDestroy {
 
   formatDate(date?: string): string {
     if (!date) return '—';
-    return new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    return new Date(date).toLocaleDateString('vi-VN', { year: 'numeric', month: 'short', day: 'numeric' });
   }
 }

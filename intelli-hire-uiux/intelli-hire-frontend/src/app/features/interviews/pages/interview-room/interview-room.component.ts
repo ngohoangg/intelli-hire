@@ -7,6 +7,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Subscription, interval } from 'rxjs';
 import { switchMap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { InterviewWebSocketService } from '../../services/interview-websocket.service';
 import { InterviewService } from '../../services/interview.service';
 import { GradingService } from '../../services/grading.service';
@@ -29,7 +30,8 @@ const MAX_POLL_ATTEMPTS = 40; // 40 × 3s = 2 minutes timeout
     ReactiveFormsModule,
     MatProgressBarModule,
     MatDialogModule,
-    LoadingSpinnerComponent
+    LoadingSpinnerComponent,
+    TranslatePipe
   ],
   templateUrl: './interview-room.component.html',
   styleUrl: './interview-room.component.scss'
@@ -58,7 +60,8 @@ export class InterviewRoomComponent implements OnInit, OnDestroy {
     private interviewService: InterviewService,
     private gradingService: GradingService,
     private auth: AuthService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private translate: TranslateService
   ) {
     this.answerForm = this.fb.group({
       answerText: ['', [Validators.required, Validators.maxLength(10000)]]
@@ -80,7 +83,7 @@ export class InterviewRoomComponent implements OnInit, OnDestroy {
           this.state = 'ready';
         } else if (this.state === 'ready' || this.state === 'question' || this.state === 'submitting') {
           this.state = 'error';
-          this.errorMessage = 'Connection lost. Please end the session and try again.';
+          this.errorMessage = this.translate.instant('interviews.interviewRoom.connectionLost');
         }
       })
     );
@@ -95,7 +98,7 @@ export class InterviewRoomComponent implements OnInit, OnDestroy {
           this.answerForm.reset();
         } else if (msg.type === 'ERROR') {
           this.state = 'error';
-          this.errorMessage = msg.question_text ?? 'Unknown error';
+          this.errorMessage = msg.question_text ?? this.translate.instant('interviews.interviewRoom.unknownError');
         }
       })
     );
@@ -134,7 +137,7 @@ export class InterviewRoomComponent implements OnInit, OnDestroy {
         if (grading.status === 'FAILED') {
           this.stopGradingPoll();
           this.state = 'error';
-          this.errorMessage = 'Grading failed. Please go back and contact support.';
+          this.errorMessage = this.translate.instant('interviews.interviewRoom.gradingFailed');
           return;
         }
       }
@@ -170,7 +173,10 @@ export class InterviewRoomComponent implements OnInit, OnDestroy {
 
   endSession(): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
-      data: { title: 'End Session', message: 'Are you sure you want to end this interview session?' }
+      data: {
+        title: this.translate.instant('interviews.interviewRoom.endSessionDialogTitle'),
+        message: this.translate.instant('interviews.interviewRoom.endSessionDialogMessage')
+      }
     });
     ref.afterClosed().subscribe(confirmed => {
       if (confirmed) {

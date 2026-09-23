@@ -5,7 +5,7 @@
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <polyline points="15 18 9 12 15 6"/>
     </svg>
-    Back to Resumes
+    {{ 'resume.resumeCreate.backButton' | translate }}
   </button>
 
   <!-- Form Card -->
@@ -20,14 +20,14 @@
         </svg>
       </div>
       <div>
-        <h2>Create New Resume</h2>
-        <p class="form-subtitle">Add a new resume to your library</p>
+        <h2>{{ 'resume.resumeCreate.headerTitle' | translate }}</h2>
+        <p class="form-subtitle">{{ 'resume.resumeCreate.headerSubtitle' | translate }}</p>
       </div>
     </div>
 
     <form [formGroup]="form" (ngSubmit)="submit()" class="form-body">
       <div class="field-group full-width">
-        <label class="field-label" for="resume-title">Resume Title <span class="required-star">*</span></label>
+        <label class="field-label" for="resume-title">{{ 'resume.resumeCreate.titleLabel' | translate }} <span class="required-star">*</span></label>
         <div class="input-wrap" [class.has-error]="title.touched && title.invalid">
           <span class="field-icon">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -36,18 +36,18 @@
               <path d="M4 17h10"></path>
             </svg>
           </span>
-          <input id="resume-title" class="field-input" formControlName="title" placeholder="e.g. Senior Frontend Engineer - 2025">
+          <input id="resume-title" class="field-input" formControlName="title" [placeholder]="'resume.resumeCreate.titlePlaceholder' | translate">
         </div>
-        <span class="field-error" *ngIf="title.touched && title.hasError('required')">Title is required</span>
-        <span class="field-error" *ngIf="title.touched && title.hasError('minlength')">Title must be at least 3 characters</span>
-        <span class="field-error" *ngIf="title.touched && title.hasError('maxlength')">Title must be under 200 characters</span>
+        <span class="field-error" *ngIf="title.touched && title.hasError('required')">{{ 'resume.resumeCreate.titleRequiredError' | translate }}</span>
+        <span class="field-error" *ngIf="title.touched && title.hasError('minlength')">{{ 'resume.resumeCreate.titleMinLengthError' | translate }}</span>
+        <span class="field-error" *ngIf="title.touched && title.hasError('maxlength')">{{ 'resume.resumeCreate.titleMaxLengthError' | translate }}</span>
       </div>
 
       <div class="form-actions">
-        <button type="button" class="btn-ghost" (click)="router.navigate(['/resumes'])">Cancel</button>
+        <button type="button" class="btn-ghost" (click)="router.navigate(['/resumes'])">{{ 'resume.actions.cancel' | translate }}</button>
         <button type="submit" class="btn-primary" [disabled]="loading">
-          <span *ngIf="!loading">Create Resume</span>
-          <span *ngIf="loading">Creating…</span>
+          <span *ngIf="!loading">{{ 'resume.resumeCreate.createButton' | translate }}</span>
+          <span *ngIf="loading">{{ 'resume.resumeCreate.creatingButton' | translate }}</span>
         </button>
       </div>
     </form>

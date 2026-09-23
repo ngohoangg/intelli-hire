@@ -4,14 +4,14 @@
   <div class="page-header">
     <div class="page-title">
       <span class="ai-dot"></span>
-      <h1>Interview Sessions</h1>
+      <h1>{{ 'interviews.interviewList.title' | translate }}</h1>
       <span class="count-badge" *ngIf="totalElements > 0">{{ totalElements }}</span>
     </div>
     <button class="btn-primary" (click)="createNew()">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
         <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
       </svg>
-      New Interview
+      {{ 'interviews.interviewList.newInterview' | translate }}
     </button>
   </div>
 
@@ -21,7 +21,7 @@
 
       <!-- Topic Column -->
       <ng-container matColumnDef="topic">
-        <th mat-header-cell *matHeaderCellDef>Topic</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'interviews.interviewList.columnTopic' | translate }}</th>
         <td mat-cell *matCellDef="let s">
           <div class="title-cell">
             <div class="session-icon">
@@ -38,7 +38,7 @@
 
       <!-- Difficulty Column -->
       <ng-container matColumnDef="difficulty">
-        <th mat-header-cell *matHeaderCellDef>Difficulty</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'interviews.interviewList.columnDifficulty' | translate }}</th>
         <td mat-cell *matCellDef="let s">
           <span class="difficulty-badge difficulty-{{ s.difficulty }}">{{ s.difficulty | uppercase }}</span>
         </td>
@@ -46,18 +46,18 @@
 
       <!-- Status Column -->
       <ng-container matColumnDef="status">
-        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'interviews.interviewList.columnStatus' | translate }}</th>
         <td mat-cell *matCellDef="let s">
           <span class="status-badge" [ngClass]="getStatusClass(s.status)">
             <span class="dot" *ngIf="s.status === SessionStatus.ACTIVE"></span>
-            {{ s.status }}
+            {{ getStatusLabel(s.status) | translate }}
           </span>
         </td>
       </ng-container>
 
       <!-- Created Column -->
       <ng-container matColumnDef="createdAt">
-        <th mat-header-cell *matHeaderCellDef>Created</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'interviews.interviewList.columnCreated' | translate }}</th>
         <td mat-cell *matCellDef="let s" class="date-cell">{{ s.created_at | date:'dd/MM/yyyy HH:mm' }}</td>
       </ng-container>
 
@@ -65,7 +65,7 @@
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let s" class="actions-cell" (click)="$event.stopPropagation()">
-          <button class="action-btn view-btn" (click)="openSession(s)" title="Open session">
+          <button class="action-btn view-btn" (click)="openSession(s)" [title]="'interviews.interviewList.openSession' | translate">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
               <circle cx="12" cy="12" r="3"/>
@@ -74,14 +74,14 @@
           <button *ngIf="s.status === SessionStatus.ACTIVE || s.status === SessionStatus.CREATED"
                   class="action-btn end-btn"
                   (click)="endSession(s)"
-                  title="End session">
+                  [title]="'interviews.interviewList.endSession' | translate">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <rect x="3" y="3" width="18" height="18"/>
             </svg>
           </button>
           <button class="action-btn delete-btn"
                   (click)="deleteSession(s)"
-                  title="Delete session">
+                  [title]="'interviews.interviewList.deleteSession' | translate">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <polyline points="3 6 5 6 21 6"/>
               <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
@@ -105,8 +105,8 @@
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3">
               <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
             </svg>
-            <p>No sessions yet. Start your first interview.</p>
-            <button class="btn-primary small" (click)="createNew()">New Interview</button>
+            <p>{{ 'interviews.interviewList.emptyState' | translate }}</p>
+            <button class="btn-primary small" (click)="createNew()">{{ 'interviews.interviewList.newInterview' | translate }}</button>
           </div>
         </td>
       </tr>

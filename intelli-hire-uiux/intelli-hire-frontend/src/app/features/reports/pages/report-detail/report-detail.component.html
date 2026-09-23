@@ -5,7 +5,7 @@
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <polyline points="15 18 9 12 15 6"/>
     </svg>
-    Back to History
+    {{ 'reports.detail.backToHistory' | translate }}
   </button>
 
   <div *ngIf="report && !loading">
@@ -23,11 +23,11 @@
         </div>
         <div class="header-info">
           <div class="title-row">
-            <h1>{{ report.topic || 'Untitled Report' }}</h1>
-            <span class="status-badge" [ngClass]="getStatusClass(report.status)">{{ report.status }}</span>
+            <h1>{{ report.topic || ('reports.detail.untitledReport' | translate) }}</h1>
+            <span class="status-badge" [ngClass]="getStatusClass(report.status)">{{ 'reports.status.' + report.status.toLowerCase() | translate }}</span>
           </div>
           <div class="meta-row">
-            <span class="meta-text">{{ report.total_questions }} questions</span>
+            <span class="meta-text">{{ 'reports.detail.questionsCount' | translate: { count: report.total_questions } }}</span>
             <span class="meta-sep">·</span>
             <span class="meta-text">{{ report.created_at | date:'dd/MM/yyyy HH:mm' }}</span>
           </div>
@@ -37,7 +37,7 @@
       <!-- Total Score Bar -->
       <div class="total-score-section">
         <div class="total-score-header">
-          <span class="total-score-label">Total Score</span>
+          <span class="total-score-label">{{ 'reports.detail.totalScore' | translate }}</span>
           <span class="total-score-value">{{ report.total_score }}/{{ report.max_score }}
             <span class="total-score-percent">({{ getScorePercent().toFixed(1) }}%)</span>
           </span>
@@ -55,7 +55,7 @@
           <line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/>
           <line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/>
         </svg>
-        <span class="section-title">Summary</span>
+        <span class="section-title">{{ 'reports.detail.summary' | translate }}</span>
       </div>
       <p class="summary-text">{{ report.summary }}</p>
     </div>
@@ -66,7 +66,7 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2">
           <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
         </svg>
-        <span class="section-title">Skill Scores</span>
+        <span class="section-title">{{ 'reports.detail.skillScores' | translate }}</span>
       </div>
       <div class="skill-scores-list">
         <div class="skill-score-item" *ngFor="let skill of report.skill_scores">
@@ -74,7 +74,7 @@
             <span class="skill-name">{{ skill.skill_name }}</span>
             <span class="skill-meta">
               <span class="skill-score-value">{{ skill.score }}/{{ skill.max_score }}</span>
-              <span class="skill-q-count">{{ skill.question_count }} Q</span>
+              <span class="skill-q-count">{{ 'reports.detail.questionsAbbrev' | translate: { count: skill.question_count } }}</span>
             </span>
           </div>
           <div class="score-bar-track">
@@ -93,24 +93,24 @@
           <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
           <line x1="12" y1="17" x2="12.01" y2="17"/>
         </svg>
-        <span class="section-title">Question Scores</span>
+        <span class="section-title">{{ 'reports.detail.questionScores' | translate }}</span>
       </div>
       <div class="question-list">
         <div class="question-item" *ngFor="let q of report.question_scores; let i = index">
           <div class="question-header">
             <div class="question-left">
-              <span class="q-num">Q{{ i + 1 }}</span>
+              <span class="q-num">{{ 'reports.detail.questionPrefix' | translate }}{{ i + 1 }}</span>
               <span class="skill-tag" *ngIf="q.skill_name">{{ q.skill_name }}</span>
             </div>
             <span class="q-score">{{ q.score }}/{{ q.max_score }}</span>
           </div>
           <p class="q-text">{{ q.question_text }}</p>
           <div class="q-answer">
-            <span class="answer-label">ANSWER</span>
+            <span class="answer-label">{{ 'reports.detail.answerLabel' | translate }}</span>
             <p class="answer-text">{{ q.answer_text || '—' }}</p>
           </div>
           <div class="q-feedback" *ngIf="q.feedback">
-            <span class="feedback-label">FEEDBACK</span>
+            <span class="feedback-label">{{ 'reports.detail.feedbackLabel' | translate }}</span>
             <p class="feedback-text">{{ q.feedback }}</p>
           </div>
         </div>
@@ -123,19 +123,25 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2">
           <polygon points="3 11 22 2 13 21 11 13 3 11"/>
         </svg>
-        <span class="section-title">Improvement Roadmap</span>
+        <span class="section-title">{{ 'reports.detail.improvementRoadmap' | translate }}</span>
         <button class="btn-regen" (click)="regenerateRoadmap()" [disabled]="regenerating">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M23 4v6h-6"/><path d="M1 20v-6h6"/>
             <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
           </svg>
-          {{ regenerating ? 'Regenerating...' : 'Regenerate' }}
+          {{ (regenerating ? 'reports.detail.regenerating' : 'reports.detail.regenerate') | translate }}
         </button>
       </div>
       <div class="roadmap-list">
         <div class="roadmap-item" *ngFor="let entry of getRoadmapEntries()">
-          <div class="roadmap-key">{{ entry[0] }}</div>
-          <div class="roadmap-value">{{ entry[1] }}</div>
+          <div class="roadmap-key">
+            <ng-container [ngSwitch]="entry.kind">
+              <ng-container *ngSwitchCase="'raw'">{{ entry.text }}</ng-container>
+              <ng-container *ngSwitchCase="'step'">{{ 'reports.detail.step' | translate: { number: entry.index } }}</ng-container>
+              <ng-container *ngSwitchCase="'label'">{{ 'reports.detail.roadmapLabel' | translate }}</ng-container>
+            </ng-container>
+          </div>
+          <div class="roadmap-value">{{ entry.value }}</div>
         </div>
       </div>
     </div>

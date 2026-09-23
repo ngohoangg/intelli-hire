@@ -3,23 +3,23 @@
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <polyline points="15 18 9 12 15 6"></polyline>
     </svg>
-    Back
+    {{ 'questions.actions.back' | translate }}
   </button>
 
   <div class="page-header">
     <div class="page-title-group">
       <div class="page-title">
         <span class="ai-dot"></span>
-        <h1>Tags</h1>
+        <h1>{{ 'questions.tagManagement.title' | translate }}</h1>
         <span class="count-badge">{{ tags.length }}</span>
       </div>
       <p class="page-subtitle">
-        Manage reusable labels that power search, random generation and targeted question curation.
+        {{ 'questions.tagManagement.subtitle' | translate }}
       </p>
     </div>
 
     <div class="header-actions">
-      <button class="btn-ghost" type="button" (click)="startCreate()">New Tag</button>
+      <button class="btn-ghost" type="button" (click)="startCreate()">{{ 'questions.tagManagement.newTagButton' | translate }}</button>
     </div>
   </div>
 
@@ -31,7 +31,7 @@
             <path d="M20.59 13.41L11 3.83a2 2 0 0 0-1.41-.59H4a2 2 0 0 0-2 2v5.59a2 2 0 0 0 .59 1.41L12.17 22a2 2 0 0 0 2.83 0l5.59-5.59a2 2 0 0 0 0-2.83z"></path>
             <line x1="7" y1="7" x2="7.01" y2="7"></line>
           </svg>
-          <h2 class="section-title">Tag Library</h2>
+          <h2 class="section-title">{{ 'questions.tagManagement.tagLibraryTitle' | translate }}</h2>
         </div>
       </div>
 
@@ -43,15 +43,15 @@
           [class.selected]="selectedTag?.id === tag.id"
           (click)="selectTag(tag)">
           <span class="chip chip-accent">{{ tag.name }}</span>
-          <span class="table-secondary">Reusable filter label</span>
-          <span class="text-action danger" (click)="deleteTag(tag, $event)">Delete</span>
+          <span class="table-secondary">{{ 'questions.tagManagement.reusableFilterLabel' | translate }}</span>
+          <span class="text-action danger" (click)="deleteTag(tag, $event)">{{ 'questions.actions.delete' | translate }}</span>
         </button>
       </div>
 
       <ng-template #emptyState>
         <div class="empty-panel compact">
-          <h3>No tags yet</h3>
-          <p>Create the first reusable tag to improve question segmentation.</p>
+          <h3>{{ 'questions.tagManagement.emptyTitle' | translate }}</h3>
+          <p>{{ 'questions.tagManagement.emptyBody' | translate }}</p>
         </div>
       </ng-template>
     </section>
@@ -65,20 +65,20 @@
             <path d="M4 9h16"></path>
             <path d="M4 15h16"></path>
           </svg>
-          <h2 class="section-title">{{ selectedTag ? 'Edit Tag' : 'Create Tag' }}</h2>
+          <h2 class="section-title">{{ (selectedTag ? 'questions.tagManagement.editHeaderEdit' : 'questions.tagManagement.editHeaderCreate') | translate }}</h2>
         </div>
       </div>
 
       <form [formGroup]="form" class="stack-list">
         <mat-form-field appearance="outline">
-          <mat-label>Name</mat-label>
+          <mat-label>{{ 'questions.fields.name' | translate }}</mat-label>
           <input matInput formControlName="name" placeholder="spring-core" />
         </mat-form-field>
 
         <div class="editor-actions">
-          <button class="btn-ghost" type="button" (click)="startCreate()">Reset</button>
+          <button class="btn-ghost" type="button" (click)="startCreate()">{{ 'questions.actions.reset' | translate }}</button>
           <button class="btn-primary" type="button" (click)="submit()">
-            {{ selectedTag ? 'Save Tag' : 'Create Tag' }}
+            {{ (selectedTag ? 'questions.tagManagement.submitEdit' : 'questions.tagManagement.submitCreate') | translate }}
           </button>
         </div>
       </form>
@@ -86,7 +86,7 @@
       <div class="divider"></div>
 
       <button class="text-action" type="button" [disabled]="!selectedTag" (click)="openQuestionBank()">
-        Open question bank with this tag
+        {{ 'questions.tagManagement.openQuestionBankLink' | translate }}
       </button>
     </aside>
   </div>
