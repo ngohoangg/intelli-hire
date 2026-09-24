@@ -93,7 +93,7 @@ class OpenRouterLlmServiceImplTest {
         LlmGradingResult result = llmService.grade("test prompt");
 
         assertEquals(0.0, result.getScore());
-        assertTrue(result.getFeedback().contains("Parse error"));
+        assertTrue(result.getFeedback().contains("Lỗi phân tích phản hồi"));
     }
 
     @Test
@@ -108,7 +108,7 @@ class OpenRouterLlmServiceImplTest {
         LlmGradingResult result = llmService.grade("test prompt");
 
         assertEquals(0.0, result.getScore());
-        assertTrue(result.getFeedback().contains("Unable to grade"));
+        assertTrue(result.getFeedback().contains("Không thể chấm điểm"));
     }
 
     @Test
@@ -121,7 +121,7 @@ class OpenRouterLlmServiceImplTest {
         LlmGradingResult result = llmService.grade("test prompt");
 
         assertEquals(0.0, result.getScore());
-        assertTrue(result.getFeedback().contains("Unable to grade"));
+        assertTrue(result.getFeedback().contains("Không thể chấm điểm"));
         assertEquals(2, mockServer.getRequestCount()); // original + 1 retry
     }
 
@@ -158,7 +158,7 @@ class OpenRouterLlmServiceImplTest {
         LlmGradingResult result = llmService.grade("test prompt");
 
         assertEquals(9.0, result.getScore());
-        assertEquals("No feedback provided", result.getFeedback());
+        assertEquals("Không có phản hồi được cung cấp", result.getFeedback());
     }
 
     @Test

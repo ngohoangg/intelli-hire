@@ -22,11 +22,14 @@ public class PromptBuilder {
 
             Max Score: %.1f
 
+            Write the "feedback" value in %s. Keep the JSON keys ("score", "feedback") in English exactly as shown, and keep the topic, skill, and any catalog names unchanged.
+
             Respond ONLY with a valid JSON object (no markdown, no extra text):
-            {"score": <number between 0 and %.1f>, "feedback": "<detailed feedback explaining the score>"}
+            {"score": <number between 0 and %.1f>, "feedback": "<detailed feedback explaining the score, written in %s>"}
             """;
 
-    public String build(AnswerRequest answer, String topic) {
+    public String build(AnswerRequest answer, String topic, String language) {
+        String resolvedLanguage = (language != null && !language.isBlank()) ? language : "Vietnamese";
         return String.format(
                 GRADING_PROMPT_TEMPLATE,
                 topic != null ? topic : "General",
@@ -34,7 +37,9 @@ public class PromptBuilder {
                 answer.getQuestionText() != null ? answer.getQuestionText() : "",
                 answer.getAnswerText() != null ? answer.getAnswerText() : "(no answer provided)",
                 answer.getMaxScore(),
-                answer.getMaxScore()
+                resolvedLanguage,
+                answer.getMaxScore(),
+                resolvedLanguage
         );
     }
 }

@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../../../core/services/auth.service';
 import { OAuthProvider } from '../../../../core/models/auth.model';
+import { extractApiErrorMessage } from '../../../../core/utils/api-error';
 
 @Component({
   selector: 'app-login',
@@ -41,7 +42,7 @@ export class LoginComponent implements OnInit {
     this.loading = true; this.error = '';
     this.auth.login(this.form.value).subscribe({
       next: () => { this.loading = false; this.router.navigate([this.homeRoute]); },
-      error: err => { this.error = err?.error?.message ?? this.translate.instant('auth.login.invalidCredentials'); this.loading = false; }
+      error: err => { this.error = extractApiErrorMessage(err) ?? this.translate.instant('auth.login.invalidCredentials'); this.loading = false; }
     });
   }
 

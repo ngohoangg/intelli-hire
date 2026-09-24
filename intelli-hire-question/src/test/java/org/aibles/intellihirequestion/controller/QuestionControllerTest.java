@@ -275,7 +275,7 @@ class QuestionControllerTest {
             // Given
             String questionId = "q_1";
             QuestionResponse response = buildUpdatedQuestionResponse();
-            when(questionService.update(eq(questionId), any(QuestionRequest.class)))
+            when(questionService.update(eq(questionId), any(QuestionRequest.class), nullable(String.class)))
                     .thenReturn(response);
 
             // When & Then
@@ -366,7 +366,7 @@ class QuestionControllerTest {
         void shouldReturn404_whenQuestionNotFound() throws Exception {
             String questionId = "q_missing";
 
-            when(questionService.update(eq(questionId), any(QuestionRequest.class)))
+            when(questionService.update(eq(questionId), any(QuestionRequest.class), nullable(String.class)))
                     .thenThrow(new NotFoundException(ErrorCode.QUE_001));
 
             mockMvc.perform(put("/v1/questions/{id}", questionId)
@@ -381,7 +381,7 @@ class QuestionControllerTest {
         @Test
         @DisplayName("Should return 404 with TOP_001 when topic not found")
         void shouldReturn404_whenTopicNotFound() throws Exception {
-            when(questionService.update(eq("q_1"), any(QuestionRequest.class)))
+            when(questionService.update(eq("q_1"), any(QuestionRequest.class), nullable(String.class)))
                     .thenThrow(new NotFoundException(ErrorCode.TOP_001));
 
             mockMvc.perform(put("/v1/questions/{id}", "q_1")
@@ -395,7 +395,7 @@ class QuestionControllerTest {
         @Test
         @DisplayName("Should return 404 with TOP_003 when topic is inactive")
         void shouldReturn404_whenTopicInactive() throws Exception {
-            when(questionService.update(eq("q_1"), any(QuestionRequest.class)))
+            when(questionService.update(eq("q_1"), any(QuestionRequest.class), nullable(String.class)))
                     .thenThrow(new NotFoundException(ErrorCode.TOP_003));
 
             mockMvc.perform(put("/v1/questions/{id}", "q_1")
@@ -409,7 +409,7 @@ class QuestionControllerTest {
         @Test
         @DisplayName("Should return 404 with DIF_001 when difficulty not found")
         void shouldReturn404_whenDifficultyNotFound() throws Exception {
-            when(questionService.update(eq("q_1"), any(QuestionRequest.class)))
+            when(questionService.update(eq("q_1"), any(QuestionRequest.class), nullable(String.class)))
                     .thenThrow(new NotFoundException(ErrorCode.DIF_001));
 
             mockMvc.perform(put("/v1/questions/{id}", "q_1")
@@ -423,7 +423,7 @@ class QuestionControllerTest {
         @Test
         @DisplayName("Should return 404 with TAG_001 when some tags not found")
         void shouldReturn404_whenTagsNotFound() throws Exception {
-            when(questionService.update(eq("q_1"), any(QuestionRequest.class)))
+            when(questionService.update(eq("q_1"), any(QuestionRequest.class), nullable(String.class)))
                     .thenThrow(new NotFoundException(ErrorCode.TAG_001));
 
             mockMvc.perform(put("/v1/questions/{id}", "q_1")

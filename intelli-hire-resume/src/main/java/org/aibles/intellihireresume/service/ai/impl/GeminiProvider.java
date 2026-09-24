@@ -7,6 +7,8 @@ import org.aibles.intellihireresume.dto.ai.ResumeParseResult;
 import org.aibles.intellihireresume.exception.AiAuthException;
 import org.aibles.intellihireresume.exception.AiRateLimitException;
 import org.aibles.intellihireresume.service.ai.AiProvider;
+import org.aibles.intellihireresume.service.ai.ResumeParsePromptBuilder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
 
@@ -26,6 +28,9 @@ public class GeminiProvider implements AiProvider {
     private final AiProperties.GeminiConfig config;
     private final ObjectMapper objectMapper;
     private final RestClient restClient;
+
+    @Value("${app.ai.output-language:Vietnamese}")
+    private String outputLanguage = "Vietnamese";
 
     public GeminiProvider(AiProperties.GeminiConfig config) {
         this.config = config;
@@ -165,26 +170,6 @@ public class GeminiProvider implements AiProvider {
     }
 
     private String buildSystemPrompt(String catalogStr) {
-        return """
-            You are a professional CV/resume parser. Extract structured information from the resume text.
-
-            Rules:
-            1. Return ONLY valid JSON. No explanation, no markdown, no code fences.
-            2. For skills, ONLY use names from this exact catalog (case-sensitive):
-               [%s]
-            3. If a field cannot be determined, use null.
-            4. confidenceScore: 0.0 = skill mentioned once, 1.0 = primary skill with clear years of evidence.
-            5. isPrimary = true for skills central to the candidate's career.
-            6. summary: 2-4 sentences in English summarizing the candidate's profile.
-
-            Required JSON structure:
-            {
-              "contact": {"fullName": "...", "email": "...", "phone": "...", "linkedinUrl": "...", "location": "..."},
-              "summary": "...",
-              "experiences": [{"company": "...", "title": "...", "startYear": 2020, "startMonth": 3, "endYear": 2023, "endMonth": 6, "isCurrent": false, "description": "..."}],
-              "educations": [{"school": "...", "degree": "...", "field": "...", "startYear": 2016, "endYear": 2020, "description": "..."}],
-              "skills": [{"name": "...", "confidenceScore": 0.9, "yearsExperience": 3.0, "isPrimary": true, "evidenceText": "..."}]
-            }
-            """.formatted(catalogStr);
+        return ResumeParsePromptBuilder.build(catalogStr, outputLanguage);
     }
 }

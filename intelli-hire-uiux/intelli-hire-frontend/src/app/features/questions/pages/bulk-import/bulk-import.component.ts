@@ -6,7 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
-import { BulkImportRequest, BulkImportResponse } from '../../../../core/models/question.model';
+import { BulkImportError, BulkImportRequest, BulkImportResponse } from '../../../../core/models/question.model';
 import { QuestionBankService } from '../../services/question-bank.service';
 import { buildBulkImportSample } from '../../questions.utils';
 
@@ -76,5 +76,24 @@ export class BulkImportComponent {
         this.loading = false;
       }
     });
+  }
+
+  /**
+   * The per-row `error` field is documented as a string, but a backend error
+   * shape change can hand back an object (e.g. a field-error record) instead.
+   * Stringify defensively so the template never renders "[object Object]".
+   */
+  rowErrorText(row: BulkImportError): string {
+    const value: unknown = row.error;
+    if (typeof value === 'string') {
+      return value;
+    }
+    if (value && typeof value === 'object') {
+      const withMessage = value as { message?: string; field?: string };
+      if (typeof withMessage.message === 'string' && withMessage.message.trim()) {
+        return withMessage.field ? `${withMessage.field}: ${withMessage.message}` : withMessage.message;
+      }
+    }
+    return JSON.stringify(value);
   }
 }

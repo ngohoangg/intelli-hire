@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 public class VerifyEmailRequestDTO {
 
-    @NotBlank(message = "Token is required")
+    @NotBlank(message = "Token là bắt buộc")
     private String token;
 }

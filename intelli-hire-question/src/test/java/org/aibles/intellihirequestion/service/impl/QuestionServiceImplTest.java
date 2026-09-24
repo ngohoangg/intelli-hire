@@ -529,7 +529,7 @@ class QuestionServiceImplTest {
             )).thenReturn(expectedResponse);
 
             // When
-            QuestionResponse actual = questionService.update(QUESTION_ID, request);
+            QuestionResponse actual = questionService.update(QUESTION_ID, request, "tester");
 
             // Then
             assertThat(actual).isNotNull();
@@ -589,7 +589,7 @@ class QuestionServiceImplTest {
             )).thenReturn(expectedResponse);
 
             // When
-            QuestionResponse actual = questionService.update(QUESTION_ID, request);
+            QuestionResponse actual = questionService.update(QUESTION_ID, request, "tester");
 
             // Then
             assertThat(actual).isNotNull();
@@ -625,7 +625,7 @@ class QuestionServiceImplTest {
             )).thenReturn(expectedResponse);
 
             // When
-            QuestionResponse actual = questionService.update(QUESTION_ID, request);
+            QuestionResponse actual = questionService.update(QUESTION_ID, request, "tester");
 
             // Then
             assertThat(actual).isNotNull();
@@ -650,7 +650,7 @@ class QuestionServiceImplTest {
             // When
             NotFoundException ex = assertThrows(
                     NotFoundException.class,
-                    () -> questionService.update(QUESTION_ID, request)
+                    () -> questionService.update(QUESTION_ID, request, "tester")
             );
 
             // Then
@@ -673,7 +673,7 @@ class QuestionServiceImplTest {
             // When
             NotFoundException ex = assertThrows(
                     NotFoundException.class,
-                    () -> questionService.update(QUESTION_ID, request)
+                    () -> questionService.update(QUESTION_ID, request, "tester")
             );
 
             // Then
@@ -696,7 +696,7 @@ class QuestionServiceImplTest {
             // When
             InactiveResourceException ex = assertThrows(
                     InactiveResourceException.class,
-                    () -> questionService.update(QUESTION_ID, request)
+                    () -> questionService.update(QUESTION_ID, request, "tester")
             );
 
             // Then
@@ -721,7 +721,7 @@ class QuestionServiceImplTest {
             // When
             NotFoundException ex = assertThrows(
                     NotFoundException.class,
-                    () -> questionService.update(QUESTION_ID, request)
+                    () -> questionService.update(QUESTION_ID, request, "tester")
             );
 
             // Then
@@ -746,7 +746,7 @@ class QuestionServiceImplTest {
             // When
             InactiveResourceException ex = assertThrows(
                     InactiveResourceException.class,
-                    () -> questionService.update(QUESTION_ID, request)
+                    () -> questionService.update(QUESTION_ID, request, "tester")
             );
 
             // Then
@@ -1887,13 +1887,13 @@ class QuestionServiceImplTest {
             assertThat(response.getFailed()).isEqualTo(4);
             assertThat(response.getErrors()).hasSize(4);
             assertThat(response.getErrors().get(0).getIndex()).isEqualTo(1);
-            assertThat(response.getErrors().get(0).getError()).isEqualTo("Topic is inactive: " + inactiveTopicId);
+            assertThat(response.getErrors().get(0).getError()).isEqualTo("Chủ đề đang không hoạt động: " + inactiveTopicId);
             assertThat(response.getErrors().get(1).getIndex()).isEqualTo(2);
-            assertThat(response.getErrors().get(1).getError()).isEqualTo("Difficulty level not found: " + missingDifficultyId);
+            assertThat(response.getErrors().get(1).getError()).isEqualTo("Không tìm thấy độ khó: " + missingDifficultyId);
             assertThat(response.getErrors().get(2).getIndex()).isEqualTo(3);
-            assertThat(response.getErrors().get(2).getError()).isEqualTo("Tag not found: " + missingTagId);
+            assertThat(response.getErrors().get(2).getError()).isEqualTo("Không tìm thấy nhãn: " + missingTagId);
             assertThat(response.getErrors().get(3).getIndex()).isEqualTo(4);
-            assertThat(response.getErrors().get(3).getError()).isEqualTo("Duplicate question text in batch");
+            assertThat(response.getErrors().get(3).getError()).isEqualTo("Trùng lặp nội dung câu hỏi trong lô nhập");
 
             verify(questionMapper, times(1)).toEntity(any(QuestionRequest.class));
             verify(questionTagRepository, never()).saveAll(anyList());

@@ -10,6 +10,7 @@ import { AdminQuestionService, AdminQuestionSearchParams } from '../../../../cor
 import { QuestionModerationStatus, QuestionResponse, QuestionType } from '../../../../core/models/question.model';
 import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
 import { RejectDialogComponent } from '../../../../shared/components/reject-dialog/reject-dialog.component';
+import { extractApiErrorMessage } from '../../../../core/utils/api-error';
 
 const POLL_INTERVAL_MS = 10_000;
 
@@ -107,7 +108,7 @@ export class AdminQuestionsComponent implements OnInit, OnDestroy {
         this.replaceInList(updated);
         this.adminQuestionService.refreshPendingCount();
       },
-      error: err => { this.actionError = err?.error?.message ?? this.translate.instant('admin.adminQuestions.actionFailed'); }
+      error: err => { this.actionError = extractApiErrorMessage(err) ?? this.translate.instant('admin.adminQuestions.actionFailed'); }
     });
   }
 
@@ -122,7 +123,7 @@ export class AdminQuestionsComponent implements OnInit, OnDestroy {
           this.replaceInList(updated);
           this.adminQuestionService.refreshPendingCount();
         },
-        error: err => { this.actionError = err?.error?.message ?? this.translate.instant('admin.adminQuestions.rejectionFailed'); }
+        error: err => { this.actionError = extractApiErrorMessage(err) ?? this.translate.instant('admin.adminQuestions.rejectionFailed'); }
       });
     });
   }
@@ -134,7 +135,7 @@ export class AdminQuestionsComponent implements OnInit, OnDestroy {
         this.replaceInList(updated);
         this.adminQuestionService.refreshPendingCount();
       },
-      error: err => { this.actionError = err?.error?.message ?? this.translate.instant('admin.adminQuestions.actionFailed'); }
+      error: err => { this.actionError = extractApiErrorMessage(err) ?? this.translate.instant('admin.adminQuestions.actionFailed'); }
     });
   }
 
@@ -145,7 +146,7 @@ export class AdminQuestionsComponent implements OnInit, OnDestroy {
         this.replaceInList(updated);
         this.adminQuestionService.refreshPendingCount();
       },
-      error: err => { this.actionError = err?.error?.message ?? this.translate.instant('admin.adminQuestions.actionFailed'); }
+      error: err => { this.actionError = extractApiErrorMessage(err) ?? this.translate.instant('admin.adminQuestions.actionFailed'); }
     });
   }
 

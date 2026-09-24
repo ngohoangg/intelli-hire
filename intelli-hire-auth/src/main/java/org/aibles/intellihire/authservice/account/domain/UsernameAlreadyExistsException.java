@@ -10,6 +10,6 @@ public class UsernameAlreadyExistsException extends BaseException {
     }
 
     public UsernameAlreadyExistsException(String username) {
-        super(ErrorCode.USERNAME_ALREADY_EXISTS, "Username: " + username);
+        super(ErrorCode.USERNAME_ALREADY_EXISTS, "Tên đăng nhập: " + username);
     }
 }

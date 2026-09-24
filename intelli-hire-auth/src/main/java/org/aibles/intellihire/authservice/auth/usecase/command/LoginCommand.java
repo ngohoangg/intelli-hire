@@ -3,10 +3,10 @@ package org.aibles.intellihire.authservice.auth.usecase.command;
 import jakarta.validation.constraints.NotBlank;
 
 public record LoginCommand(
-        @NotBlank(message = "Email or username is required")
+        @NotBlank(message = "Email hoặc tên đăng nhập là bắt buộc")
         String identifier,
 
-        @NotBlank(message = "Password is required")
+        @NotBlank(message = "Mật khẩu là bắt buộc")
         String password,
 
         String ipAddress,

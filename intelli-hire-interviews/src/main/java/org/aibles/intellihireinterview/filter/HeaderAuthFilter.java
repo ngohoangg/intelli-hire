@@ -42,7 +42,7 @@ public class HeaderAuthFilter extends OncePerRequestFilter {
 
         if (userId == null || userId.isBlank()) {
             log.warn("Request rejected: missing X-User-Id header for path={}", request.getRequestURI());
-            sendForbidden(response, "Missing required header: X-User-Id");
+            sendForbidden(response, "Thiếu tiêu đề bắt buộc: X-User-Id");
             return;
         }
 

@@ -41,7 +41,7 @@ public class AdminCreateRoleUseCaseImpl implements AdminCreateRoleUseCase {
 
     private static class RoleNameAlreadyExistsException extends BaseException {
         RoleNameAlreadyExistsException() {
-            super(ErrorCode.VALIDATION_ERROR, "Role name already exists");
+            super(ErrorCode.VALIDATION_ERROR, "Tên vai trò đã tồn tại");
         }
     }
 }

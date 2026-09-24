@@ -15,6 +15,6 @@ import lombok.NoArgsConstructor;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class RegenerateRoadmapRequest {
 
-    @NotNull(message = "Roadmap JSON is required")
+    @NotNull(message = "JSON lộ trình là bắt buộc")
     private Object roadmapJson;
 }

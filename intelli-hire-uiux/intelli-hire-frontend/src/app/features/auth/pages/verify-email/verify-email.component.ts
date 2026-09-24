@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../../../core/services/auth.service';
+import { extractApiErrorMessage } from '../../../../core/utils/api-error';
 
 @Component({
   selector: 'app-verify-email',
@@ -26,7 +27,7 @@ export class VerifyEmailComponent implements OnInit {
     if (!token) { this.status = 'error'; this.messageKey = 'auth.verifyEmail.missingToken'; return; }
     this.auth.verifyEmail(token).subscribe({
       next: () => { this.status = 'success'; this.message = this.translate.instant('auth.verifyEmail.verifySuccess'); },
-      error: err => { this.status = 'error'; this.message = err?.error?.message ?? this.translate.instant('auth.verifyEmail.verifyFailed'); }
+      error: err => { this.status = 'error'; this.message = extractApiErrorMessage(err) ?? this.translate.instant('auth.verifyEmail.verifyFailed'); }
     });
   }
 }

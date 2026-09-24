@@ -20,10 +20,18 @@ import java.util.stream.Collectors;
 public class OpenRouterQuestionGenerationClient implements QuestionGenerationAiClient {
 
     private static final String BASE_URL = "https://openrouter.ai/api/v1";
+    private static final String DEFAULT_OUTPUT_LANGUAGE = "Vietnamese";
+    private static final Map<String, String> LANGUAGE_CODE_ALIASES = Map.of(
+            "vi", "Vietnamese",
+            "vi-vn", "Vietnamese",
+            "en", "English",
+            "en-us", "English"
+    );
 
     private final AiProperties.OpenRouterConfig config;
     private final ObjectMapper objectMapper;
     private final RestClient restClient;
+    private final String outputLanguage;
 
     /**
      * @param config       OpenRouter API configuration
@@ -31,8 +39,22 @@ public class OpenRouterQuestionGenerationClient implements QuestionGenerationAiC
      *                     by Spring Boot's JacksonAutoConfiguration)
      */
     public OpenRouterQuestionGenerationClient(AiProperties.OpenRouterConfig config, ObjectMapper objectMapper) {
+        this(config, objectMapper, DEFAULT_OUTPUT_LANGUAGE);
+    }
+
+    /**
+     * @param config         OpenRouter API configuration
+     * @param objectMapper   Spring-managed ObjectMapper (already configured with JavaTimeModule
+     *                       by Spring Boot's JacksonAutoConfiguration)
+     * @param outputLanguage configured default output language (e.g. "ai.output-language"); falls
+     *                       back to {@link #DEFAULT_OUTPUT_LANGUAGE} when null/blank
+     */
+    public OpenRouterQuestionGenerationClient(AiProperties.OpenRouterConfig config, ObjectMapper objectMapper, String outputLanguage) {
         this.config = config;
         this.objectMapper = objectMapper;
+        this.outputLanguage = (outputLanguage != null && !outputLanguage.isBlank())
+                ? outputLanguage
+                : DEFAULT_OUTPUT_LANGUAGE;
 
         int timeoutMs = config.getTimeoutSeconds() * 1000;
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
@@ -90,10 +112,25 @@ public class OpenRouterQuestionGenerationClient implements QuestionGenerationAiC
         }
     }
 
-    private String buildSystemPrompt(
+    /**
+     * Resolves the effective output language: the request's own language when non-blank,
+     * otherwise the service-configured default. Known short codes ("vi", "vi-VN", "en",
+     * "en-US") are normalized to their full English name; any other non-blank value is
+     * passed through as given.
+     */
+    String resolveOutputLanguage(String requestLanguage) {
+        String raw = (requestLanguage != null && !requestLanguage.isBlank())
+                ? requestLanguage.trim()
+                : outputLanguage;
+        String alias = LANGUAGE_CODE_ALIASES.get(raw.toLowerCase());
+        return alias != null ? alias : raw;
+    }
+
+    String buildSystemPrompt(
             GenerateQuestionsFromResumeRequest request,
             String topicCatalog,
             String difficultyCatalog) {
+        String resolvedLanguage = resolveOutputLanguage(request.getLanguage());
         String topicInstruction = topicCatalog.isBlank()
                 ? """
                 2. There is no internal topic catalog configured. Infer a concise, resume-based topic name from the candidate's skills, experience, or focus areas.
@@ -121,10 +158,11 @@ public class OpenRouterQuestionGenerationClient implements QuestionGenerationAiC
                 4. If focusAreas is present, prioritize those areas.
                 5. If questionType is provided, prefer that type. Allowed types: TECHNICAL, BEHAVIORAL, CODING.
                 6. If difficultyName is provided, prefer that difficulty.
-                7. If language is provided, write the questions in that language.
+                7. Write all human-readable text values (candidateSummary, questionText, rationale) in %s.
 
                 Constraints:
                 1. Return ONLY valid JSON. No markdown. No explanation outside JSON.
+                2. Keep JSON keys, enum values (questionType), and catalog-matched names (topicName, difficultyName) exactly as specified in English/catalog form — do NOT translate them.
                 4. Keep each question concise and interview-ready.
                 5. rationale must be a short sentence explaining why the question fits the resume.
 
@@ -149,6 +187,7 @@ public class OpenRouterQuestionGenerationClient implements QuestionGenerationAiC
                 }
                 """.formatted(
                 request.getCount(),
+                resolvedLanguage,
                 topicInstruction,
                 difficultyInstruction);
     }

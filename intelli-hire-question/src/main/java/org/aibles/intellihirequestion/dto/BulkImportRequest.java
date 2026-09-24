@@ -17,8 +17,8 @@ import java.util.List;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class BulkImportRequest {
 
-    @NotEmpty(message = "Questions list must not be empty")
-    @Size(max = 100, message = "Questions list must not exceed 100 items")
+    @NotEmpty(message = "Danh sách câu hỏi không được để trống")
+    @Size(max = 100, message = "Danh sách câu hỏi không được vượt quá 100 mục")
     @Valid
     private List<QuestionRequest> questions;
 }

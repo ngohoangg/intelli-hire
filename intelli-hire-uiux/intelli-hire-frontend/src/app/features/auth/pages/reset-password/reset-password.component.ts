@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../../../core/services/auth.service';
+import { extractApiErrorMessage } from '../../../../core/utils/api-error';
 
 @Component({
   selector: 'app-reset-password',
@@ -42,7 +43,7 @@ export class ResetPasswordComponent implements OnInit {
     this.loading = true; this.error = ''; this.errorKey = null;
     this.auth.resetPassword(this.token, this.form.value.newPassword).subscribe({
       next: () => { this.success = this.translate.instant('auth.resetPassword.resetSuccess'); this.loading = false; },
-      error: err => { this.error = err?.error?.message ?? this.translate.instant('auth.resetPassword.resetFailed'); this.loading = false; }
+      error: err => { this.error = extractApiErrorMessage(err) ?? this.translate.instant('auth.resetPassword.resetFailed'); this.loading = false; }
     });
   }
 }

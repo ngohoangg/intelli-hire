@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Data
 public class AssignRoleRequestDTO {
 
-    @NotNull(message = "Role ID is required")
+    @NotNull(message = "ID vai trò là bắt buộc")
     @JsonProperty("role_id")
     private Long roleId;
 

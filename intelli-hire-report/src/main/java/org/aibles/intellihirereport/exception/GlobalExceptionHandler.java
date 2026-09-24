@@ -21,9 +21,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BaseException.class)
     public ResponseEntity<BaseResponse<Void>> handleBaseException(BaseException ex) {
         log.warn("{}: {}", ex.getClass().getSimpleName(), ex.getMessage());
+        List<FieldError> errors = List.of(
+                FieldError.builder()
+                        .field("general")
+                        .message(ex.getMessage())
+                        .rejectedValue(null)
+                        .build()
+        );
         return ResponseEntity
                 .status(ex.getStatus())
-                .body(BaseResponse.error(ex.getErrorCode(), null));
+                .body(BaseResponse.error(ex.getErrorCode(), errors));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

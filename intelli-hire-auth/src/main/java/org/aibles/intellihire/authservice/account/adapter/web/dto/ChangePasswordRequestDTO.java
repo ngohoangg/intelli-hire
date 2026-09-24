@@ -7,13 +7,13 @@ import lombok.Data;
 @Data
 public class ChangePasswordRequestDTO {
 
-    @NotBlank(message = "Current password is required")
+    @NotBlank(message = "Mật khẩu hiện tại là bắt buộc")
     private String currentPassword;
 
-    @NotBlank(message = "New password is required")
-    @Size(min = 8, message = "New password must be at least 8 characters")
+    @NotBlank(message = "Mật khẩu mới là bắt buộc")
+    @Size(min = 8, message = "Mật khẩu mới phải có ít nhất 8 ký tự")
     private String newPassword;
 
-    @NotBlank(message = "Confirm password is required")
+    @NotBlank(message = "Mật khẩu xác nhận là bắt buộc")
     private String confirmPassword;
 }

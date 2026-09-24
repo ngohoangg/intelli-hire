@@ -41,7 +41,7 @@ class RegisterUseCaseImplTest {
     @BeforeEach
     void setUp() {
         command = new RegisterCommand(
-                "test@example.com", "testuser", "Password1",
+                "test@example.com", "testuser", "Password1", "Password1",
                 "John", "Doe", "127.0.0.1", "Test-Agent"
         );
     }

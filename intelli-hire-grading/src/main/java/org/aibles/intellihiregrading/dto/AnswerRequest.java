@@ -12,7 +12,7 @@ import lombok.*;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class AnswerRequest {
 
-    @NotBlank(message = "Question ID is required")
+    @NotBlank(message = "Mã câu hỏi là bắt buộc")
     private String questionId;
 
     private String questionText;
@@ -21,8 +21,8 @@ public class AnswerRequest {
 
     private String skillName;
 
-    @Min(value = 1, message = "Max score must be >= 1")
-    @Max(value = 100, message = "Max score must be <= 100")
+    @Min(value = 1, message = "Điểm tối đa phải lớn hơn hoặc bằng 1")
+    @Max(value = 100, message = "Điểm tối đa phải nhỏ hơn hoặc bằng 100")
     @Builder.Default
     private Double maxScore = 10.0;
 }

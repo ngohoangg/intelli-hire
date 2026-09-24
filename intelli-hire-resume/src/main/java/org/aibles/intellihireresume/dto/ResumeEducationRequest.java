@@ -16,14 +16,14 @@ import lombok.NoArgsConstructor;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ResumeEducationRequest {
 
-    @NotBlank(message = "School must not be blank")
-    @Size(max = 255, message = "School must not exceed 255 characters")
+    @NotBlank(message = "Trường học không được để trống")
+    @Size(max = 255, message = "Trường học không được vượt quá 255 ký tự")
     private String school;
 
-    @Size(max = 255, message = "Degree must not exceed 255 characters")
+    @Size(max = 255, message = "Bằng cấp không được vượt quá 255 ký tự")
     private String degree;
 
-    @Size(max = 255, message = "Field must not exceed 255 characters")
+    @Size(max = 255, message = "Ngành học không được vượt quá 255 ký tự")
     private String field;
 
     private Integer startYear;

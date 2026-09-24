@@ -11,6 +11,7 @@ import { ResumeService } from '../../../resume/services/resume.service';
 import { CreateSessionRequest, Difficulty } from '../../../../core/models/interview.model';
 import { Resume, ResumeStatus } from '../../../../core/models/resume.model';
 import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
+import { extractApiErrorMessage } from '../../../../core/utils/api-error';
 
 type QuestionSource = 'bank' | 'resume';
 
@@ -156,7 +157,7 @@ export class InterviewCreateComponent implements OnInit {
       },
       error: (err) => {
         this.saving = false;
-        const msg = err?.error?.message ?? this.translate.instant('interviews.interviewCreate.createErrorFallback');
+        const msg = extractApiErrorMessage(err) ?? this.translate.instant('interviews.interviewCreate.createErrorFallback');
         this.snackBar.open(msg, this.translate.instant('interviews.interviewCreate.snackbarClose'), { duration: 5000 });
       }
     });

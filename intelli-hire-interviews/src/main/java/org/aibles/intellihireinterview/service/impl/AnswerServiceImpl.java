@@ -43,7 +43,7 @@ public class AnswerServiceImpl implements AnswerService {
             log.warn("Duplicate answer attempt for session {} question {} by user {}",
                      sessionId, request.getQuestionId(), userId);
             throw new IllegalStateException(
-                "Answer already submitted for question " + request.getQuestionId() + " in session " + sessionId);
+                "Câu hỏi " + request.getQuestionId() + " trong phiên " + sessionId + " đã được trả lời");
         }
 
         var questionText = questionLogRepo.findBySessionIdOrderByQuestionOrder(sessionId).stream()

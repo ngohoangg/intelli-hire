@@ -150,7 +150,7 @@ class ResumeControllerTest {
                 .andExpect(status().isConflict())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.errors[0].message").value("Resume title already exists"));
+                .andExpect(jsonPath("$.errors[0].message").value("Tiêu đề hồ sơ đã tồn tại"));
 
         verify(resumeService).create(eq(testUserId), any(CreateResumeRequest.class));
     }
@@ -284,7 +284,7 @@ class ResumeControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.errors[0].message").value("Resume not found"));
+                .andExpect(jsonPath("$.errors[0].message").value("Không tìm thấy hồ sơ"));
 
         verify(resumeService).update(eq(testResumeId), any(CreateResumeRequest.class));
     }
@@ -305,7 +305,7 @@ class ResumeControllerTest {
                 .andExpect(status().isConflict())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.errors[0].message").value("Resume title already exists"));
+                .andExpect(jsonPath("$.errors[0].message").value("Tiêu đề hồ sơ đã tồn tại"));
 
         verify(resumeService).update(eq(testResumeId), any(CreateResumeRequest.class));
     }
@@ -379,7 +379,7 @@ class ResumeControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.errors[0].message").value("Resume not found"));
+                .andExpect(jsonPath("$.errors[0].message").value("Không tìm thấy hồ sơ"));
 
         verify(resumeService).delete(testResumeId);
     }
@@ -419,7 +419,7 @@ class ResumeControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.errors[0].message").value("Resume not found"));
+                .andExpect(jsonPath("$.errors[0].message").value("Không tìm thấy hồ sơ"));
 
         verify(resumeService).reprocess(testResumeId);
     }

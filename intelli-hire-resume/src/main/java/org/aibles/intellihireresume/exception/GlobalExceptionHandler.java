@@ -87,7 +87,7 @@ public class GlobalExceptionHandler {
 
         List<FieldError> errors = List.of(FieldError.builder()
                 .field(ex.getHeaderName())
-                .message("Missing required header: " + ex.getHeaderName())
+                .message("Thiếu header bắt buộc: " + ex.getHeaderName())
                 .rejectedValue(null)
                 .build());
 

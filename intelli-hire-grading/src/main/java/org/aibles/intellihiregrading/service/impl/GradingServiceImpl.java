@@ -15,6 +15,7 @@ import org.aibles.intellihiregrading.service.LlmService;
 import org.aibles.intellihiregrading.kafka.GradingCompletedProducer;
 import org.aibles.intellihiregrading.utils.PromptBuilder;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -41,6 +42,9 @@ public class GradingServiceImpl implements GradingService {
     private final Executor gradingTaskExecutor;
     private final TransactionTemplate transactionTemplate;
     private final CacheManager cacheManager;
+
+    @Value("${app.ai.output-language:Vietnamese}")
+    private String aiOutputLanguage = "Vietnamese";
 
     public GradingServiceImpl(
             GradingSessionRepository sessionRepository,
@@ -79,7 +83,7 @@ public class GradingServiceImpl implements GradingService {
 
         // 4. Save results + update session (in transaction)
         boolean allFailed = results.stream().allMatch(r ->
-                r.getFeedback() != null && r.getFeedback().startsWith("Unable to grade"));
+                r.getFeedback() != null && r.getFeedback().startsWith("Không thể chấm điểm"));
         transactionTemplate.executeWithoutResult(status -> {
             resultRepository.saveAll(results);
             session.setGradedCount(results.size());
@@ -178,7 +182,7 @@ public class GradingServiceImpl implements GradingService {
 
     private GradingResult gradeOneQuestion(AnswerRequest answer, String topic, String sessionId) {
         long start = System.currentTimeMillis();
-        String prompt = promptBuilder.build(answer, topic);
+        String prompt = promptBuilder.build(answer, topic, aiOutputLanguage);
         LlmGradingResult llmResult = llmService.grade(prompt);
         long latencyMs = System.currentTimeMillis() - start;
 
@@ -208,7 +212,7 @@ public class GradingServiceImpl implements GradingService {
                 .skillName(answer.getSkillName())
                 .score(0.0)
                 .maxScore(answer.getMaxScore())
-                .feedback("Unable to grade: " + errorMsg)
+                .feedback("Không thể chấm điểm: " + errorMsg)
                 .modelUsed("N/A")
                 .latencyMs(0L)
                 .build();

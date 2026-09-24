@@ -15,6 +15,6 @@ import lombok.NoArgsConstructor;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CreateResumeRequest {
 
-    @Size(max = 255, message = "Title must not exceed 255 characters")
+    @Size(max = 255, message = "Tiêu đề không được vượt quá 255 ký tự")
     private String title;
 }

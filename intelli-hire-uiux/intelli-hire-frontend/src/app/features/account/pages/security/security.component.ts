@@ -7,6 +7,7 @@ import { ProfileService } from '../../../../core/services/profile.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { LinkedOAuthProvider } from '../../../../core/models/auth.model';
 import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
+import { extractApiErrorMessage } from '../../../../core/utils/api-error';
 
 @Component({
   selector: 'app-security',
@@ -57,7 +58,7 @@ export class SecurityComponent implements OnInit {
   unlink(providerCode: string): void {
     this.profileService.unlinkProvider(providerCode).subscribe({
       next: () => { this.linkedProviders = this.linkedProviders.filter(p => p.provider_code !== providerCode); this.success = this.translate.instant('account.security.unlinkSuccess'); },
-      error: err => { this.error = err?.error?.message ?? this.translate.instant('account.security.unlinkFailed'); }
+      error: err => { this.error = extractApiErrorMessage(err) ?? this.translate.instant('account.security.unlinkFailed'); }
     });
   }
 
@@ -78,12 +79,8 @@ export class SecurityComponent implements OnInit {
         this.pwSaving = false;
       },
       error: err => {
-        const body = err?.error;
-        if (body?.fieldErrors) {
-          this.pwError = Object.values(body.fieldErrors).join(', ');
-        } else {
-          this.pwError = body?.message ?? this.translate.instant('account.security.changeFailedWithStatus', { status: err.status });
-        }
+        this.pwError = extractApiErrorMessage(err)
+          ?? this.translate.instant('account.security.changeFailedWithStatus', { status: err.status });
         this.pwSaving = false;
       }
     });

@@ -73,7 +73,7 @@
       <div class="stack-list" *ngIf="result?.errors?.length">
         <article class="stack-item" *ngFor="let error of result?.errors">
           <span class="status-badge danger">{{ 'questions.bulkImport.rowLabel' | translate: { index: error.index } }}</span>
-          <p class="support-copy">{{ error.error }}</p>
+          <p class="support-copy">{{ rowErrorText(error) }}</p>
         </article>
       </div>
 

@@ -19,12 +19,12 @@ import java.time.LocalDate;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ResumeExperienceRequest {
 
-    @NotBlank(message = "Company must not be blank")
-    @Size(max = 255, message = "Company must not exceed 255 characters")
+    @NotBlank(message = "Công ty không được để trống")
+    @Size(max = 255, message = "Công ty không được vượt quá 255 ký tự")
     private String company;
 
-    @NotBlank(message = "Title must not be blank")
-    @Size(max = 255, message = "Title must not exceed 255 characters")
+    @NotBlank(message = "Chức danh không được để trống")
+    @Size(max = 255, message = "Chức danh không được vượt quá 255 ký tự")
     private String title;
 
     @JsonFormat(pattern = "yyyy-MM-dd")

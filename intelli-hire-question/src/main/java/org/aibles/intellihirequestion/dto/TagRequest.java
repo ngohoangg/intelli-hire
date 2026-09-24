@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class TagRequest {
 
-    @NotBlank(message = "Name is required")
-    @Size(max = 100, message = "Name must not exceed 100 characters")
+    @NotBlank(message = "Tên là bắt buộc")
+    @Size(max = 100, message = "Tên không được vượt quá 100 ký tự")
     private String name;
 }

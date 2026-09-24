@@ -12,15 +12,15 @@ import lombok.*;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class DifficultyLevelRequest {
 
-    @NotBlank(message = "Name is required")
-    @Size(max = 50, message = "Name must not exceed 50 characters")
+    @NotBlank(message = "Tên là bắt buộc")
+    @Size(max = 50, message = "Tên không được vượt quá 50 ký tự")
     private String name;
 
-    @Min(value = 1, message = "Weight must be greater than or equal to 1")
-    @Max(value = 100, message = "Weight must be less than or equal to 100")
-    @NotNull(message = "Weight is required")
+    @Min(value = 1, message = "Trọng số phải lớn hơn hoặc bằng 1")
+    @Max(value = 100, message = "Trọng số phải nhỏ hơn hoặc bằng 100")
+    @NotNull(message = "Trọng số là bắt buộc")
     private Integer weight;
 
-    @Size(max = 255, message = "Description must not exceed 255 characters")
+    @Size(max = 255, message = "Mô tả không được vượt quá 255 ký tự")
     private String description;
 }

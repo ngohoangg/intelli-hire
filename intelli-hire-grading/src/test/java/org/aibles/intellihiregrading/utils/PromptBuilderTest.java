@@ -25,7 +25,7 @@ class PromptBuilderTest {
                 .maxScore(10.0)
                 .build();
 
-        String prompt = promptBuilder.build(answer, "Java Backend");
+        String prompt = promptBuilder.build(answer, "Java Backend", "Vietnamese");
 
         assertTrue(prompt.contains("Java Backend"));
         assertTrue(prompt.contains("spring-core"));
@@ -33,6 +33,7 @@ class PromptBuilderTest {
         assertTrue(prompt.contains("A framework for Java"));
         assertTrue(prompt.contains("10.0"));
         assertTrue(prompt.contains("JSON"));
+        assertTrue(prompt.contains("Vietnamese"));
     }
 
     @Test
@@ -44,7 +45,7 @@ class PromptBuilderTest {
                 .maxScore(10.0)
                 .build();
 
-        String prompt = promptBuilder.build(answer, null);
+        String prompt = promptBuilder.build(answer, null, "Vietnamese");
 
         assertTrue(prompt.contains("Topic: General"));
     }
@@ -59,7 +60,7 @@ class PromptBuilderTest {
                 .maxScore(10.0)
                 .build();
 
-        String prompt = promptBuilder.build(answer, "Java");
+        String prompt = promptBuilder.build(answer, "Java", "Vietnamese");
 
         assertTrue(prompt.contains("Skill: General"));
     }
@@ -73,7 +74,7 @@ class PromptBuilderTest {
                 .maxScore(10.0)
                 .build();
 
-        String prompt = promptBuilder.build(answer, "Java");
+        String prompt = promptBuilder.build(answer, "Java", "Vietnamese");
 
         assertTrue(prompt.contains("(no answer provided)"));
     }
@@ -87,7 +88,7 @@ class PromptBuilderTest {
                 .maxScore(10.0)
                 .build();
 
-        String prompt = promptBuilder.build(answer, "Java");
+        String prompt = promptBuilder.build(answer, "Java", "Vietnamese");
 
         assertTrue(prompt.contains("Question: \n"));
     }
@@ -101,9 +102,38 @@ class PromptBuilderTest {
                 .maxScore(10.0)
                 .build();
 
-        String prompt = promptBuilder.build(answer, "Java");
+        String prompt = promptBuilder.build(answer, "Java", "Vietnamese");
 
         assertTrue(prompt.contains("\"score\""));
         assertTrue(prompt.contains("\"feedback\""));
+    }
+
+    @Test
+    void build_withConfiguredLanguage_usesGivenLanguage() {
+        AnswerRequest answer = AnswerRequest.builder()
+                .questionId("q1")
+                .questionText("Q?")
+                .answerText("A")
+                .maxScore(10.0)
+                .build();
+
+        String prompt = promptBuilder.build(answer, "Java", "English");
+
+        assertTrue(prompt.contains("English"));
+        assertFalse(prompt.contains("Vietnamese"));
+    }
+
+    @Test
+    void build_withNullLanguage_defaultsToVietnamese() {
+        AnswerRequest answer = AnswerRequest.builder()
+                .questionId("q1")
+                .questionText("Q?")
+                .answerText("A")
+                .maxScore(10.0)
+                .build();
+
+        String prompt = promptBuilder.build(answer, "Java", null);
+
+        assertTrue(prompt.contains("Vietnamese"));
     }
 }

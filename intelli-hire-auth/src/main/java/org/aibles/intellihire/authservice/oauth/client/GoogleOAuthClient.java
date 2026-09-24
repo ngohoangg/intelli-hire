@@ -88,10 +88,10 @@ public class GoogleOAuthClient implements OAuthClient {
             }
 
             log.error("No access token in Google response");
-            throw new OAuthCallbackException("Failed to get access token from Google");
+            throw new OAuthCallbackException("Không thể lấy access token từ Google");
         } catch (Exception e) {
             log.error("Error exchanging code for access token with Google", e);
-            throw new OAuthCallbackException("Failed to exchange code with Google: " + e.getMessage());
+            throw new OAuthCallbackException("Không thể trao đổi mã với Google: " + e.getMessage());
         }
     }
 
@@ -111,7 +111,7 @@ public class GoogleOAuthClient implements OAuthClient {
 
             JsonNode body = response.getBody();
             if (body == null) {
-                throw new OAuthCallbackException("Empty response from Google user info");
+                throw new OAuthCallbackException("Phản hồi trống từ thông tin người dùng Google");
             }
 
             return new OAuthUserInfo(
@@ -124,7 +124,7 @@ public class GoogleOAuthClient implements OAuthClient {
             throw e;
         } catch (Exception e) {
             log.error("Error fetching user info from Google", e);
-            throw new OAuthCallbackException("Failed to fetch user info from Google: " + e.getMessage());
+            throw new OAuthCallbackException("Không thể lấy thông tin người dùng từ Google: " + e.getMessage());
         }
     }
 

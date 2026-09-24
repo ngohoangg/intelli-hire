@@ -3,6 +3,7 @@ import { inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslateService } from '@ngx-translate/core';
 import { catchError, throwError } from 'rxjs';
+import { extractApiErrorMessage } from '../utils/api-error';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const snackBar = inject(MatSnackBar);
@@ -18,10 +19,10 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
       let message = translate.instant('common.errorInterceptor.unexpectedError');
 
-      if (error.error?.message) {
-        message = error.error.message;
-      } else if (error.error?.errorCode) {
-        message = `Error ${error.error.errorCode}: ${error.error.message ?? error.statusText}`;
+      const apiMessage = extractApiErrorMessage(error);
+
+      if (apiMessage) {
+        message = apiMessage;
       } else if (error.status === 403) {
         message = translate.instant('common.errorInterceptor.accessDenied');
       } else if (error.status === 0) {

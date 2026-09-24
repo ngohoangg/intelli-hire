@@ -341,7 +341,7 @@ class DifficultyControllerTest {
                     .andExpect(jsonPath("$.success").value(false))
                     .andExpect(jsonPath("$.error_code").value(ErrorCode.COM_001.getCode()))
                     .andExpect(jsonPath("$.errors[0].field").value("name"))
-                    .andExpect(jsonPath("$.errors[0].message").value("Name is required"))
+                    .andExpect(jsonPath("$.errors[0].message").value("Tên là bắt buộc"))
                     .andExpect(jsonPath("$.data").doesNotExist());
         }
 
@@ -363,7 +363,7 @@ class DifficultyControllerTest {
                     .andExpect(jsonPath("$.success").value(false))
                     .andExpect(jsonPath("$.error_code").value(ErrorCode.COM_001.getCode()))
                     .andExpect(jsonPath("$.errors[0].field").value("name"))
-                    .andExpect(jsonPath("$.errors[0].message").value("Name must not exceed 50 characters"))
+                    .andExpect(jsonPath("$.errors[0].message").value("Tên không được vượt quá 50 ký tự"))
                     .andExpect(jsonPath("$.data").doesNotExist());
         }
 
@@ -384,7 +384,7 @@ class DifficultyControllerTest {
                     .andExpect(jsonPath("$.success").value(false))
                     .andExpect(jsonPath("$.error_code").value(ErrorCode.COM_001.getCode()))
                     .andExpect(jsonPath("$.errors[0].field").value("weight"))
-                    .andExpect(jsonPath("$.errors[0].message").value("Weight is required"))
+                    .andExpect(jsonPath("$.errors[0].message").value("Trọng số là bắt buộc"))
                     .andExpect(jsonPath("$.data").doesNotExist());
         }
 
@@ -406,7 +406,7 @@ class DifficultyControllerTest {
                     .andExpect(jsonPath("$.success").value(false))
                     .andExpect(jsonPath("$.error_code").value(ErrorCode.COM_001.getCode()))
                     .andExpect(jsonPath("$.errors[0].field").value("weight"))
-                    .andExpect(jsonPath("$.errors[0].message").value("Weight must be greater than or equal to 1"))
+                    .andExpect(jsonPath("$.errors[0].message").value("Trọng số phải lớn hơn hoặc bằng 1"))
                     .andExpect(jsonPath("$.data").doesNotExist());
         }
 
@@ -428,7 +428,7 @@ class DifficultyControllerTest {
                     .andExpect(jsonPath("$.success").value(false))
                     .andExpect(jsonPath("$.error_code").value(ErrorCode.COM_001.getCode()))
                     .andExpect(jsonPath("$.errors[0].field").value("weight"))
-                    .andExpect(jsonPath("$.errors[0].message").value("Weight must be less than or equal to 100"))
+                    .andExpect(jsonPath("$.errors[0].message").value("Trọng số phải nhỏ hơn hoặc bằng 100"))
                     .andExpect(jsonPath("$.data").doesNotExist());
         }
 
@@ -450,7 +450,7 @@ class DifficultyControllerTest {
                     .andExpect(jsonPath("$.success").value(false))
                     .andExpect(jsonPath("$.error_code").value(ErrorCode.COM_001.getCode()))
                     .andExpect(jsonPath("$.errors[0].field").value("description"))
-                    .andExpect(jsonPath("$.errors[0].message").value("Description must not exceed 255 characters"))
+                    .andExpect(jsonPath("$.errors[0].message").value("Mô tả không được vượt quá 255 ký tự"))
                     .andExpect(jsonPath("$.data").doesNotExist());
         }
 

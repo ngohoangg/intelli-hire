@@ -5,6 +5,6 @@ import lombok.Data;
 
 @Data
 public class DeleteAccountRequestDTO {
-    @NotBlank(message = "Password is required to confirm account deletion")
+    @NotBlank(message = "Mật khẩu là bắt buộc để xác nhận xóa tài khoản")
     private String password;
 }

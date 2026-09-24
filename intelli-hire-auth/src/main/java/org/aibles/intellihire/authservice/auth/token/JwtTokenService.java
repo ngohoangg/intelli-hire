@@ -107,7 +107,7 @@ public class JwtTokenService {
 
             String tokenType = claims.get(CLAIM_TOKEN_TYPE, String.class);
             if (!TOKEN_TYPE_ACCESS.equals(tokenType)) {
-                throw new InvalidTokenException("Invalid token type");
+                throw new InvalidTokenException("Loại token không hợp lệ");
             }
 
             validateAudience(claims, jwtProperties.getAccessTokenAudience());
@@ -130,7 +130,7 @@ public class JwtTokenService {
             );
         } catch (JwtException | IllegalArgumentException e) {
             log.warn("Invalid access token: {}", e.getMessage());
-            throw new InvalidTokenException("Invalid or expired token");
+            throw new InvalidTokenException("Token không hợp lệ hoặc đã hết hạn");
         }
     }
 
@@ -140,7 +140,7 @@ public class JwtTokenService {
 
             String tokenType = claims.get(CLAIM_TOKEN_TYPE, String.class);
             if (!TOKEN_TYPE_REFRESH.equals(tokenType)) {
-                throw new InvalidTokenException("Invalid token type");
+                throw new InvalidTokenException("Loại token không hợp lệ");
             }
 
             validateAudience(claims, jwtProperties.getRefreshTokenAudience());
@@ -152,7 +152,7 @@ public class JwtTokenService {
             );
         } catch (JwtException | IllegalArgumentException e) {
             log.warn("Invalid refresh token: {}", e.getMessage());
-            throw new InvalidTokenException("Invalid or expired refresh token");
+            throw new InvalidTokenException("Refresh token không hợp lệ hoặc đã hết hạn");
         }
     }
 
@@ -168,7 +168,7 @@ public class JwtTokenService {
     private void validateAudience(Claims claims, String expectedAudience) {
         Set<String> audience = claims.getAudience();
         if (audience == null || !audience.contains(expectedAudience)) {
-            throw new InvalidTokenException("Invalid token audience");
+            throw new InvalidTokenException("Đối tượng token không hợp lệ");
         }
     }
 

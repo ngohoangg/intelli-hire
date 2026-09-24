@@ -20,10 +20,10 @@ import java.util.List;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CreateReportRequest {
 
-    @NotBlank(message = "Session ID is required")
+    @NotBlank(message = "Mã phiên là bắt buộc")
     private String sessionId;
 
-    @NotNull(message = "User ID is required")
+    @NotNull(message = "Mã người dùng là bắt buộc")
     private Long userId;
 
     private String topic;
@@ -32,7 +32,7 @@ public class CreateReportRequest {
 
     private Object roadmapJson;
 
-    @NotEmpty(message = "Question scores must not be empty")
+    @NotEmpty(message = "Danh sách điểm câu hỏi không được để trống")
     @Valid
     private List<QuestionScoreRequest> questionScores;
 }

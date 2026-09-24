@@ -17,25 +17,25 @@ import lombok.NoArgsConstructor;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ResumeContactRequest {
 
-    @Size(max = 255, message = "Full name must not exceed 255 characters")
+    @Size(max = 255, message = "Họ tên không được vượt quá 255 ký tự")
     private String fullName;
 
-    @Email(message = "Email must be valid")
-    @Size(max = 100, message = "Email must not exceed 100 characters")
+    @Email(message = "Email không hợp lệ")
+    @Size(max = 100, message = "Email không được vượt quá 100 ký tự")
     private String email;
 
-    @Pattern(regexp = "^[+]?[\\d\\s\\-]{7,15}$", message = "Phone number is invalid")
-    @Size(max = 50, message = "Phone must not exceed 50 characters")
+    @Pattern(regexp = "^[+]?[\\d\\s\\-]{7,15}$", message = "Số điện thoại không hợp lệ")
+    @Size(max = 50, message = "Số điện thoại không được vượt quá 50 ký tự")
     private String phone;
 
-    @Size(max = 255, message = "Location must not exceed 255 characters")
+    @Size(max = 255, message = "Địa chỉ không được vượt quá 255 ký tự")
     private String location;
 
     @Pattern(
         regexp = "^(https?://)?(www\\.)?linkedin\\.com/.*$",
-        message = "LinkedIn URL is invalid"
+        message = "URL LinkedIn không hợp lệ"
     )
-    @Size(max = 255, message = "LinkedIn URL must not exceed 255 characters")
+    @Size(max = 255, message = "URL LinkedIn không được vượt quá 255 ký tự")
     private String linkedinUrl;
 
     private String otherInfo;

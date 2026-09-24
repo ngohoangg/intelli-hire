@@ -458,9 +458,9 @@ class GradingServiceImplTest {
             session.initId();
             when(sessionRepository.save(any())).thenReturn(session);
 
-            // LLM returns fallback (Unable to grade)
+            // LLM returns fallback (Không thể chấm điểm)
             when(llmService.grade(anyString())).thenReturn(
-                    LlmGradingResult.builder().score(0.0).feedback("Unable to grade: timeout").model("gpt-4o").build()
+                    LlmGradingResult.builder().score(0.0).feedback("Không thể chấm điểm: timeout").model("gpt-4o").build()
             );
             when(resultRepository.saveAll(anyList())).thenAnswer(inv -> inv.getArgument(0));
 

@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 public class CreateSessionRequest {
-    @NotBlank(message = "topic is required")
+    @NotBlank(message = "Chủ đề là bắt buộc")
     private String topic;
 
     private String difficulty;

@@ -21,21 +21,21 @@ import java.util.List;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class RubricRequest {
 
-    @NotBlank(message = "Criteria must not be blank")
-    @Size(max = 5000, message = "Criteria must not exceed 5000 characters")
+    @NotBlank(message = "Tiêu chí không được để trống")
+    @Size(max = 5000, message = "Tiêu chí không được vượt quá 5000 ký tự")
     private String criteria;
 
     private List<String> keywords;
 
-    @Size(max = 10000, message = "Example answer must not exceed 10000 characters")
+    @Size(max = 10000, message = "Câu trả lời mẫu không được vượt quá 10000 ký tự")
     private String exampleAnswer;
 
     private List<String> commonMistakes;
 
     private List<String> hints;
 
-    @NotNull(message = "Max score must not be null")
-    @Min(value = 1, message = "Max score must be at least 1")
-    @Max(value = 100, message = "Max score must not exceed 100")
+    @NotNull(message = "Điểm tối đa không được để trống")
+    @Min(value = 1, message = "Điểm tối đa phải lớn hơn hoặc bằng 1")
+    @Max(value = 100, message = "Điểm tối đa không được vượt quá 100")
     private Integer maxScore = 10;
 }

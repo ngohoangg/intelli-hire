@@ -17,9 +17,9 @@ import org.aibles.intellihireresume.entity.enums.JobType;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ParseJobRequest {
 
-    @NotBlank(message = "Resume ID is required")
+    @NotBlank(message = "Resume ID là bắt buộc")
     private String resumeId;
 
-    @NotNull(message = "Job type is required")
+    @NotNull(message = "Loại tác vụ là bắt buộc")
     private JobType jobType;
 }

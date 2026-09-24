@@ -4,6 +4,7 @@ import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validatio
 import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../../../core/services/auth.service';
+import { extractApiErrorMessage } from '../../../../core/utils/api-error';
 
 const passwordMatchValidator: ValidatorFn = (group: AbstractControl): ValidationErrors | null => {
   const pw = group.get('password')?.value;
@@ -47,7 +48,7 @@ export class RegisterComponent {
     this.loading = true; this.error = '';
     this.auth.register(this.form.value).subscribe({
       next: res => { this.success = res.message || this.translate.instant('auth.register.registrationSuccess'); this.loading = false; },
-      error: err => { this.error = err?.error?.message ?? this.translate.instant('auth.register.registrationFailed'); this.loading = false; }
+      error: err => { this.error = extractApiErrorMessage(err) ?? this.translate.instant('auth.register.registrationFailed'); this.loading = false; }
     });
   }
 

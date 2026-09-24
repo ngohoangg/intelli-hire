@@ -24,13 +24,13 @@ public class SmtpEmailService implements EmailService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(emailProperties.getFrom());
         message.setTo(to);
-        message.setSubject("IntelliHire - Password Reset Request");
+        message.setSubject("IntelliHire - Yêu cầu đặt lại mật khẩu");
         message.setText(
-                "You have requested to reset your password.\n\n" +
-                "Click the link below to reset your password:\n" +
+                "Bạn đã yêu cầu đặt lại mật khẩu.\n\n" +
+                "Nhấp vào liên kết bên dưới để đặt lại mật khẩu của bạn:\n" +
                 resetUrl + "\n\n" +
-                "This link will expire in 1 hour.\n\n" +
-                "If you did not request this, please ignore this email."
+                "Liên kết này sẽ hết hạn sau 1 giờ.\n\n" +
+                "Nếu bạn không yêu cầu điều này, vui lòng bỏ qua email này."
         );
 
         mailSender.send(message);
@@ -44,13 +44,13 @@ public class SmtpEmailService implements EmailService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(emailProperties.getFrom());
         message.setTo(to);
-        message.setSubject("IntelliHire - Verify Your Email");
+        message.setSubject("IntelliHire - Xác thực email của bạn");
         message.setText(
-                "Welcome to IntelliHire!\n\n" +
-                "Please verify your email by clicking the link below:\n" +
+                "Chào mừng bạn đến với IntelliHire!\n\n" +
+                "Vui lòng xác thực email của bạn bằng cách nhấp vào liên kết bên dưới:\n" +
                 verifyUrl + "\n\n" +
-                "This link will expire in 24 hours.\n\n" +
-                "If you did not create an account, please ignore this email."
+                "Liên kết này sẽ hết hạn sau 24 giờ.\n\n" +
+                "Nếu bạn không tạo tài khoản này, vui lòng bỏ qua email này."
         );
 
         mailSender.send(message);

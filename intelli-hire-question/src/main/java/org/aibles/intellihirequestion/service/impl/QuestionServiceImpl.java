@@ -327,7 +327,7 @@ public class QuestionServiceImpl implements QuestionService {
             log.error("Not enough questions available. Found {} but requested {}",
                     questionIds.size(), request.getCount());
             throw new NotFoundException("QUE_005",
-                    String.format("Not enough questions available. Found %d but requested %d",
+                    String.format("Không đủ câu hỏi khả dụng. Tìm thấy %d nhưng yêu cầu %d",
                             questionIds.size(), request.getCount()));
         }
 
@@ -644,10 +644,10 @@ public class QuestionServiceImpl implements QuestionService {
         log.info("resubmit - id: {}, userId: {}", id, userId);
         Question question = getQuestionOrThrow(id);
         if (!Objects.equals(question.getSubmittedById(), userId)) {
-            throw new BadRequestException("QUE_403", "Not the owner of this question");
+            throw new BadRequestException("QUE_403", "Bạn không phải là chủ sở hữu của câu hỏi này");
         }
         if (!"REJECTED".equals(question.getStatus())) {
-            throw new BadRequestException("QUE_409", "Only REJECTED questions can be resubmitted");
+            throw new BadRequestException("QUE_409", "Chỉ có thể gửi lại các câu hỏi ở trạng thái REJECTED");
         }
         question.setStatus("PENDING");
         question.setRejectionReason(null);
@@ -766,24 +766,24 @@ public class QuestionServiceImpl implements QuestionService {
         // Check topic exists
         Topic topic = existingTopics.get(req.getTopicId());
         if (topic == null) {
-            return "Topic not found: " + req.getTopicId();
+            return "Không tìm thấy chủ đề: " + req.getTopicId();
         }
 
         // Check topic is active
         if (Boolean.FALSE.equals(topic.getIsActive())) {
-            return "Topic is inactive: " + req.getTopicId();
+            return "Chủ đề đang không hoạt động: " + req.getTopicId();
         }
 
         // Check difficulty exists
         if (!existingDifficulties.containsKey(req.getDifficultyId())) {
-            return "Difficulty level not found: " + req.getDifficultyId();
+            return "Không tìm thấy độ khó: " + req.getDifficultyId();
         }
 
         // Check all tags exist
         if (req.getTagIds() != null && !req.getTagIds().isEmpty()) {
             for (String tagId : req.getTagIds()) {
                 if (!existingTagIds.contains(tagId)) {
-                    return "Tag not found: " + tagId;
+                    return "Không tìm thấy nhãn: " + tagId;
                 }
             }
         }
@@ -791,7 +791,7 @@ public class QuestionServiceImpl implements QuestionService {
         // Check duplicate questionText within batch
         String normalizedText = req.getQuestionText().trim().toLowerCase();
         if (seenTexts.contains(normalizedText)) {
-            return "Duplicate question text in batch";
+            return "Trùng lặp nội dung câu hỏi trong lô nhập";
         }
 
         return null;

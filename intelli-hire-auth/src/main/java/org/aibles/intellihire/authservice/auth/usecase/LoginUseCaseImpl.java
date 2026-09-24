@@ -104,7 +104,7 @@ public class LoginUseCaseImpl implements LoginUseCase {
         account.incrementFailedLoginAttempts();
 
         if (account.getFailedLoginAttempts() >= passwordProperties.getMaxFailedAttempts()) {
-            account.lock("Too many failed login attempts");
+            account.lock("Đăng nhập sai quá nhiều lần");
             log.warn("Account locked due to failed attempts: {}", account.getId());
         }
 

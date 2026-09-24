@@ -6,6 +6,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AdminService } from '../../../../core/services/admin.service';
 import { AdminAccount, AccountRole, AdminRole, AccountStatus } from '../../../../core/models/admin.model';
 import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
+import { extractApiErrorMessage } from '../../../../core/utils/api-error';
 
 @Component({
   selector: 'app-account-detail',
@@ -53,7 +54,7 @@ export class AccountDetailComponent implements OnInit {
       switchMap(() => this.adminService.getAccountRoles(this.account!.id))
     ).subscribe({
       next: r => { this.roles = r; this.success = this.translate.instant('admin.accountDetail.roleAssignedSuccess'); },
-      error: err => { this.error = err?.error?.message ?? this.translate.instant('admin.accountDetail.assignRoleFailed'); }
+      error: err => { this.error = extractApiErrorMessage(err) ?? this.translate.instant('admin.accountDetail.assignRoleFailed'); }
     });
   }
 
@@ -61,7 +62,7 @@ export class AccountDetailComponent implements OnInit {
     if (!this.account) return;
     this.adminService.removeRole(this.account.id, roleId).subscribe({
       next: () => { this.roles = this.roles.filter(r => r.role_id !== roleId); this.success = this.translate.instant('admin.accountDetail.roleRemovedSuccess'); },
-      error: err => { this.error = err?.error?.message ?? this.translate.instant('admin.accountDetail.removeRoleFailed'); }
+      error: err => { this.error = extractApiErrorMessage(err) ?? this.translate.instant('admin.accountDetail.removeRoleFailed'); }
     });
   }
 

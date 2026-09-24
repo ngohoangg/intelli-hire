@@ -8,7 +8,7 @@ public class SubmitAnswerRequest {
     @NotBlank
     private String questionId;
 
-    @NotBlank(message = "answer cannot be blank")
+    @NotBlank(message = "Câu trả lời không được để trống")
     @Size(max = 10000)
     private String answerText;
 }

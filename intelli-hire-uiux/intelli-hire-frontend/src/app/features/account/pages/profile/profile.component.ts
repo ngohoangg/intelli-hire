@@ -6,6 +6,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ProfileService } from '../../../../core/services/profile.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
+import { extractApiErrorMessage } from '../../../../core/utils/api-error';
 
 @Component({
   selector: 'app-profile',
@@ -67,7 +68,7 @@ export class ProfileComponent implements OnInit {
     };
     this.profileService.updateMyProfile(request).subscribe({
       next: () => { this.success = this.translate.instant('account.profile.updateSuccess'); this.saving = false; },
-      error: err => { this.error = err?.error?.message ?? this.translate.instant('account.profile.updateFailed'); this.saving = false; }
+      error: err => { this.error = extractApiErrorMessage(err) ?? this.translate.instant('account.profile.updateFailed'); this.saving = false; }
     });
   }
 }

@@ -21,10 +21,10 @@ public class RevokeSessionUseCaseImpl implements RevokeSessionUseCase {
         log.debug("Revoking session {} for account: {}", sessionId, accountId);
 
         RefreshTokenEntity token = refreshTokenRepository.findById(sessionId)
-                .orElseThrow(() -> new InvalidTokenException("Session not found"));
+                .orElseThrow(() -> new InvalidTokenException("Không tìm thấy phiên"));
 
         if (!token.getAccountId().equals(accountId)) {
-            throw new InvalidTokenException("Session does not belong to this account");
+            throw new InvalidTokenException("Phiên không thuộc về tài khoản này");
         }
 
         if (!token.isRevoked()) {

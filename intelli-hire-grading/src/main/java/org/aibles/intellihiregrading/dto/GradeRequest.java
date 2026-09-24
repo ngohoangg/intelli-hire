@@ -14,16 +14,16 @@ import java.util.List;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class GradeRequest {
 
-    @NotBlank(message = "Session ID is required")
+    @NotBlank(message = "Mã phiên là bắt buộc")
     private String sessionId;
 
-    @NotBlank(message = "User ID is required")
+    @NotBlank(message = "Mã người dùng là bắt buộc")
     private String userId;
 
     private String topic;
 
-    @NotEmpty(message = "Answers must not be empty")
-    @jakarta.validation.constraints.Size(max = 50, message = "Maximum 50 answers per request")
+    @NotEmpty(message = "Danh sách câu trả lời không được để trống")
+    @jakarta.validation.constraints.Size(max = 50, message = "Tối đa 50 câu trả lời mỗi yêu cầu")
     @Valid
     private List<AnswerRequest> answers;
 }

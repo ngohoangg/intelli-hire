@@ -16,21 +16,21 @@ import lombok.NoArgsConstructor;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class QuestionScoreRequest {
 
-    @NotBlank(message = "Question ID is required")
+    @NotBlank(message = "Mã câu hỏi là bắt buộc")
     private String questionId;
 
     private String questionText;
 
     private String answerText;
 
-    @NotNull(message = "Score is required")
-    @Min(value = 0, message = "Score must be >= 0")
-    @Max(value = 100, message = "Score must be <= 100")
+    @NotNull(message = "Điểm số là bắt buộc")
+    @Min(value = 0, message = "Điểm số phải >= 0")
+    @Max(value = 100, message = "Điểm số phải <= 100")
     private Double score;
 
-    @NotNull(message = "Max score is required")
-    @Min(value = 1, message = "Max score must be >= 1")
-    @Max(value = 100, message = "Max score must be <= 100")
+    @NotNull(message = "Điểm tối đa là bắt buộc")
+    @Min(value = 1, message = "Điểm tối đa phải >= 1")
+    @Max(value = 100, message = "Điểm tối đa phải <= 100")
     private Double maxScore;
 
     private String feedback;
@@ -38,7 +38,7 @@ public class QuestionScoreRequest {
     private String skillName;
 
     @JsonIgnore
-    @AssertTrue(message = "Score must be less than or equal to max score")
+    @AssertTrue(message = "Điểm số phải nhỏ hơn hoặc bằng điểm tối đa")
     public boolean isScoreValid() {
         if (score == null || maxScore == null) return true;
         return score <= maxScore;

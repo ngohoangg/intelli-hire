@@ -606,9 +606,9 @@ class QuestionControllerIntegrationTest {
                     .andExpect(jsonPath("$.data.failed").value(2))
                     .andExpect(jsonPath("$.data.errors", hasSize(2)))
                     .andExpect(jsonPath("$.data.errors[0].index").value(1))
-                    .andExpect(jsonPath("$.data.errors[0].error").value("Topic not found: non-existent-topic"))
+                    .andExpect(jsonPath("$.data.errors[0].error").value("Không tìm thấy chủ đề: non-existent-topic"))
                     .andExpect(jsonPath("$.data.errors[1].index").value(2))
-                    .andExpect(jsonPath("$.data.errors[1].error").value("Difficulty level not found: non-existent-diff"));
+                    .andExpect(jsonPath("$.data.errors[1].error").value("Không tìm thấy độ khó: non-existent-diff"));
         }
 
         @Test
@@ -634,7 +634,7 @@ class QuestionControllerIntegrationTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.created").value(0))
                     .andExpect(jsonPath("$.data.failed").value(1))
-                    .andExpect(jsonPath("$.data.errors[0].error").value("Tag not found: non-existent-tag"));
+                    .andExpect(jsonPath("$.data.errors[0].error").value("Không tìm thấy nhãn: non-existent-tag"));
         }
 
         @Test
@@ -663,7 +663,7 @@ class QuestionControllerIntegrationTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.created").value(0))
                     .andExpect(jsonPath("$.data.failed").value(1))
-                    .andExpect(jsonPath("$.data.errors[0].error").value("Topic is inactive: inactive-topic"));
+                    .andExpect(jsonPath("$.data.errors[0].error").value("Chủ đề đang không hoạt động: inactive-topic"));
         }
     }
 
@@ -752,7 +752,7 @@ class QuestionControllerIntegrationTest {
                     .andExpect(jsonPath("$.data.failed").value(1))
                     .andExpect(jsonPath("$.data.errors", hasSize(1)))
                     .andExpect(jsonPath("$.data.errors[0].index").value(1))
-                    .andExpect(jsonPath("$.data.errors[0].error").value("Duplicate question text in batch"));
+                    .andExpect(jsonPath("$.data.errors[0].error").value("Trùng lặp nội dung câu hỏi trong lô nhập"));
         }
 
         @Test
@@ -784,7 +784,7 @@ class QuestionControllerIntegrationTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.created").value(1))
                     .andExpect(jsonPath("$.data.failed").value(1))
-                    .andExpect(jsonPath("$.data.errors[0].error").value("Duplicate question text in batch"));
+                    .andExpect(jsonPath("$.data.errors[0].error").value("Trùng lặp nội dung câu hỏi trong lô nhập"));
         }
     }
 

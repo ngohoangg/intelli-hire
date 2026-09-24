@@ -7,19 +7,19 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum ErrorCode {
     // Grading errors
-    GRD_001("GRD_001", "Grading session not found"),
-    GRD_002("GRD_002", "Grading already exists for session"),
-    GRD_003("GRD_003", "Invalid session id"),
-    GRD_004("GRD_004", "Invalid grading status"),
-    GRD_005("GRD_005", "Access denied, admin role required"),
-    GRD_006("GRD_006", "LLM service unavailable"),
-    GRD_007("GRD_007", "LLM response parse error"),
-    GRD_008("GRD_008", "Report service unavailable"),
+    GRD_001("GRD_001", "Không tìm thấy phiên chấm điểm"),
+    GRD_002("GRD_002", "Đã tồn tại chấm điểm cho phiên này"),
+    GRD_003("GRD_003", "Mã phiên không hợp lệ"),
+    GRD_004("GRD_004", "Trạng thái chấm điểm không hợp lệ"),
+    GRD_005("GRD_005", "Không có quyền truy cập, cần vai trò quản trị viên"),
+    GRD_006("GRD_006", "Dịch vụ LLM không khả dụng"),
+    GRD_007("GRD_007", "Lỗi phân tích phản hồi LLM"),
+    GRD_008("GRD_008", "Dịch vụ báo cáo không khả dụng"),
 
     // Common errors
-    COM_001("COM_001", "Validation error"),
-    COM_002("COM_002", "Internal server error"),
-    COM_003("COM_003", "Bad request");
+    COM_001("COM_001", "Dữ liệu không hợp lệ"),
+    COM_002("COM_002", "Lỗi hệ thống"),
+    COM_003("COM_003", "Yêu cầu không hợp lệ");
 
     private final String code;
     private final String message;

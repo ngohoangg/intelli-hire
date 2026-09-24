@@ -187,7 +187,7 @@ class StudyArticleControllerTest {
                     .andExpect(jsonPath("$.success").value(false))
                     .andExpect(jsonPath("$.error_code").value(ErrorCode.SA_001.getCode()))
                     .andExpect(jsonPath("$.data").doesNotExist())
-                    .andExpect(jsonPath("$.errors").value(nullValue()));
+                    .andExpect(jsonPath("$.errors[0].message").value(ErrorCode.SA_001.getMessage()));
         }
 
         @Test
@@ -201,7 +201,7 @@ class StudyArticleControllerTest {
                     .andExpect(jsonPath("$.success").value(false))
                     .andExpect(jsonPath("$.error_code").value(ErrorCode.SA_001.getCode()))
                     .andExpect(jsonPath("$.data").doesNotExist())
-                    .andExpect(jsonPath("$.errors").value(nullValue()));
+                    .andExpect(jsonPath("$.errors[0].message").value(ErrorCode.SA_001.getMessage()));
         }
 
         @Test
@@ -315,7 +315,7 @@ class StudyArticleControllerTest {
                     .andExpect(jsonPath("$.success").value(false))
                     .andExpect(jsonPath("$.error_code").value(ErrorCode.COM_001.getCode()))
                     .andExpect(jsonPath("$.errors[0].field").value("topicId"))
-                    .andExpect(jsonPath("$.errors[0].message").value("Topic ID must not be blank"));
+                    .andExpect(jsonPath("$.errors[0].message").value("Mã chủ đề không được để trống"));
         }
 
         @Test
@@ -334,7 +334,7 @@ class StudyArticleControllerTest {
                     .andExpect(jsonPath("$.success").value(false))
                     .andExpect(jsonPath("$.error_code").value(ErrorCode.COM_001.getCode()))
                     .andExpect(jsonPath("$.errors[0].field").value("difficultyId"))
-                    .andExpect(jsonPath("$.errors[0].message").value("Difficulty ID must not be blank"));
+                    .andExpect(jsonPath("$.errors[0].message").value("Mã độ khó không được để trống"));
         }
 
         @Test
@@ -353,7 +353,7 @@ class StudyArticleControllerTest {
                     .andExpect(jsonPath("$.success").value(false))
                     .andExpect(jsonPath("$.error_code").value(ErrorCode.COM_001.getCode()))
                     .andExpect(jsonPath("$.errors[0].field").value("title"))
-                    .andExpect(jsonPath("$.errors[0].message").value("Title must not be blank"));
+                    .andExpect(jsonPath("$.errors[0].message").value("Tiêu đề không được để trống"));
         }
 
         @Test
@@ -372,7 +372,7 @@ class StudyArticleControllerTest {
                     .andExpect(jsonPath("$.success").value(false))
                     .andExpect(jsonPath("$.error_code").value(ErrorCode.COM_001.getCode()))
                     .andExpect(jsonPath("$.errors[0].field").value("url"))
-                    .andExpect(jsonPath("$.errors[0].message").value("URL must not be blank"));
+                    .andExpect(jsonPath("$.errors[0].message").value("URL không được để trống"));
         }
 
         @Test
@@ -391,7 +391,7 @@ class StudyArticleControllerTest {
                     .andExpect(jsonPath("$.success").value(false))
                     .andExpect(jsonPath("$.error_code").value(ErrorCode.COM_001.getCode()))
                     .andExpect(jsonPath("$.errors[0].field").value("title"))
-                    .andExpect(jsonPath("$.errors[0].message").value("Title must not exceed 255 characters"));
+                    .andExpect(jsonPath("$.errors[0].message").value("Tiêu đề không được vượt quá 255 ký tự"));
         }
 
         @Test
@@ -410,7 +410,7 @@ class StudyArticleControllerTest {
                     .andExpect(jsonPath("$.success").value(false))
                     .andExpect(jsonPath("$.error_code").value(ErrorCode.COM_001.getCode()))
                     .andExpect(jsonPath("$.errors[0].field").value("url"))
-                    .andExpect(jsonPath("$.errors[0].message").value("URL must not exceed 500 characters"));
+                    .andExpect(jsonPath("$.errors[0].message").value("URL không được vượt quá 500 ký tự"));
         }
 
         @Test
@@ -429,7 +429,7 @@ class StudyArticleControllerTest {
                     .andExpect(jsonPath("$.success").value(false))
                     .andExpect(jsonPath("$.error_code").value(ErrorCode.COM_001.getCode()))
                     .andExpect(jsonPath("$.errors[0].field").value("source"))
-                    .andExpect(jsonPath("$.errors[0].message").value("Source must not exceed 100 characters"));
+                    .andExpect(jsonPath("$.errors[0].message").value("Nguồn không được vượt quá 100 ký tự"));
         }
 
         @Test
@@ -450,7 +450,7 @@ class StudyArticleControllerTest {
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.success").value(false))
                     .andExpect(jsonPath("$.error_code").value(ErrorCode.TOP_001.getCode()))
-                    .andExpect(jsonPath("$.errors").value(nullValue()));
+                    .andExpect(jsonPath("$.errors[0].message").value(ErrorCode.TOP_001.getMessage()));
         }
 
         @Test
@@ -471,7 +471,7 @@ class StudyArticleControllerTest {
                     .andExpect(status().isLocked())
                     .andExpect(jsonPath("$.success").value(false))
                     .andExpect(jsonPath("$.error_code").value(ErrorCode.TOP_004.getCode()))
-                    .andExpect(jsonPath("$.errors").value(nullValue()));
+                    .andExpect(jsonPath("$.errors[0].message").value(ErrorCode.TOP_004.getMessage()));
         }
 
         @Test
@@ -492,7 +492,7 @@ class StudyArticleControllerTest {
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.success").value(false))
                     .andExpect(jsonPath("$.error_code").value(ErrorCode.DIF_001.getCode()))
-                    .andExpect(jsonPath("$.errors").value(nullValue()));
+                    .andExpect(jsonPath("$.errors[0].message").value(ErrorCode.DIF_001.getMessage()));
         }
 
         @Test
@@ -595,7 +595,7 @@ class StudyArticleControllerTest {
                     .andExpect(jsonPath("$.success").value(false))
                     .andExpect(jsonPath("$.error_code").value(ErrorCode.COM_001.getCode()))
                     .andExpect(jsonPath("$.errors[0].field").value("topicId"))
-                    .andExpect(jsonPath("$.errors[0].message").value("Topic ID must not be blank"));
+                    .andExpect(jsonPath("$.errors[0].message").value("Mã chủ đề không được để trống"));
         }
 
         @Test
@@ -614,7 +614,7 @@ class StudyArticleControllerTest {
                     .andExpect(jsonPath("$.success").value(false))
                     .andExpect(jsonPath("$.error_code").value(ErrorCode.COM_001.getCode()))
                     .andExpect(jsonPath("$.errors[0].field").value("difficultyId"))
-                    .andExpect(jsonPath("$.errors[0].message").value("Difficulty ID must not be blank"));
+                    .andExpect(jsonPath("$.errors[0].message").value("Mã độ khó không được để trống"));
         }
 
         @Test
@@ -633,7 +633,7 @@ class StudyArticleControllerTest {
                     .andExpect(jsonPath("$.success").value(false))
                     .andExpect(jsonPath("$.error_code").value(ErrorCode.COM_001.getCode()))
                     .andExpect(jsonPath("$.errors[0].field").value("title"))
-                    .andExpect(jsonPath("$.errors[0].message").value("Title must not be blank"));
+                    .andExpect(jsonPath("$.errors[0].message").value("Tiêu đề không được để trống"));
         }
 
         @Test
@@ -652,7 +652,7 @@ class StudyArticleControllerTest {
                     .andExpect(jsonPath("$.success").value(false))
                     .andExpect(jsonPath("$.error_code").value(ErrorCode.COM_001.getCode()))
                     .andExpect(jsonPath("$.errors[0].field").value("url"))
-                    .andExpect(jsonPath("$.errors[0].message").value("URL must not be blank"));
+                    .andExpect(jsonPath("$.errors[0].message").value("URL không được để trống"));
         }
 
         @Test
@@ -671,7 +671,7 @@ class StudyArticleControllerTest {
                     .andExpect(jsonPath("$.success").value(false))
                     .andExpect(jsonPath("$.error_code").value(ErrorCode.COM_001.getCode()))
                     .andExpect(jsonPath("$.errors[0].field").value("title"))
-                    .andExpect(jsonPath("$.errors[0].message").value("Title must not exceed 255 characters"));
+                    .andExpect(jsonPath("$.errors[0].message").value("Tiêu đề không được vượt quá 255 ký tự"));
         }
 
         @Test
@@ -690,7 +690,7 @@ class StudyArticleControllerTest {
                     .andExpect(jsonPath("$.success").value(false))
                     .andExpect(jsonPath("$.error_code").value(ErrorCode.COM_001.getCode()))
                     .andExpect(jsonPath("$.errors[0].field").value("url"))
-                    .andExpect(jsonPath("$.errors[0].message").value("URL must not exceed 500 characters"));
+                    .andExpect(jsonPath("$.errors[0].message").value("URL không được vượt quá 500 ký tự"));
         }
 
         @Test
@@ -709,7 +709,7 @@ class StudyArticleControllerTest {
                     .andExpect(jsonPath("$.success").value(false))
                     .andExpect(jsonPath("$.error_code").value(ErrorCode.COM_001.getCode()))
                     .andExpect(jsonPath("$.errors[0].field").value("source"))
-                    .andExpect(jsonPath("$.errors[0].message").value("Source must not exceed 100 characters"));
+                    .andExpect(jsonPath("$.errors[0].message").value("Nguồn không được vượt quá 100 ký tự"));
         }
 
         @Test
@@ -730,7 +730,7 @@ class StudyArticleControllerTest {
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.success").value(false))
                     .andExpect(jsonPath("$.error_code").value(ErrorCode.SA_001.getCode()))
-                    .andExpect(jsonPath("$.errors").value(nullValue()));
+                    .andExpect(jsonPath("$.errors[0].message").value(ErrorCode.SA_001.getMessage()));
         }
 
         @Test
@@ -751,7 +751,7 @@ class StudyArticleControllerTest {
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.success").value(false))
                     .andExpect(jsonPath("$.error_code").value(ErrorCode.TOP_001.getCode()))
-                    .andExpect(jsonPath("$.errors").value(nullValue()));
+                    .andExpect(jsonPath("$.errors[0].message").value(ErrorCode.TOP_001.getMessage()));
         }
 
         @Test
@@ -772,7 +772,7 @@ class StudyArticleControllerTest {
                     .andExpect(status().isLocked())
                     .andExpect(jsonPath("$.success").value(false))
                     .andExpect(jsonPath("$.error_code").value(ErrorCode.TOP_004.getCode()))
-                    .andExpect(jsonPath("$.errors").value(nullValue()));
+                    .andExpect(jsonPath("$.errors[0].message").value(ErrorCode.TOP_004.getMessage()));
         }
 
         @Test
@@ -793,7 +793,7 @@ class StudyArticleControllerTest {
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.success").value(false))
                     .andExpect(jsonPath("$.error_code").value(ErrorCode.DIF_001.getCode()))
-                    .andExpect(jsonPath("$.errors").value(nullValue()));
+                    .andExpect(jsonPath("$.errors[0].message").value(ErrorCode.DIF_001.getMessage()));
         }
 
         @Test
@@ -842,7 +842,7 @@ class StudyArticleControllerTest {
                     .andExpect(jsonPath("$.success").value(false))
                     .andExpect(jsonPath("$.error_code").value(ErrorCode.SA_001.getCode()))
                     .andExpect(jsonPath("$.data").doesNotExist())
-                    .andExpect(jsonPath("$.errors").value(nullValue()));
+                    .andExpect(jsonPath("$.errors[0].message").value(ErrorCode.SA_001.getMessage()));
 
             verify(studyArticleService).delete("missing-id");
         }

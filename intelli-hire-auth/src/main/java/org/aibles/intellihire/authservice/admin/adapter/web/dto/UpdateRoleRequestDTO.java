@@ -7,10 +7,10 @@ import lombok.Data;
 @Data
 public class UpdateRoleRequestDTO {
 
-    @Size(max = 50, message = "Role name must be at most 50 characters")
+    @Size(max = 50, message = "Tên vai trò không được vượt quá 50 ký tự")
     private String name;
 
-    @Size(max = 255, message = "Description must be at most 255 characters")
+    @Size(max = 255, message = "Mô tả không được vượt quá 255 ký tự")
     private String description;
 
     @JsonProperty("is_active")

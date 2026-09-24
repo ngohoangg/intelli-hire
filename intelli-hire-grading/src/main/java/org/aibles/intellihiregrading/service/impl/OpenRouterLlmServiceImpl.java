@@ -59,7 +59,7 @@ public class OpenRouterLlmServiceImpl implements LlmService {
             log.error("LLM grading failed: {}", e.getMessage(), e);
             return LlmGradingResult.builder()
                     .score(0.0)
-                    .feedback("Unable to grade: " + e.getMessage())
+                    .feedback("Không thể chấm điểm: " + e.getMessage())
                     .model(openRouterConfig.getModel())
                     .build();
         }
@@ -101,7 +101,7 @@ public class OpenRouterLlmServiceImpl implements LlmService {
         try {
             JsonNode node = objectMapper.readTree(content);
             double score = node.has("score") ? node.get("score").asDouble() : 0.0;
-            String feedback = node.has("feedback") ? node.get("feedback").asText() : "No feedback provided";
+            String feedback = node.has("feedback") ? node.get("feedback").asText() : "Không có phản hồi được cung cấp";
             return LlmGradingResult.builder()
                     .score(score)
                     .feedback(feedback)
@@ -111,7 +111,7 @@ public class OpenRouterLlmServiceImpl implements LlmService {
             log.warn("Failed to parse LLM response as JSON: {}", content, e);
             return LlmGradingResult.builder()
                     .score(0.0)
-                    .feedback("Parse error. Raw response: " + content)
+                    .feedback("Lỗi phân tích phản hồi. Phản hồi gốc: " + content)
                     .model(model)
                     .build();
         }
@@ -129,7 +129,7 @@ public class OpenRouterLlmServiceImpl implements LlmService {
     private LlmGradingResult fallbackResult(String reason) {
         return LlmGradingResult.builder()
                 .score(0.0)
-                .feedback("Unable to grade: " + reason)
+                .feedback("Không thể chấm điểm: " + reason)
                 .model(openRouterConfig.getModel())
                 .build();
     }

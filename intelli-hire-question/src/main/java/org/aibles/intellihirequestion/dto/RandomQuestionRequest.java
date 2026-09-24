@@ -26,9 +26,9 @@ public class RandomQuestionRequest {
 
     private List<String> tagIds;
 
-    @NotNull(message = "Count is required")
-    @Min(value = 1, message = "Count must be at least 1")
-    @Max(value = 50, message = "Count must not exceed 50")
+    @NotNull(message = "Số lượng là bắt buộc")
+    @Min(value = 1, message = "Số lượng phải lớn hơn hoặc bằng 1")
+    @Max(value = 50, message = "Số lượng không được vượt quá 50")
     private Integer count;
 
     private List<String> excludeIds;

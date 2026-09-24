@@ -99,6 +99,11 @@ openrouter:
   max-tokens: ${OPENROUTER_MAX_TOKENS:1024}
   timeout: ${OPENROUTER_TIMEOUT:30000}
 
+# AI output language for grading feedback
+app:
+  ai:
+    output-language: ${AI_OUTPUT_LANGUAGE:Vietnamese}
+
 # Interview Service client
 interview-service:
   base-url: ${INTERVIEW_SERVICE_URL:http://localhost:8083}

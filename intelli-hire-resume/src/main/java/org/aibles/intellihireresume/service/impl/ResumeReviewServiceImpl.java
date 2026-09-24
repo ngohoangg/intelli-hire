@@ -12,6 +12,7 @@ import org.aibles.intellihireresume.exception.NotFoundException;
 import org.aibles.intellihireresume.repository.*;
 import org.aibles.intellihireresume.service.ResumeReviewService;
 import org.aibles.intellihireresume.service.ai.AiProvider;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +40,9 @@ public class ResumeReviewServiceImpl implements ResumeReviewService {
     private final ResumeSkillProfileRepository profileRepository;
     private final AiProvider aiProvider;
     private final ObjectMapper objectMapper;
+
+    @Value("${app.ai.output-language:Vietnamese}")
+    private String outputLanguage = "Vietnamese";
 
     @Override
     @Transactional(readOnly = true)
@@ -85,7 +89,9 @@ public class ResumeReviewServiceImpl implements ResumeReviewService {
     private String buildSystemPrompt() {
         return "You are a professional CV reviewer. " +
                "Return ONLY valid JSON matching the exact structure requested. " +
-               "No markdown, no code fences, no explanation outside the JSON.";
+               "No markdown, no code fences, no explanation outside the JSON. " +
+               "Write all human-readable text values (feedback, strengths, weaknesses, priority_actions) in "
+               + outputLanguage + ". Keep JSON keys exactly as specified in English.";
     }
 
     private String buildUserPrompt(String resumeId) {
@@ -172,6 +178,8 @@ Rate this CV on a scale of 0.0-10.0 (one decimal place) for each section:
 - skills: skill set breadth, depth, and relevance
 - presentation: overall clarity, structure, and professionalism
 
+Write every "feedback" value, and every entry in "strengths", "weaknesses", and "priority_actions", in %s. Keep the JSON keys ("overall_score", "sections", "score", "feedback", "strengths", "weaknesses", "priority_actions") exactly as specified in English.
+
 Return ONLY this JSON (no markdown, no extra text):
 {
   "overall_score": 7.5,
@@ -186,7 +194,7 @@ Return ONLY this JSON (no markdown, no extra text):
   "weaknesses":       ["...", "..."],
   "priority_actions": ["...", "...", "..."]
 }
-""");
+""".formatted(outputLanguage));
 
         return sb.toString();
     }

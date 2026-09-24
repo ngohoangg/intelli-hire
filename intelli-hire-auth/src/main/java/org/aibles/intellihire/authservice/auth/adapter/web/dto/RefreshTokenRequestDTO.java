@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class RefreshTokenRequestDTO {
 
-    @NotBlank(message = "Refresh token is required")
+    @NotBlank(message = "Refresh token là bắt buộc")
     @JsonProperty("refresh_token")
     private String refreshToken;
 }

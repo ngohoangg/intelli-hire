@@ -87,12 +87,12 @@ public class GitHubOAuthClient implements OAuthClient {
 
             String error = body != null && body.has("error") ? body.get("error").asText() : "Unknown error";
             log.error("Error from GitHub token endpoint: {}", error);
-            throw new OAuthCallbackException("Failed to get access token from GitHub: " + error);
+            throw new OAuthCallbackException("Không thể lấy access token từ GitHub: " + error);
         } catch (OAuthCallbackException e) {
             throw e;
         } catch (Exception e) {
             log.error("Error exchanging code for access token with GitHub", e);
-            throw new OAuthCallbackException("Failed to exchange code with GitHub: " + e.getMessage());
+            throw new OAuthCallbackException("Không thể trao đổi mã với GitHub: " + e.getMessage());
         }
     }
 
@@ -113,7 +113,7 @@ public class GitHubOAuthClient implements OAuthClient {
 
             JsonNode body = response.getBody();
             if (body == null) {
-                throw new OAuthCallbackException("Empty response from GitHub user info");
+                throw new OAuthCallbackException("Phản hồi trống từ thông tin người dùng GitHub");
             }
 
             String email = body.has("email") && !body.get("email").isNull()
@@ -130,7 +130,7 @@ public class GitHubOAuthClient implements OAuthClient {
             throw e;
         } catch (Exception e) {
             log.error("Error fetching user info from GitHub", e);
-            throw new OAuthCallbackException("Failed to fetch user info from GitHub: " + e.getMessage());
+            throw new OAuthCallbackException("Không thể lấy thông tin người dùng từ GitHub: " + e.getMessage());
         }
     }
 

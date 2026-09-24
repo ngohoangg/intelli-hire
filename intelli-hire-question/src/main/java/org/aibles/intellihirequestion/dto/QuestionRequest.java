@@ -19,17 +19,17 @@ import java.util.List;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class QuestionRequest {
 
-    @NotBlank(message = "Topic ID must not be blank")
+    @NotBlank(message = "Mã chủ đề không được để trống")
     private String topicId;
 
-    @NotBlank(message = "Difficulty ID must not be blank")
+    @NotBlank(message = "Mã độ khó không được để trống")
     private String difficultyId;
 
-    @NotBlank(message = "Question text must not be blank")
-    @Size(max = 5000, message = "Question text must not exceed 5000 characters")
+    @NotBlank(message = "Nội dung câu hỏi không được để trống")
+    @Size(max = 5000, message = "Nội dung câu hỏi không được vượt quá 5000 ký tự")
     private String questionText;
 
-    @NotNull(message = "Question type must not be blank")
+    @NotNull(message = "Loại câu hỏi không được để trống")
     private QuestionType questionType;
 
     private List<String> tagIds;

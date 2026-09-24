@@ -42,6 +42,10 @@ class GlobalExceptionHandlerTest {
         assertFalse(response.getBody().isSuccess());
         assertEquals("QUE_001", response.getBody().getErrorCode());
         assertNotNull(response.getBody().getTimestamp());
+        assertNotNull(response.getBody().getErrors());
+        assertEquals(1, response.getBody().getErrors().size());
+        assertEquals("general", response.getBody().getErrors().get(0).getField());
+        assertEquals(ErrorCode.QUE_001.getMessage(), response.getBody().getErrors().get(0).getMessage());
     }
 
     @Test
@@ -56,6 +60,8 @@ class GlobalExceptionHandlerTest {
         assertFalse(response.getBody().isSuccess());
         assertEquals("QUE_002", response.getBody().getErrorCode());
         assertNotNull(response.getBody().getTimestamp());
+        assertNotNull(response.getBody().getErrors());
+        assertEquals(ErrorCode.QUE_002.getMessage(), response.getBody().getErrors().get(0).getMessage());
     }
 
     @Test
@@ -164,7 +170,7 @@ class GlobalExceptionHandlerTest {
     @Test
     @DisplayName("NotFoundException with custom message should return 404")
     void handleBaseException_notFoundWithCustomMessage_shouldReturn404() {
-        NotFoundException ex = new NotFoundException("QUE_001", "Question not found with id: 123");
+        NotFoundException ex = new NotFoundException("QUE_001", "Không tìm thấy câu hỏi với id: 123");
 
         ResponseEntity<BaseResponse<Void>> response = handler.handleBaseException(ex);
 
@@ -172,6 +178,7 @@ class GlobalExceptionHandlerTest {
         assertNotNull(response.getBody());
         assertFalse(response.getBody().isSuccess());
         assertEquals("QUE_001", response.getBody().getErrorCode());
+        assertEquals("Không tìm thấy câu hỏi với id: 123", response.getBody().getErrors().get(0).getMessage());
     }
 
     @Test
@@ -184,5 +191,6 @@ class GlobalExceptionHandlerTest {
         assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals("TOP_003", response.getBody().getErrorCode());
+        assertEquals(ErrorCode.TOP_003.getMessage(), response.getBody().getErrors().get(0).getMessage());
     }
 }

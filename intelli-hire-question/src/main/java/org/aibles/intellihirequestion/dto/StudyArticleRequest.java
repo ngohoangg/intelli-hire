@@ -18,23 +18,23 @@ import lombok.Setter;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class StudyArticleRequest {
 
-    @NotBlank(message = "Topic ID must not be blank")
+    @NotBlank(message = "Mã chủ đề không được để trống")
     private String topicId;
 
-    @NotBlank(message = "Difficulty ID must not be blank")
+    @NotBlank(message = "Mã độ khó không được để trống")
     private String difficultyId;
 
-    @NotBlank(message = "Title must not be blank")
-    @Size(max = 255, message = "Title must not exceed 255 characters")
+    @NotBlank(message = "Tiêu đề không được để trống")
+    @Size(max = 255, message = "Tiêu đề không được vượt quá 255 ký tự")
     private String title;
 
-    @NotBlank(message = "URL must not be blank")
-    @Size(max = 500, message = "URL must not exceed 500 characters")
+    @NotBlank(message = "URL không được để trống")
+    @Size(max = 500, message = "URL không được vượt quá 500 ký tự")
     private String url;
 
     private String description;
 
-    @Size(max = 100, message = "Source must not exceed 100 characters")
+    @Size(max = 100, message = "Nguồn không được vượt quá 100 ký tự")
     private String source;
 
     @Builder.Default

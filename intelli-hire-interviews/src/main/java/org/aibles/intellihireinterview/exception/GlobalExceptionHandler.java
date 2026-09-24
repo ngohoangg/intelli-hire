@@ -58,7 +58,7 @@ public class GlobalExceptionHandler {
                 ErrorCode.COM_002.getCode(),
                 List.of(FieldError.builder()
                         .field("error")
-                        .message("Internal server error")
+                        .message("Lỗi hệ thống")
                         .build())
         );
         return ResponseEntity.status(500).body(body);

@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../../../core/services/auth.service';
+import { extractApiErrorMessage } from '../../../../core/utils/api-error';
 
 @Component({
   selector: 'app-forgot-password',
@@ -27,7 +28,7 @@ export class ForgotPasswordComponent {
     this.loading = true; this.error = '';
     this.auth.forgotPassword(this.form.value.email).subscribe({
       next: () => { this.success = this.translate.instant('auth.forgotPassword.resetLinkSent'); this.loading = false; },
-      error: err => { this.error = err?.error?.message ?? this.translate.instant('auth.forgotPassword.sendFailed'); this.loading = false; }
+      error: err => { this.error = extractApiErrorMessage(err) ?? this.translate.instant('auth.forgotPassword.sendFailed'); this.loading = false; }
     });
   }
 }

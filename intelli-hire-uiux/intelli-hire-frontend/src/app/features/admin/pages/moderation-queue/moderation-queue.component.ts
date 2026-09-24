@@ -7,6 +7,7 @@ import { AdminQuestionService } from '../../../../core/services/admin-question.s
 import { QuestionResponse, QuestionType } from '../../../../core/models/question.model';
 import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
 import { RejectDialogComponent } from '../../../../shared/components/reject-dialog/reject-dialog.component';
+import { extractApiErrorMessage } from '../../../../core/utils/api-error';
 
 @Component({
   selector: 'app-moderation-queue',
@@ -45,7 +46,7 @@ export class ModerationQueueComponent implements OnInit {
   approve(question: QuestionResponse): void {
     this.adminQuestionService.patchModerationStatus(question.id, 'APPROVED').subscribe({
       next: () => { this.actionError = ''; this.questions = this.questions.filter(q => q.id !== question.id); },
-      error: err => { this.actionError = err?.error?.message ?? this.translate.instant('admin.moderationQueue.actionFailed'); }
+      error: err => { this.actionError = extractApiErrorMessage(err) ?? this.translate.instant('admin.moderationQueue.actionFailed'); }
     });
   }
 
@@ -56,7 +57,7 @@ export class ModerationQueueComponent implements OnInit {
       if (!reason) return;
       this.adminQuestionService.patchModerationStatus(question.id, 'REJECTED', reason).subscribe({
         next: () => { this.actionError = ''; this.questions = this.questions.filter(q => q.id !== question.id); },
-        error: err => { this.actionError = err?.error?.message ?? this.translate.instant('admin.moderationQueue.actionFailed'); }
+        error: err => { this.actionError = extractApiErrorMessage(err) ?? this.translate.instant('admin.moderationQueue.actionFailed'); }
       });
     });
   }

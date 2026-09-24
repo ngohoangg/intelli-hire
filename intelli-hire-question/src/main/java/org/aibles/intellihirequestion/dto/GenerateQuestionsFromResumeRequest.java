@@ -19,15 +19,15 @@ import java.util.List;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class GenerateQuestionsFromResumeRequest {
 
-    @NotBlank(message = "Resume ID must not be blank")
+    @NotBlank(message = "Mã hồ sơ không được để trống")
     private String resumeId;
 
-    @Min(value = 1, message = "Count must be between 1 and 20")
-    @Max(value = 20, message = "Count must be between 1 and 20")
+    @Min(value = 1, message = "Số lượng phải từ 1 đến 20")
+    @Max(value = 20, message = "Số lượng phải từ 1 đến 20")
     private Integer count = 8;
 
     private String questionType;
     private String difficultyName;
-    private String language = "en";
+    private String language;
     private List<String> focusAreas;
 }

@@ -37,12 +37,12 @@ public class ResumeAggregateClient {
                 .header("X-User-Id", userId)
                 .retrieve()
                 .onStatus(status -> status.value() == 404, (req, res) -> {
-                    throw new NotFoundException("RSM_001", "Resume question context not found");
+                    throw new NotFoundException("RSM_001", "Không tìm thấy ngữ cảnh hồ sơ cho câu hỏi");
                 })
                 .body(new ParameterizedTypeReference<ResumeApiResponse<ResumeAggregateData>>() {});
 
         if (response == null || !response.isSuccess() || response.getData() == null) {
-            throw new NotFoundException("RSM_001", "Resume question context not found");
+            throw new NotFoundException("RSM_001", "Không tìm thấy ngữ cảnh hồ sơ cho câu hỏi");
         }
 
         return response.getData();

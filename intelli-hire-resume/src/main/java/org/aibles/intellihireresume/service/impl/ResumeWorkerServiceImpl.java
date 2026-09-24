@@ -47,7 +47,7 @@ public class ResumeWorkerServiceImpl implements ResumeWorkerService {
         Resume resume = resumeRepository.findByIdActive(resumeId).orElse(null);
         if (resume == null) {
             log.warn("Resume not found for ID={}, marking job as failed", resumeId);
-            failJob(job, "Resume not found");
+            failJob(job, "Không tìm thấy hồ sơ");
             return;
         }
 
@@ -66,7 +66,7 @@ public class ResumeWorkerServiceImpl implements ResumeWorkerService {
         try {
             // Step 1: Get file info
             ResumeFile file = resumeFileRepository.findByResumeId(resumeId)
-                    .orElseThrow(() -> new RuntimeException("No file found for resumeId=" + resumeId));
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy tệp cho resumeId=" + resumeId));
 
             // Step 2: Download file bytes from MinIO
             log.info("Downloading file from MinIO: bucket={}, key={}", file.getObjectBucket(), file.getObjectKey());
@@ -115,7 +115,7 @@ public class ResumeWorkerServiceImpl implements ResumeWorkerService {
     private void failJob(ResumeParseJob job, String errorMessage) {
         job.setStatus(JobStatus.FAILED);
         job.setFinishedAt(LocalDateTime.now());
-        String msg = errorMessage != null ? errorMessage : "Unknown error";
+        String msg = errorMessage != null ? errorMessage : "Lỗi không xác định";
         job.setErrorMessage(msg.length() <= 1000 ? msg : msg.substring(0, 1000));
         job.setRetryCount(job.getRetryCount() + 1);
         resumeParseJobRepository.save(job);

@@ -6,9 +6,9 @@ import lombok.Data;
 @Data
 public class OAuthCallbackRequestDTO {
 
-    @NotBlank(message = "Authorization code is required")
+    @NotBlank(message = "Mã ủy quyền là bắt buộc")
     private String code;
 
-    @NotBlank(message = "State is required")
+    @NotBlank(message = "State là bắt buộc")
     private String state;
 }

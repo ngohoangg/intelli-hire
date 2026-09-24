@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../../../core/services/auth.service';
+import { extractApiErrorMessage } from '../../../../core/utils/api-error';
 
 @Component({
   selector: 'app-oauth-callback',
@@ -39,7 +40,7 @@ export class OAuthCallbackComponent implements OnInit {
 
     this.auth.handleOAuthCallback(provider, code, state).subscribe({
       next: () => this.router.navigate(['/resumes']),
-      error: err => { this.error = err?.error?.message ?? this.translate.instant('auth.oauthCallback.authFailed'); }
+      error: err => { this.error = extractApiErrorMessage(err) ?? this.translate.instant('auth.oauthCallback.authFailed'); }
     });
   }
 }

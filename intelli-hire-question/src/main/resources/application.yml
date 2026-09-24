@@ -87,6 +87,7 @@ clients:
 
 ai:
   provider: ${AI_PROVIDER:openrouter}
+  output-language: ${AI_OUTPUT_LANGUAGE:Vietnamese}
   openrouter:
     api-key: ${OPENROUTER_API_KEY:}
     model: ${OPENROUTER_MODEL:x-ai/grok-4.1-fast}

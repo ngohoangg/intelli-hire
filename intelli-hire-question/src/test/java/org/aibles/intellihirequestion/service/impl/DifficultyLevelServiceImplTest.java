@@ -195,7 +195,7 @@ class DifficultyLevelServiceImplTest {
 
             assertThatThrownBy(() -> difficultyLevelService.getById("missing-id"))
                     .isInstanceOf(NotFoundException.class)
-                    .hasMessage("Difficulty level not found");
+                    .hasMessage("Không tìm thấy độ khó");
 
             verify(difficultyLevelRepository).findById("missing-id");
             verify(difficultyLevelMapper, never()).toResponse(any());
@@ -240,7 +240,7 @@ class DifficultyLevelServiceImplTest {
 
             assertThatThrownBy(() -> difficultyLevelService.create(request))
                     .isInstanceOf(DuplicateException.class)
-                    .hasMessage("Difficulty level already exists");
+                    .hasMessage("Độ khó đã tồn tại");
 
             verify(difficultyLevelRepository).existsByNameIgnoreCase("Senior");
             verify(difficultyLevelMapper, never()).toEntity(any());
@@ -256,7 +256,7 @@ class DifficultyLevelServiceImplTest {
 
             assertThatThrownBy(() -> difficultyLevelService.create(request))
                     .isInstanceOf(DuplicateException.class)
-                    .hasMessage("Difficulty level already exists");
+                    .hasMessage("Độ khó đã tồn tại");
 
             verify(difficultyLevelRepository).existsByNameIgnoreCase("Senior");
             verify(difficultyLevelMapper, never()).toEntity(any());
@@ -272,7 +272,7 @@ class DifficultyLevelServiceImplTest {
 
             assertThatThrownBy(() -> difficultyLevelService.create(request))
                     .isInstanceOf(DuplicateException.class)
-                    .hasMessage("Difficulty level already exists");
+                    .hasMessage("Độ khó đã tồn tại");
 
             verify(difficultyLevelRepository).existsByNameIgnoreCase("senior");
             verify(difficultyLevelMapper, never()).toEntity(any());
@@ -379,7 +379,7 @@ class DifficultyLevelServiceImplTest {
 
             assertThatThrownBy(() -> difficultyLevelService.update(id, request))
                     .isInstanceOf(NotFoundException.class)
-                    .hasMessage("Difficulty level not found");
+                    .hasMessage("Không tìm thấy độ khó");
 
             verify(difficultyLevelRepository).findById(id);
             verify(difficultyLevelRepository, never()).existsByNameIgnoreCaseAndIdNot(any(), any());
@@ -400,7 +400,7 @@ class DifficultyLevelServiceImplTest {
 
             assertThatThrownBy(() -> difficultyLevelService.update(id, request))
                     .isInstanceOf(DuplicateException.class)
-                    .hasMessage("Difficulty level already exists");
+                    .hasMessage("Độ khó đã tồn tại");
 
             verify(difficultyLevelRepository).findById(id);
             verify(difficultyLevelRepository).existsByNameIgnoreCaseAndIdNot("Senior", id);
@@ -421,7 +421,7 @@ class DifficultyLevelServiceImplTest {
 
             assertThatThrownBy(() -> difficultyLevelService.update(id, request))
                     .isInstanceOf(DuplicateException.class)
-                    .hasMessage("Difficulty level already exists");
+                    .hasMessage("Độ khó đã tồn tại");
 
             verify(difficultyLevelRepository).findById(id);
             verify(difficultyLevelRepository).existsByNameIgnoreCaseAndIdNot("senior", id);

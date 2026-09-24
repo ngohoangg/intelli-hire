@@ -6,9 +6,9 @@ import lombok.Data;
 @Data
 public class LoginRequestDTO {
 
-    @NotBlank(message = "Email or username is required")
+    @NotBlank(message = "Email hoặc tên đăng nhập là bắt buộc")
     private String identifier;
 
-    @NotBlank(message = "Password is required")
+    @NotBlank(message = "Mật khẩu là bắt buộc")
     private String password;
 }

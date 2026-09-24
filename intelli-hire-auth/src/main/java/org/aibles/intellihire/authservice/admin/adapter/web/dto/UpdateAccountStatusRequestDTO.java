@@ -7,7 +7,7 @@ import org.aibles.intellihire.authservice.account.domain.AccountStatus;
 @Data
 public class UpdateAccountStatusRequestDTO {
 
-    @NotNull(message = "Status is required")
+    @NotNull(message = "Trạng thái là bắt buộc")
     private AccountStatus status;
 
     private String reason;
