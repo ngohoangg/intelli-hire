@@ -48,8 +48,8 @@ Not garish rainbow chaos — every neon element earns its place.
 
 | Usage | Font | Size | Weight |
 |---|---|---|---|
-| Headings | Syne (`--font-display`) | 20–28px | 700–800 |
-| Body | DM Sans (`--font-body`) | 14px | 400–600 |
+| Headings | Unbounded (`--font-display`) | 20–28px | 700–800 |
+| Body | Be Vietnam Pro (`--font-body`) | 14px | 400–600 |
 | Labels/Tags | JetBrains Mono (`--font-mono`) | 11px uppercase | 600 |
 | Mono values | JetBrains Mono | 13px | 500 |
 

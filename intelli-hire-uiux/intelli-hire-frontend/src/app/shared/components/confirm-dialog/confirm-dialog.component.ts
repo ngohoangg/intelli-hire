@@ -45,7 +45,7 @@ export interface ConfirmDialogData {
     }
 
     .dialog-title {
-      font-family: 'Syne', sans-serif;
+      font-family: var(--font-display);
       font-size: 17px;
       font-weight: 700;
       color: var(--text-primary);
@@ -58,7 +58,7 @@ export interface ConfirmDialogData {
     }
 
     .dialog-message {
-      font-family: 'DM Sans', sans-serif;
+      font-family: var(--font-body);
       font-size: 14px;
       color: var(--text-secondary);
       margin: 0;
@@ -78,7 +78,7 @@ export interface ConfirmDialogData {
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid var(--border);
       color: var(--text-secondary);
-      font-family: 'DM Sans', sans-serif;
+      font-family: var(--font-body);
       font-size: 14px;
       font-weight: 600;
       cursor: pointer;
@@ -97,7 +97,7 @@ export interface ConfirmDialogData {
       background: rgba(255, 23, 68, 0.15);
       border: 1px solid rgba(255, 23, 68, 0.35);
       color: #FF3D71;
-      font-family: 'DM Sans', sans-serif;
+      font-family: var(--font-body);
       font-size: 14px;
       font-weight: 700;
       cursor: pointer;
