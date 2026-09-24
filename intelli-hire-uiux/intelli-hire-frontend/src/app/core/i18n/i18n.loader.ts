@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpBackend, HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { TranslateLoader } from '@ngx-translate/core';
 import { Observable, forkJoin, of } from 'rxjs';
@@ -31,7 +31,10 @@ import { I18N_NAMESPACES } from './i18n-namespaces';
  */
 @Injectable()
 export class I18nTranslateLoader extends TranslateLoader {
-  private readonly http = inject(HttpClient);
+  // Built on HttpBackend so requests skip the app's HTTP interceptors: the error
+  // interceptor injects TranslateService, which needs this loader — routing the
+  // translation fetch through it is a DI cycle (NG0200) that blanks every key.
+  private readonly http = new HttpClient(inject(HttpBackend));
 
   getTranslation(lang: string): Observable<any> {
     const namespaceRequests = I18N_NAMESPACES.map((ns) =>
