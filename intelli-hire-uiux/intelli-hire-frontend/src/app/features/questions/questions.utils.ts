@@ -29,10 +29,10 @@ export const QUESTION_TYPE_OPTIONS = [
 ] as const;
 
 export const QUESTION_SORT_OPTIONS = [
-  { label: 'Latest', value: 'createdAt,desc' },
-  { label: 'Recently Updated', value: 'lastUpdatedAt,desc' },
-  { label: 'Question Text A-Z', value: 'questionText,asc' },
-  { label: 'Question Type', value: 'questionType,asc' }
+  { label: 'questions.sortOptions.latest', value: 'createdAt,desc' },
+  { label: 'questions.sortOptions.recentlyUpdated', value: 'lastUpdatedAt,desc' },
+  { label: 'questions.sortOptions.textAsc', value: 'questionText,asc' },
+  { label: 'questions.sortOptions.type', value: 'questionType,asc' }
 ] as const;
 
 /**

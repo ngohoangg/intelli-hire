@@ -173,7 +173,7 @@
             [formControl]="filterForm.controls.sort"
             panelClass="filter-select-panel">
             <mat-option *ngFor="let option of sortOptions" [value]="option.value">
-              {{ option.label }}
+              {{ option.label | translate }}
             </mat-option>
           </mat-select>
         </div>

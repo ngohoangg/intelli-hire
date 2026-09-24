@@ -397,5 +397,11 @@
     "rationaleLabel": "Vì sao câu hỏi này xuất hiện",
     "emptyTitle": "Chưa có bộ câu hỏi nào được tạo",
     "emptyBody": "Thiết lập bộ tạo câu hỏi bên trái và tạo bộ câu hỏi phù hợp với hồ sơ tại đây."
+  },
+  "sortOptions": {
+    "latest": "Mới nhất",
+    "recentlyUpdated": "Cập nhật gần đây",
+    "textAsc": "Nội dung câu hỏi A-Z",
+    "type": "Loại câu hỏi"
   }
 }

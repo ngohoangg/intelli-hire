@@ -397,5 +397,11 @@
     "rationaleLabel": "Why this appears",
     "emptyTitle": "No generated set yet",
     "emptyBody": "Configure the generator on the left and create a resume-tailored question pack here."
+  },
+  "sortOptions": {
+    "latest": "Latest",
+    "recentlyUpdated": "Recently Updated",
+    "textAsc": "Question Text A-Z",
+    "type": "Question Type"
   }
 }
