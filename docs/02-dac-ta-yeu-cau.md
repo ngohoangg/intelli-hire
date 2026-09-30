@@ -17,6 +17,7 @@ Yêu cầu được đánh mã `FR-<module>-<số>` / `NFR-<số>` để truy v�
 ## 2.2 Yêu cầu chức năng
 
 ### Auth
+
 | Mã | Yêu cầu | Ưu tiên |
 |---|---|---|
 | FR-AUTH-01 | Đăng ký tài khoản; gửi link xác thực email (hiệu lực 24h) | Must |
@@ -32,6 +33,7 @@ Yêu cầu được đánh mã `FR-<module>-<số>` / `NFR-<số>` để truy v�
 | FR-AUTH-11 | Tự đăng xuất khi không hoạt động 30 phút | Should |
 
 ### Question
+
 | Mã | Yêu cầu | Ưu tiên |
 |---|---|---|
 | FR-QUE-01 | CRUD câu hỏi (technical / behavioral / coding) gắn topic, độ khó, tag | Must |
@@ -46,6 +48,7 @@ Yêu cầu được đánh mã `FR-<module>-<số>` / `NFR-<số>` để truy v�
 | FR-QUE-10 | Bài học tham khảo (study article) theo topic, độ khó | Could |
 
 ### Resume
+
 | Mã | Yêu cầu | Ưu tiên |
 |---|---|---|
 | FR-RES-01 | CRUD resume (tiêu đề duy nhất theo người dùng), xóa mềm | Must |
@@ -58,6 +61,7 @@ Yêu cầu được đánh mã `FR-<module>-<số>` / `NFR-<số>` để truy v�
 | FR-RES-08 | Cung cấp hồ sơ tổng hợp cho question service | Should |
 
 ### Interview
+
 | Mã | Yêu cầu | Ưu tiên |
 |---|---|---|
 | FR-INT-01 | Tạo phiên: topic, độ khó, số câu (1–20) | Must |
@@ -68,6 +72,7 @@ Yêu cầu được đánh mã `FR-<module>-<số>` / `NFR-<số>` để truy v�
 | FR-INT-06 | Danh sách phiên, chi tiết phiên (câu hỏi + trả lời), xóa phiên | Must |
 
 ### Grading
+
 | Mã | Yêu cầu | Ưu tiên |
 |---|---|---|
 | FR-GRA-01 | Tự chấm khi phiên kết thúc (qua Kafka) | Must |
@@ -77,6 +82,7 @@ Yêu cầu được đánh mã `FR-<module>-<số>` / `NFR-<số>` để truy v�
 | FR-GRA-05 | Admin xem toàn bộ lượt chấm | Could |
 
 ### Report
+
 | Mã | Yêu cầu | Ưu tiên |
 |---|---|---|
 | FR-REP-01 | Tạo báo cáo khi nhận kết quả chấm | Must |
@@ -103,5 +109,3 @@ Yêu cầu được đánh mã `FR-<module>-<số>` / `NFR-<số>` để truy v�
 | NFR-12 | Kiểm thử | Coverage service layer ≥ 70% | JaCoCo |
 | NFR-13 | Quan sát | Actuator health/metrics/prometheus; log có correlation id (MDC) | Kiểm tra endpoint |
 | NFR-14 | Khả dụng | UI responsive, tôn trọng `prefers-reduced-motion` | Review UI |
-
-> Các ngưỡng số của NFR-01 → NFR-03 là mục tiêu đề xuất, cần nhóm chốt.

@@ -1,6 +1,6 @@
 # 07 – Thiết kế bảo mật
 
-Hiện chỉ auth service xác thực JWT; 5 service còn lại tin header `X-User-*` do client gửi. Ưu tiên số một là đưa gateway vào để xác thực tập trung và ghi đè các header này.
+JWT được xác thực tập trung tại API Gateway; gateway ghi đè các header `X-User-*` trước khi chuyển tiếp, các service phía sau chỉ nhận request từ mạng nội bộ và không tin header do client gửi.
 
 ## 7.1 Mô hình tin cậy
 
@@ -27,16 +27,16 @@ flowchart LR
 
 ## 7.2 Xác thực & phân quyền
 
-| Service | Hiện trạng | Mục tiêu |
+| Service | Xác thực | Phân quyền |
 |---|---|---|
-| auth | Spring Security + JWT filter; `/v1/admin/**` yêu cầu `ADMIN`/`SUPER_ADMIN` | Thêm `@PreAuthorize` theo permission code |
-| question | Chỉ đọc `X-User-Id`, `X-User-Name`; không kiểm role | Endpoint admin + moderation yêu cầu `ADMIN`; tạo câu hỏi yêu cầu đăng nhập |
-| resume | `HeaderAuthFilter` gán `user-001` nếu thiếu, không bao giờ từ chối | Bắt buộc `X-User-Id` từ gateway; kiểm `resume.user_id == X-User-Id` |
-| interviews | `HeaderAuthFilter` bị tắt | Bật lại; WS xác thực JWT ở STOMP CONNECT; kiểm sở hữu phiên |
-| grading | `/admin/all` kiểm header `X-User-Role` | `history/{userId}` chỉ trả dữ liệu của chính người gọi, trừ admin |
-| report | Không có security | Kiểm sở hữu (`RPT_007`), admin mới xem `/admin/all` |
+| auth | Spring Security + JWT filter | `/v1/admin/**` yêu cầu `ADMIN`/`SUPER_ADMIN`; `@PreAuthorize` theo permission code |
+| question | `X-User-Id`, `X-User-Role`, `X-User-Name` từ gateway | Endpoint admin + moderation yêu cầu `ADMIN`; tạo câu hỏi yêu cầu đăng nhập |
+| resume | `HeaderAuthFilter` bắt buộc `X-User-Id` từ gateway, thiếu → 401 | Kiểm `resume.user_id == X-User-Id` |
+| interviews | `HeaderAuthFilter` cho REST; JWT ở STOMP CONNECT cho WebSocket | Kiểm sở hữu phiên |
+| grading | `X-User-Id`, `X-User-Role` từ gateway | `history/{userId}` chỉ trả dữ liệu của chính người gọi, trừ admin; `/admin/all` yêu cầu `ADMIN` |
+| report | `X-User-Id`, `X-User-Role` từ gateway | Kiểm sở hữu (`RPT_007`), chỉ admin xem `/admin/all` |
 
-### Ma trận quyền (mục tiêu)
+### Ma trận quyền
 
 | Tài nguyên | USER | ADMIN / SUPER_ADMIN |
 |---|---|---|
@@ -48,7 +48,7 @@ flowchart LR
 | Phiên phỏng vấn | RW của mình | R |
 | Kết quả chấm, báo cáo | R của mình | R tất cả |
 
-## 7.3 Kiểm soát đã có
+## 7.3 Kiểm soát bảo mật
 
 | Kiểm soát | Chi tiết |
 |---|---|
@@ -68,11 +68,11 @@ flowchart LR
 | Mối đe dọa | Ví dụ trong IntelliHire | Mức | Biện pháp |
 |---|---|---|---|
 | **S**poofing | Gửi `X-User-Id` tùy ý tới resume/report/grading để giả làm người khác | Cao | Gateway ghi đè header; service chỉ nhận từ mạng nội bộ |
-| **S**poofing | OAuth callback không kiểm `state` | Trung bình | Lưu `state` (Redis, TTL ngắn), so khớp ở callback |
-| **T**ampering | Sửa rubric / câu hỏi qua endpoint admin không khóa | Cao | Kiểm role ADMIN |
+| **S**poofing | Giả mạo OAuth callback (CSRF đăng nhập) | Trung bình | Lưu `state` (Redis, TTL ngắn), so khớp ở callback |
+| **T**ampering | Sửa rubric / câu hỏi qua endpoint admin | Cao | Kiểm role ADMIN |
 | **R**epudiation | Không truy vết ai duyệt câu hỏi | Thấp | Audit `last_updated_by` từ JWT, log có correlation id |
 | **I**nformation disclosure | Đọc CV (PII: email, SĐT) của người khác theo resume id | Cao | Kiểm sở hữu; không log nội dung CV |
-| **I**nformation disclosure | Subscribe `/topic/interview/{id}` của người khác | Trung bình | User destination + xác thực STOMP |
+| **I**nformation disclosure | Nghe lén câu hỏi/câu trả lời phiên phỏng vấn của người khác qua WebSocket | Trung bình | User destination + xác thực STOMP |
 | **I**nformation disclosure | Gửi CV/câu trả lời tới LLM bên ngoài | Trung bình | Thông báo trong điều khoản; tối thiểu hóa dữ liệu gửi đi |
 | **D**enial of service | Spam `/generate`, `/review/generate`, tạo phiên → tốn chi phí LLM | Trung bình | Rate limit theo user ở gateway, hạn mức mỗi ngày |
 | **D**enial of service | Upload file lớn / nhiều | Thấp | Giới hạn 5MB, 1 file/resume |
@@ -92,7 +92,7 @@ flowchart LR
 ## 7.6 Checklist bắt buộc trước khi release
 
 - [ ] Gateway xác thực JWT, service không mở port ra ngoài
-- [ ] Bỏ fallback `user-001` (resume), bật `HeaderAuthFilter` (interviews)
+- [ ] Mọi service bắt buộc `X-User-Id` hợp lệ từ gateway, thiếu → 401
 - [ ] Kiểm sở hữu ở resume, interviews, grading, report
 - [ ] Kiểm role ở question admin/moderation
 - [ ] OAuth kiểm `state`

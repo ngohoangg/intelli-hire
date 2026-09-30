@@ -1,16 +1,16 @@
-# API Gateway & Service Discovery – Thiết kế mục tiêu
+# API Gateway & Service Discovery – Thiết kế chi tiết
 
-Hai repo `intelli-hire-gateway` và `intelli-hire-eureka-service` **chưa có code**; tài liệu này là thiết kế đề xuất để thay `proxy.conf.json` của frontend và gom xác thực về một chỗ.
+Repo `intelli-hire-gateway` cung cấp API Gateway làm điểm vào duy nhất của hệ thống; repo `intelli-hire-eureka-service` cung cấp service discovery. Gateway gom xác thực, CORS và rate limit về một chỗ.
 
-## 1. Mục tiêu
+## 1. Vai trò
 
-| Vấn đề hiện tại | Giải pháp |
+| Mối quan tâm | Thiết kế |
 |---|---|
-| FE dùng dev proxy trỏ thẳng từng port | Một điểm vào duy nhất `:8080` |
-| question, resume, interviews, grading, report tin header `X-User-*` không kiểm | Gateway xác thực JWT, **ghi đè** header `X-User-*` |
-| Mỗi service tự cấu hình CORS | CORS tập trung ở gateway |
-| Rate limit in-memory ở auth | Rate limit Redis ở gateway |
-| URL service cứng trong config | Eureka + `lb://` |
+| Điểm vào | Một điểm vào duy nhất `:8080` cho REST và WebSocket |
+| Xác thực | Gateway xác thực JWT, **ghi đè** header `X-User-*`; question, resume, interviews, grading, report tin các header này vì chỉ nhận request từ gateway |
+| CORS | Tập trung ở gateway |
+| Rate limit | Redis ở gateway, dùng chung giữa các instance |
+| Định tuyến | Eureka + `lb://`, không cấu hình cứng URL service |
 
 ## 2. Kiến trúc
 
@@ -34,7 +34,7 @@ flowchart LR
 
 | Path vào gateway | Service | Rewrite | Public |
 |---|---|---|---|
-| `/api/v1/auth/**`, `/api/v1/oauth/**` | auth-service | bỏ `/api` | một phần (login, register, refresh, forgot/reset, verify, oauth providers/authorize/callback) |
+| `/api/v1/auth/**`, `/api/v1/oauth/**` | auth-service | bỏ `/api` | một phần (login, register, refresh, forgot/reset, verify, resend-verification, oauth providers/authorize/callback) |
 | `/api/v1/profiles/**`, `/api/v1/accounts/**` | auth-service | bỏ `/api` | – |
 | `/api/v1/admin/questions/**` | question-service | giữ | – |
 | `/api/v1/admin/**` | auth-service | bỏ `/api` | – |
@@ -116,10 +116,10 @@ eureka:
 | Client (mỗi service) | thêm `spring-cloud-starter-netflix-eureka-client`, đặt `spring.application.name` thống nhất (`auth-service`, `question-service`, `resume-service`, `interview-service`, `grading-service`, `report-service`) |
 | Heartbeat | mặc định 30 s |
 
-## 7. Kế hoạch chuyển đổi
+## 7. Thứ tự triển khai
 
-1. Dựng Eureka, đăng ký các service (không đổi hành vi).
-2. Dựng gateway với route giống `proxy.conf.json`, chưa bật JWT.
-3. Bật JwtAuthFilter + HeaderRelayFilter; bỏ các fallback `user-001`, bật lại `HeaderAuthFilter` ở interviews.
-4. Đổi `environment.apiUrl` của FE sang gateway, xóa proxy.
-5. Chuyển rate limit sang gateway (Redis).
+1. Dựng Eureka, cấu hình Eureka client và `spring.application.name` cho từng service.
+2. Dựng gateway với bảng route ở mục 3.
+3. Bật `JwtAuthFilter` + `HeaderRelayFilter`; các service chỉ đọc `X-User-*` do gateway gắn và từ chối request thiếu header.
+4. Cấu hình `environment.apiUrl` của FE trỏ tới gateway ở mọi môi trường.
+5. Bật rate limit Redis ở gateway.

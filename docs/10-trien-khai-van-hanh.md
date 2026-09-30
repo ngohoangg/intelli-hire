@@ -1,6 +1,6 @@
 # 10 – Triển khai & vận hành
 
-Mỗi service có `Dockerfile` và `docker-compose.yml` riêng; tài liệu này đề xuất một compose chung cho toàn hệ thống, liệt kê biến môi trường và cách giám sát.
+Mỗi service được đóng gói bằng `Dockerfile` riêng và chạy chung qua một file compose cho toàn hệ thống. Tài liệu này mô tả môi trường, biến cấu hình, cách giám sát và vận hành.
 
 ## 10.1 Môi trường
 
@@ -19,7 +19,7 @@ flowchart LR
 
 Hạ tầng phải sẵn sàng trước (healthcheck); các service không phụ thuộc cứng vào nhau khi khởi động (lỗi REST/Kafka được xử lý lúc chạy).
 
-## 10.3 Compose chung (khung đề xuất)
+## 10.3 Compose chung
 
 ```yaml
 services:
@@ -64,11 +64,11 @@ services:
   interviews:
     build: ./intelli-hire-interviews
     env_file: .env
-    environment: { QUESTION_SERVICE_URL: http://question:8081, KAFKA_SERVERS: kafka:9092 }
+    environment: { SERVER_PORT: 8083, QUESTION_SERVICE_URL: http://question:8081, KAFKA_SERVERS: kafka:9092 }
   grading:
     build: ./intelli-hire-grading
     env_file: .env
-    environment: { SERVER_PORT: 8084, INTERVIEW_SERVICE_URL: http://interviews:8083, KAFKA_SERVERS: kafka:9092 }
+    environment: { SERVER_PORT: 8084, INTERVIEW_SERVICE_URL: http://interviews:8083, QUESTION_SERVICE_URL: http://question:8081, KAFKA_SERVERS: kafka:9092 }
   report:
     build: ./intelli-hire-report
     env_file: .env
@@ -77,14 +77,12 @@ volumes:
   pgdata:
 ```
 
-`intelli-hire-resume` hiện chưa có `Dockerfile` → cần bổ sung.
-
 ## 10.4 Biến môi trường
 
 | Nhóm | Biến | Dùng bởi |
 |---|---|---|
 | Server | `SERVER_PORT`, `CONTEXT_PATH` | tất cả |
-| DB | `DB_HOST`, `DB_PORT`, `DB_NAME`/`DATABASE_NAME`, `DB_SCHEMA`, `DB_USERNAME`/`DATABASE_USERNAME`, `DB_PASSWORD`/`DATABASE_PASSWORD` | tất cả (tên biến chưa thống nhất ⚠️) |
+| DB | `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_SCHEMA`, `DB_USERNAME`, `DB_PASSWORD` | tất cả |
 | Redis | `REDIS_HOST`, `REDIS_PORT` | auth, question, resume, grading, report |
 | Kafka | `KAFKA_SERVERS`, `KAFKA_TOPIC_SESSION_COMPLETED`, `KAFKA_TOPIC_GRADING_COMPLETED` | interviews, grading, report |
 | JWT | `JWT_SECRET`, `JWT_ISSUER`, `JWT_ACCESS_EXPIRATION_SECONDS`, `JWT_REFRESH_EXPIRATION_SECONDS`, `JWT_ACCESS_AUDIENCE`, `JWT_REFRESH_AUDIENCE` | auth (+ gateway) |
@@ -92,7 +90,7 @@ volumes:
 | Email | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD` | auth |
 | MinIO | `MINIO_ENDPOINT`, `MINIO_ACCESS_KEY`, `MINIO_SECRET_KEY`, `MINIO_BUCKET` | resume |
 | AI | `AI_PROVIDER`, `OPENAI_*`, `CLAUDE_*`, `GEMINI_*`, `GROK_*`, `OPENROUTER_*` | resume, question, grading |
-| URL service | `QUESTION_SERVICE_URL`, `INTERVIEW_SERVICE_URL`, `REPORT_SERVICE_URL`, `clients.resume.base-url` | interviews, grading, question |
+| URL service | `QUESTION_SERVICE_URL`, `INTERVIEW_SERVICE_URL`, `RESUME_SERVICE_URL` | interviews, grading, question |
 | FE | `API_URL` (prod) | frontend |
 
 File `.env` không được commit; cung cấp `.env.example` với giá trị giả.
@@ -105,7 +103,7 @@ File `.env` không được commit; cung cấp `.env.example` với giá trị g
 | Metric | `/actuator/prometheus` → Prometheus + Grafana |
 | Metric nghiệp vụ | `resume.parse.duration{outcome}`, `file.upload.count{fileType}`, thời gian chấm (`latency_ms`), số lượt chấm `FAILED` |
 | Kafka | Consumer lag của `grading-service`, `report-service` |
-| Log | JSON log, MDC correlation id (`MdcLoggingFilter` ở resume) → nên áp dụng cho mọi service; không log token, mật khẩu, nội dung CV |
+| Log | JSON log, MDC correlation id (`MdcLoggingFilter`) cho mọi service; không log token, mật khẩu, nội dung CV |
 | Cảnh báo | Tỷ lệ 5xx > 1%, lag Kafka > 100, job parse `FAILED` tăng đột biến, chi phí LLM theo ngày |
 
 ## 10.6 Vận hành thường gặp
@@ -113,10 +111,10 @@ File `.env` không được commit; cung cấp `.env.example` với giá trị g
 | Tình huống | Xử lý |
 |---|---|
 | Phiên đã xong nhưng không có kết quả chấm | Kiểm log grading; lượt `FAILED` → gửi lại `POST /api/v1/gradings` hoặc phát lại sự kiện |
-| Chấm xong nhưng không có báo cáo | Report nuốt lỗi consumer → gọi `POST /api/v1/reports` với dữ liệu chấm |
+| Chấm xong nhưng không có báo cáo | Kiểm dead-letter topic `grading_completed.DLT`; phát lại sự kiện hoặc gọi `POST /api/v1/reports` với dữ liệu chấm |
 | Job parse kẹt ở `QUEUED` | Kiểm Redis `resume:parse:queue`; gọi `POST /resumes/{id}/reprocess` |
 | Người dùng bị khóa | Admin `PATCH /v1/admin/accounts/{id}/status` |
-| Đổi nhà cung cấp LLM | Đổi `AI_PROVIDER` + key, khởi động lại resume |
+| Đổi nhà cung cấp LLM | Đổi `AI_PROVIDER` + key, khởi động lại service liên quan |
 
 ## 10.7 Sao lưu
 

@@ -8,7 +8,7 @@ Interview service điều phối phiên phỏng vấn: tạo phiên từ câu h�
 | Stack | Spring Boot 3.2.4, Java 17, Web, WebSocket (STOMP + SockJS), Data JPA, Validation, Spring Kafka, Flyway |
 | Tên ứng dụng / port | `interview-service` / 8083 |
 | DB | PostgreSQL `interview_db`, schema `interviews`, bảng Flyway `flyway_schema_history_interviews` |
-| JSON | Jackson `SNAKE_CASE` |
+| JSON | Jackson camelCase (thống nhất với mọi service) |
 | Package gốc | `org.aibles.intellihireinterview` |
 
 ## 1. Trách nhiệm
@@ -16,7 +16,8 @@ Interview service điều phối phiên phỏng vấn: tạo phiên từ câu h�
 - Tạo phiên (topic, độ khó, 1–20 câu), lưu danh sách câu hỏi theo thứ tự.
 - Phát câu hỏi và nhận câu trả lời qua STOMP; REST dự phòng.
 - Kết thúc phiên (thủ công / hết câu), tự hết hạn sau 60 phút.
-- Phát `answers_submitted`, `session_completed`.
+- Phát sự kiện `session_completed` cho grading service.
+- Chỉ chủ phiên được xem, trả lời, kết thúc và xóa phiên.
 
 ## 2. Mô hình dữ liệu
 
@@ -27,8 +28,10 @@ erDiagram
 
     interview_sessions {
         bigserial id PK
-        varchar user_id "NOT NULL"
+        varchar user_id "NOT NULL, ≤255"
+        varchar topic_id
         varchar topic "≤100"
+        varchar difficulty_id
         varchar difficulty "≤20"
         varchar status "CREATED|ACTIVE|COMPLETED|EXPIRED"
         timestamp started_at
@@ -38,45 +41,50 @@ erDiagram
     question_logs {
         bigserial id PK
         bigint session_id FK "CASCADE"
-        varchar question_id
+        varchar question_id "≤255"
         text question_text
         int question_order
         timestamp asked_at
     }
     user_answers_raw {
         bigserial id PK
-        bigint session_id FK "CASCADE"
-        varchar question_id
+        bigint session_id FK "CASCADE, UQ(session_id, question_id)"
+        varchar question_id "≤255"
         text answer_text
         timestamp submitted_at
     }
 ```
 
 - Index: `interview_sessions(user_id)`, `interview_sessions(status)`.
-- V2 đổi `user_id` BIGINT → VARCHAR(255); V3 đổi `question_id` BIGINT → VARCHAR(255) (để khớp UUID của question service).
-- Trùng câu trả lời (session, question) được chặn trong code, **chưa có unique constraint** ở DB.
+- `user_id` và `question_id` kiểu VARCHAR(255) để khớp định danh String của auth service và UUID của question service (ADR-010).
+- Mỗi câu hỏi chỉ nhận một câu trả lời trong một phiên: kiểm tra ở tầng service và ràng buộc `UNIQUE (session_id, question_id)` trên `user_answers_raw`.
 
 ## 3. API REST – `/api/v1/interviews/sessions`
 
 | Method | Path | Mô tả | Body / tham số |
 |---|---|---|---|
-| POST | `/` | Tạo phiên → 201 | `topic` (bắt buộc), `difficulty`, `question_count` 1–20 (mặc định 5) |
-| GET | `/` | Phiên của tôi | `page`=0, `size`=20 (≤100), sắp theo `created_at` giảm dần |
+| POST | `/` | Tạo phiên → 201 | `topicId` (bắt buộc), `topic` (tên hiển thị), `difficultyId`, `difficulty`, `questionCount` 1–20 (mặc định 5) |
+| GET | `/` | Phiên của tôi | `page`=0, `size`=20 (≤100), sắp theo `createdAt` giảm dần |
 | GET | `/{sessionId}` | Chi tiết + câu hỏi + câu trả lời | – |
 | PUT | `/{sessionId}/end` | Kết thúc phiên | – |
 | DELETE | `/{sessionId}` | Xóa phiên | – |
-| POST | `/{sessionId}/answers` | Gửi câu trả lời | `question_id`, `answer_text` (≤ 10000) |
+| POST | `/{sessionId}/answers` | Gửi câu trả lời | `questionId`, `answerText` (≤ 10000) |
 
-`userId` lấy từ request attribute do `HeaderAuthFilter` gán từ `X-User-Id`.
+- `HeaderAuthFilter` bắt buộc cho mọi endpoint `/api/**`: đọc `X-User-Id` do API gateway gán sau khi xác thực JWT, đặt vào request attribute `userId`; thiếu header → 401.
+- Mọi thao tác trên `/{sessionId}` kiểm tra `session.userId` khớp người gọi; không khớp → 403. Riêng lời gọi nội bộ từ grading service (`GET /{sessionId}` kèm `X-User-Id` của chủ phiên) cũng đi qua kiểm tra này.
 
 ## 4. WebSocket
 
 | Thuộc tính | Giá trị |
 |---|---|
-| Endpoint | `/ws/interview` (SockJS), allowed origins `*` |
-| Prefix | app `/app`, broker `/topic` |
+| Endpoint | `/ws/interview` (SockJS), allowed origins giới hạn theo domain frontend (`ws.allowed-origins`) |
+| Prefix | app `/app`, user destination prefix `/user` |
+| Xác thực | JWT trong header `Authorization` của frame STOMP CONNECT; `ChannelInterceptor` xác thực và gán `Principal` = `userId` |
 | Nhận | `/app/interview/{sessionId}/start`, `/app/interview/{sessionId}/answer` (`AnswerMessage{questionId, answerText}`) |
-| Gửi | `/topic/interview/{sessionId}` – `QuestionMessage{type, questionId, questionText, questionOrder, totalQuestions}` |
+| Gửi | `/user/queue/interview` – `QuestionMessage{type, sessionId, questionId, questionText, questionOrder, totalQuestions}` |
+
+- Server gửi bằng `convertAndSendToUser(userId, "/queue/interview", msg)` nên chỉ chủ phiên nhận được.
+- Mỗi message `start`/`answer` kiểm tra `Principal` là chủ phiên; không phải → `ERROR`.
 
 Chi tiết giao thức: [05-thiet-ke-tich-hop.md §5.3](../05-thiet-ke-tich-hop.md#53-giao-thức-websocket-interview).
 
@@ -86,7 +94,7 @@ Chi tiết giao thức: [05-thiet-ke-tich-hop.md §5.3](../05-thiet-ke-tich-hop.
 stateDiagram-v2
     [*] --> CREATED: @PrePersist
     CREATED --> ACTIVE: createSession() lưu xong question_logs
-    CREATED --> COMPLETED: endSession() (được phép vì CREATED không terminal)
+    CREATED --> [*]: không lấy được câu hỏi (xóa phiên, không phát sự kiện)
     ACTIVE --> COMPLETED: PUT /end hoặc trả lời câu cuối (WS)
     ACTIVE --> EXPIRED: SessionExpiryScheduler (started_at > 60')
     COMPLETED --> [*]
@@ -101,7 +109,8 @@ stateDiagram-v2
     end note
 ```
 
-- `submitAnswer` yêu cầu `ACTIVE`, nếu không → `SessionNotActiveException`.
+- `CREATED` là trạng thái tạm trong lúc lấy câu hỏi; `endSession` và `submitAnswer` chỉ áp dụng cho phiên `ACTIVE`, nếu không → `SessionNotActiveException`.
+- `session_completed` chỉ phát cho phiên đã từng `ACTIVE` (có câu hỏi).
 - Scheduler: `@Scheduled(fixedDelay = session.expiry.check-interval-ms, mặc định 300000)`, `@Transactional`.
 
 ## 6. Sequence tạo phiên
@@ -113,12 +122,13 @@ sequenceDiagram
     participant S as InterviewSessionServiceImpl
     participant QC as QuestionServiceClient
     participant DB
-    FE->>C: POST /sessions {topic, difficulty, question_count}
+    FE->>C: POST /sessions {topicId, topic, difficultyId, difficulty, questionCount}
     C->>S: createSession(userId, req)
     S->>DB: insert session CREATED
-    S->>QC: getRandom(count, topicId=null, difficultyId=null)
-    QC->>QC: GET :8081/api/v1/questions/random (timeout 5s)
+    S->>QC: getRandom(count, topicId, difficultyId)
+    QC->>QC: GET :8081/api/v1/questions/random?count=&topic_id=&difficulty_id= (timeout 5s)
     alt rỗng / lỗi
+        S->>DB: xóa session CREATED
         S-->>FE: NoQuestionsAvailableException
     else
         S->>DB: insert question_logs (order 1..N)
@@ -133,9 +143,13 @@ sequenceDiagram
 classDiagram
     class InterviewRestController
     class InterviewWebSocketController {
-        +start(sessionId, headers)
-        +answer(sessionId, AnswerMessage, headers)
+        +start(sessionId, principal)
+        +answer(sessionId, AnswerMessage, principal)
     }
+    class StompAuthChannelInterceptor {
+        +preSend(message, channel)
+    }
+    class HeaderAuthFilter
     class InterviewSessionService {
         <<interface>>
         +createSession()
@@ -153,14 +167,14 @@ classDiagram
     }
     class QuestionServiceClient
     class SessionEventProducer
-    class AnswerEventProducer
+    HeaderAuthFilter ..> InterviewRestController : gán userId
+    StompAuthChannelInterceptor ..> InterviewWebSocketController : gán Principal
     InterviewRestController --> InterviewSessionService
     InterviewRestController --> AnswerService
     InterviewWebSocketController --> AnswerService
     InterviewWebSocketController --> InterviewSessionService
     InterviewSessionService --> QuestionServiceClient
     InterviewSessionService --> SessionEventProducer
-    AnswerService --> AnswerEventProducer
     SessionExpiryScheduler --> SessionEventProducer
 ```
 
@@ -171,15 +185,20 @@ classDiagram
 | `server.port` | 8083 |
 | `DB_HOST`, `DB_NAME` (interview_db), `DB_SCHEMA` (interviews) | localhost |
 | `KAFKA_SERVERS` | localhost:9092 |
-| `kafka.topics.answers-submitted` / `session-completed` | `answers_submitted` / `session_completed` |
+| `kafka.topics.session-completed` | `session_completed` |
 | `session.expiry.minutes` / `check-interval-ms` | 60 / 300000 |
 | `QUESTION_SERVICE_URL` | http://localhost:8081 |
+| `ws.allowed-origins` | domain frontend (ví dụ http://localhost:3000) |
+| `JWT_SECRET` / public key | dùng chung với auth service để xác thực STOMP CONNECT |
 
-## 9. Điểm lệch cần xử lý ⚠️
+## 9. Rủi ro & lưu ý khi triển khai
 
-1. `HeaderAuthFilter.shouldNotFilter` luôn trả `true` (TODO local dev) → REST không có định danh người dùng.
-2. `createSession` truyền `topicId=null`, `difficultyId=null` → câu hỏi không theo topic đã chọn; cần tra `topicId` từ tên topic hoặc FE gửi id.
-3. WS `/topic/interview/{id}` không kiểm quyền sở hữu phiên; origins `*`.
-4. `answers_submitted` chưa có consumer.
-5. Chưa có unique constraint (session_id, question_id) trong `user_answers_raw`.
-6. CREATED → COMPLETED vẫn phát `session_completed` cho phiên chưa có câu hỏi.
+1. **Tin cậy header định danh**: REST dựa vào `X-User-Id` do gateway gán → service chỉ được expose qua gateway (không mở port ra ngoài), gateway phải xóa header `X-User-*` do client tự gửi.
+2. **Khớp topic/độ khó**: FE phải gửi `topicId`/`difficultyId` lấy từ danh mục của question service; nếu topic không đủ câu hỏi, question service có thể trả ít hơn `questionCount` → phiên dùng số câu thực nhận (`totalQuestions`), trả rỗng → `NoQuestionsAvailableException`.
+3. **Bảo mật WebSocket**: JWT hết hạn giữa phiên làm kết nối STOMP vẫn mở → cần kiểm tra hạn token ở mỗi message hoặc ngắt kết nối khi token hết hạn; cấu hình origins sai sẽ chặn FE hợp lệ.
+4. **Trả lời trùng / đồng thời**: hai message `answer` cùng lúc cho một câu có thể vượt qua kiểm tra ở service → dựa vào `UNIQUE (session_id, question_id)` và chuyển lỗi vi phạm ràng buộc thành `ERROR` cho client.
+5. **Phát sự kiện và giao dịch**: `session_completed` nên phát sau khi commit (`@TransactionalEventListener(AFTER_COMMIT)` hoặc outbox) để tránh grading đọc phiên chưa cập nhật; mất sự kiện khi Kafka lỗi → cân nhắc outbox.
+6. **Phiên hết hạn**: phiên `EXPIRED` vẫn phát `session_completed` với `finalStatus=EXPIRED`; grading chấm các câu đã trả lời (xem [grading-service.md](grading-service.md) §8). Scheduler chạy 5 phút/lần nên phiên có thể kéo dài tối đa ~65 phút.
+7. **Nhiều instance**: khi scale ngang, simple broker không chia sẻ session STOMP giữa các instance và scheduler chạy trùng → cần sticky session hoặc broker relay, và khóa phân tán (ví dụ ShedLock) cho scheduler.
+
+Danh sách rủi ro toàn hệ thống: [11 – Rủi ro & lưu ý khi triển khai](../11-rui-ro-trien-khai.md).

@@ -1,10 +1,12 @@
 # 04 – Kiến trúc tổng thể (HLD)
 
-IntelliHire là hệ microservice gồm 6 service Spring Boot, mỗi service sở hữu một schema PostgreSQL; giao tiếp đồng bộ qua REST và bất đồng bộ qua Kafka cho chuỗi phỏng vấn → chấm → báo cáo.
+IntelliHire được thiết kế theo kiến trúc microservice gồm 6 service Spring Boot, mỗi service sở hữu một schema PostgreSQL; giao tiếp đồng bộ qua REST và bất đồng bộ qua Kafka cho chuỗi phỏng vấn → chấm → báo cáo.
 
 ## 4.1 Sơ đồ thành phần
 
-### Hiện trạng (dev)
+### Sơ đồ thành phần logic
+
+Ở môi trường phát triển, frontend gọi thẳng từng service qua dev proxy của Angular.
 
 ```mermaid
 flowchart TB
@@ -42,6 +44,7 @@ flowchart TB
     INT -->|GET /questions/random| QUE
     QUE -->|GET /resumes/:id/profile| RES
     GRA -->|GET /interviews/sessions/:id| INT
+    GRA -->|GET /questions/:id + rubric| QUE
     INT -- session_completed --> KF
     KF -- session_completed --> GRA
     GRA -- grading_completed --> KF
@@ -60,7 +63,9 @@ flowchart TB
     GRA -.-> LLM
 ```
 
-### Mục tiêu
+### Định tuyến qua API Gateway
+
+Ở môi trường staging/production, mọi request đi qua API Gateway.
 
 ```mermaid
 flowchart LR
@@ -75,20 +80,18 @@ flowchart LR
     AUTH & QUE & RES & INT & GRA & REP -. register .-> EU
 ```
 
-Gateway xác thực JWT một lần và chuyển tiếp `X-User-Id`, `X-User-Role` (các service phía sau đã đọc sẵn các header này). Xem [services/gateway-eureka.md](services/gateway-eureka.md).
+Gateway xác thực JWT một lần và chuyển tiếp `X-User-Id`, `X-User-Role`, `X-User-Name` cho các service phía sau. Xem [services/gateway-eureka.md](services/gateway-eureka.md).
 
 ## 4.2 Danh mục service
 
 | Service | Trách nhiệm | Port | Context path | Schema DB | Redis | Kafka | Ngoài |
 |---|---|---|---|---|---|---|---|
 | auth | Danh tính, JWT, OAuth, RBAC, phiên | 8090 (`SERVER_PORT`) | `/` | `${DB_SCHEMA}` | Hoạt động phiên | – | SMTP, Google, GitHub |
-| question | Ngân hàng câu hỏi, rubric, kiểm duyệt, topic/tag | 8081 ⚠️ mặc định 8080 | `/api` | `question` | Cache + random pool | – | OpenRouter |
-| resume | CV, file, parse AI, review | 8082 ⚠️ mặc định 8080 | – (path có `/api`) | mặc định | Cache + hàng đợi parse | – | MinIO, LLM |
+| question | Ngân hàng câu hỏi, rubric, kiểm duyệt, topic/tag | 8081 | `/api` | `question` | Cache + random pool | – | OpenRouter |
+| resume | CV, file, parse AI, review | 8082 | – (path có `/api`) | mặc định | Cache + hàng đợi parse | – | MinIO, LLM |
 | interviews | Phiên phỏng vấn, WebSocket | 8083 | – | `interviews` | – | Produce | – |
 | grading | Chấm bằng LLM | 8084 | `/api` | mặc định | Cache | Consume + produce | OpenRouter |
 | report | Báo cáo, thống kê, tiến bộ | 8085 | `/api` | mặc định | Cache | Consume | – |
-
-⚠️ question và resume đều mặc định port 8080; khi chạy local phải đặt `SERVER_PORT=8081` / `8082` để khớp proxy FE.
 
 ## 4.3 Công nghệ
 
@@ -114,8 +117,9 @@ Gateway xác thực JWT một lần và chuyển tiếp `X-User-Id`, `X-User-Rol
 | interviews → question | REST | Lấy câu hỏi ngẫu nhiên | 5 s, lỗi → danh sách rỗng |
 | question → resume | REST | Hồ sơ tổng hợp để sinh câu hỏi | – |
 | grading → interviews | REST | Lấy câu hỏi + câu trả lời của phiên | 10 s, lỗi → Kafka retry |
-| interviews → grading | Kafka `session_completed` | Kích hoạt chấm | 3 retry × 5 s |
-| grading → report | Kafka `grading_completed` | Kích hoạt lập báo cáo | Không retry ⚠️ |
+| grading → question | REST | Lấy rubric, topic/tag của câu hỏi | 10 s, lỗi → Kafka retry |
+| interviews → grading | Kafka `session_completed` | Kích hoạt chấm | 3 retry × 5 s, lỗi → DLT |
+| grading → report | Kafka `grading_completed` | Kích hoạt lập báo cáo | Retry có giới hạn, lỗi → DLT |
 | resume (nội bộ) | Redis list `resume:parse:queue` | Hàng đợi parse CV | retry 2/4/8 s cho LLM |
 
 ## 4.5 Mẫu kiến trúc nội bộ
@@ -127,7 +131,7 @@ Gateway xác thực JWT một lần và chuyển tiếp `X-User-Id`, `X-User-Rol
 
 Nguyên tắc chung: database-per-service, không truy cập bảng của service khác; ID dạng UUID String (question, resume, grading, report) hoặc BIGINT identity (auth, interviews).
 
-## 4.6 Sơ đồ triển khai (đề xuất)
+## 4.6 Sơ đồ triển khai
 
 ```mermaid
 flowchart TB

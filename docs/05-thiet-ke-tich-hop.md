@@ -1,6 +1,6 @@
 # 05 – Thiết kế tích hợp
 
-Chuỗi nghiệp vụ chính chạy qua 2 sự kiện Kafka (`session_completed`, `grading_completed`), 1 kênh WebSocket và 3 lời gọi REST liên service.
+Chuỗi nghiệp vụ chính được thiết kế chạy qua 2 sự kiện Kafka (`session_completed`, `grading_completed`), 1 kênh WebSocket và 4 lời gọi REST liên service.
 
 ## 5.1 Luồng end-to-end
 
@@ -21,19 +21,19 @@ sequenceDiagram
     INT->>QUE: GET /api/v1/questions/random?count=N
     QUE-->>INT: danh sách câu hỏi
     INT-->>FE: 201 session (ACTIVE)
-    FE->>INT: STOMP CONNECT /ws/interview
+    FE->>INT: STOMP CONNECT /ws/interview (JWT)
     FE->>INT: SEND /app/interview/{id}/start
-    INT-->>FE: /topic/interview/{id} QUESTION #1
+    INT-->>FE: /user/queue/interview QUESTION #1
     loop mỗi câu
         U->>FE: nhập câu trả lời
         FE->>INT: SEND /app/interview/{id}/answer
-        INT->>K: answers_submitted
         INT-->>FE: QUESTION kế tiếp
     end
     INT-->>FE: SESSION_END
     INT->>K: session_completed (COMPLETED)
     K->>GRA: session_completed
     GRA->>INT: GET /api/v1/interviews/sessions/{id}
+    GRA->>QUE: GET câu hỏi + rubric
     par mỗi câu trả lời
         GRA->>LLM: POST /chat/completions
         LLM-->>GRA: {"score","feedback"}
@@ -51,25 +51,13 @@ sequenceDiagram
 
 | Topic | Producer | Consumer (group) | Key | Khi nào phát |
 |---|---|---|---|---|
-| `answers_submitted` | interviews (`AnswerEventProducer`) | *chưa có* | sessionId | Mỗi câu trả lời được lưu |
 | `session_completed` | interviews (`SessionEventProducer`) | grading (`grading-service`) | sessionId | Phiên kết thúc (thủ công, hết câu, hết hạn) |
 | `grading_completed` | grading (`GradingCompletedProducer`) | report (`report-service`) | sessionId | Chấm xong một phiên |
 
 Cấu hình chung: `JsonSerializer`/`JsonDeserializer`, **không** type header, consumer `ignoreUnknown`, `auto-offset-reset=earliest`. Tên topic cấu hình qua `kafka.topics.*` (grading/report nhận override từ `KAFKA_TOPIC_*`).
 
-### 5.2.1 `answers_submitted`
-```json
-{
-  "sessionId": 42,
-  "questionId": "b1f0c1d2-...",
-  "userId": "7",
-  "questionText": "Giải thích Spring Bean lifecycle",
-  "answerText": "...",
-  "submittedAt": "2026-09-29T10:15:30"
-}
-```
+### 5.2.1 `session_completed`
 
-### 5.2.2 `session_completed`
 ```json
 {
   "sessionId": 42,
@@ -83,12 +71,13 @@ Cấu hình chung: `JsonSerializer`/`JsonDeserializer`, **không** type header, 
   "answeredQuestions": 5
 }
 ```
-`finalStatus` ∈ `COMPLETED` | `EXPIRED`. Consumer xử lý: 3 retry cách 5 s (`FixedBackOff(5000, 3)`), sau đó log và bỏ qua.
+`finalStatus` ∈ `COMPLETED` | `EXPIRED`. Consumer xử lý: 3 retry cách 5 s (`FixedBackOff(5000, 3)`), sau đó chuyển sang `session_completed.DLT`.
 
-### 5.2.3 `grading_completed`
+### 5.2.2 `grading_completed`
+
 ```json
 {
-  "sessionId": "42",
+  "sessionId": 42,
   "userId": "7",
   "topic": "Spring Boot",
   "questionScores": [
@@ -99,15 +88,15 @@ Cấu hình chung: `JsonSerializer`/`JsonDeserializer`, **không** type header, 
       "score": 7.5,
       "maxScore": 10.0,
       "feedback": "...",
-      "skillName": null
+      "skillName": "Spring Core"
     }
   ]
 }
 ```
-⚠️ `sessionId` là **Long** ở `session_completed` nhưng **String** ở `grading_completed`; report parse `userId` sang Long.
-⚠️ `skillName` hiện luôn `null` → report không tạo được skill score / progress (xem [11](11-van-de-ton-dong.md)).
+`sessionId` dùng cùng kiểu **Long** ở mọi sự kiện; `userId` là **String** (ADR-010). `skillName` lấy từ topic/tag của câu hỏi để report tính điểm và tiến bộ theo kỹ năng. `maxScore` lấy từ rubric của câu hỏi.
 
-### 5.2.4 Quy ước đề xuất cho sự kiện mới
+### 5.2.3 Quy ước cho sự kiện mới
+
 - Tên topic `snake_case`, thì quá khứ (`resume_parsed`).
 - Payload có `eventId` (UUID), `occurredAt` (ISO-8601 UTC), `version`.
 - Consumer idempotent theo khóa nghiệp vụ; lỗi không phục hồi → dead-letter topic `<topic>.DLT`.
@@ -116,16 +105,16 @@ Cấu hình chung: `JsonSerializer`/`JsonDeserializer`, **không** type header, 
 
 | Thuộc tính | Giá trị |
 |---|---|
-| Endpoint | `/ws/interview` (SockJS), allowed origins `*` |
+| Endpoint | `/ws/interview` (SockJS), allowed origins giới hạn theo domain frontend |
 | Application prefix | `/app` |
-| Broker | Simple broker `/topic` |
-| Header định danh | `X-User-Id` trong STOMP CONNECT/SEND |
+| Broker | Simple broker, user destination `/user/queue/interview` |
+| Xác thực | JWT trong header `Authorization` của STOMP CONNECT |
 
 | Hướng | Destination | Payload | Kết quả |
 |---|---|---|---|
 | Client → Server | `/app/interview/{sessionId}/start` | – | Gửi câu thứ nhất; không có câu → `SESSION_END` (total 0) |
 | Client → Server | `/app/interview/{sessionId}/answer` | `{questionId, answerText}` | Lưu trả lời, gửi câu kế; hết câu → kết thúc phiên + `SESSION_END` |
-| Server → Client | `/topic/interview/{sessionId}` | `QuestionMessage` | – |
+| Server → Client | `/user/queue/interview` | `QuestionMessage` (kèm `sessionId`) | Chỉ chủ phiên nhận được |
 
 `QuestionMessage`:
 ```json
@@ -139,8 +128,8 @@ sequenceDiagram
     participant S as InterviewWebSocketController
     participant A as AnswerService
     participant SS as SessionService
-    C->>S: CONNECT (X-User-Id)
-    C->>S: SUBSCRIBE /topic/interview/42
+    C->>S: CONNECT (Authorization: Bearer JWT)
+    C->>S: SUBSCRIBE /user/queue/interview
     C->>S: SEND /app/interview/42/start
     S-->>C: QUESTION order=1
     C->>S: SEND /app/interview/42/answer {questionId, answerText}
@@ -151,10 +140,8 @@ sequenceDiagram
         S->>SS: endSession() → COMPLETED + session_completed
         S-->>C: SESSION_END
     end
-    Note over S,C: Lỗi (thiếu X-User-Id, trả lời trùng, phiên không ACTIVE) → ERROR
+    Note over S,C: Lỗi (JWT không hợp lệ, không phải chủ phiên, trả lời trùng, phiên không ACTIVE) → ERROR
 ```
-
-⚠️ Broker `/topic` là kênh chung theo sessionId, không gắn với user; ai biết sessionId đều subscribe được. Đề xuất: `/user/queue/interview` + xác thực JWT ở CONNECT.
 
 ## 5.4 REST liên service
 
@@ -162,18 +149,19 @@ sequenceDiagram
 |---|---|---|---|---|
 | interviews `QuestionServiceClient` | question | `GET /api/v1/questions/random?count=&topic_id=&difficulty_id=` | Lấy câu hỏi cho phiên | 5 s; lỗi → list rỗng → `NoQuestionsAvailableException` |
 | grading `InterviewServiceClient` | interviews | `GET /api/v1/interviews/sessions/{id}` + `X-User-Id` | Lấy câu hỏi + câu trả lời | 10 s; lỗi → throw → Kafka retry |
+| grading `QuestionServiceClient` | question | `GET /api/v1/questions/{id}` + rubric | Lấy rubric, topic/tag để chấm và gán `skillName` | 10 s; lỗi → throw → Kafka retry |
 | question `ResumeAggregateClient` | resume | `GET /api/v1/resumes/{resumeId}/profile` | Dữ liệu CV để AI sinh câu hỏi | – |
 
-Base URL cấu hình: `question-service.base-url`, `interview-service.base-url`, `clients.resume.base-url` (và `report-service.base-url` ở grading – khai báo nhưng chưa dùng).
+Base URL cấu hình: `question-service.base-url`, `interview-service.base-url`, `clients.resume.base-url`.
 
-⚠️ interviews truyền `topic_id=null`, `difficulty_id=null` → câu hỏi lấy ngẫu nhiên toàn ngân hàng, không theo topic đã chọn.
+interviews truyền `topic_id`, `difficulty_id` theo lựa chọn của người dùng khi tạo phiên để câu hỏi đúng topic và độ khó.
 
 ## 5.5 Hợp đồng chung cho REST
 
 | Mục | Quy ước |
 |---|---|
 | Version | Tiền tố `/v1` |
-| JSON | interviews, question (rubric): `snake_case`; các service khác `camelCase` → **cần thống nhất** |
+| JSON | `camelCase` cho mọi service |
 | Phân trang | `page` (0-based), `size` (giới hạn 100), `sort=field,dir` |
 | Lỗi | `{ code, message, timestamp, path, errors? }`, code dạng `<PREFIX>_<số>` (`AUTH_*`, `QUE_*`, `FILE_*`, `JOB_*`, `REVIEW_*`, `GRD_*`, `RPT_*`) |
 | Định danh | `Authorization: Bearer <JWT>`; qua gateway thêm `X-User-Id`, `X-User-Role`, `X-User-Name` |

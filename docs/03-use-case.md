@@ -75,6 +75,7 @@ flowchart LR
 ## 3.3 Đặc tả use case chính
 
 ### UC-01 Đăng nhập bằng mật khẩu
+
 | Mục | Nội dung |
 |---|---|
 | Tác nhân | Khách |
@@ -84,6 +85,7 @@ flowchart LR
 | Hậu điều kiện | Phiên mới xuất hiện ở `GET /v1/auth/sessions` |
 
 ### UC-02 Quên mật khẩu
+
 | Mục | Nội dung |
 |---|---|
 | Tác nhân | Khách, SMTP |
@@ -91,6 +93,7 @@ flowchart LR
 | Luồng thay thế | 5a. Token sai/hết hạn → `PASSWORD_RESET_TOKEN_INVALID` |
 
 ### UC-03 Upload và parse CV
+
 | Mục | Nội dung |
 |---|---|
 | Tác nhân | Candidate, LLM provider |
@@ -100,15 +103,17 @@ flowchart LR
 | Hậu điều kiện | Người dùng rà soát và chỉnh sửa dữ liệu parse |
 
 ### UC-04 Thực hiện phỏng vấn
+
 | Mục | Nội dung |
 |---|---|
 | Tác nhân | Candidate |
 | Tiền điều kiện | Đã đăng nhập; ngân hàng có đủ câu hỏi |
-| Luồng chính | 1. Chọn topic, độ khó, số câu → 2. Interview gọi `GET /api/v1/questions/random` → lưu `question_logs`, phiên `ACTIVE` → 3. FE kết nối STOMP `/ws/interview`, subscribe `/topic/interview/{id}`, gửi `/app/interview/{id}/start` → 4. Nhận `QUESTION` → 5. Gửi `/app/interview/{id}/answer` → lưu `user_answers_raw`, phát `answers_submitted`, nhận câu kế → 6. Hết câu → phiên `COMPLETED`, nhận `SESSION_END`, phát `session_completed` |
+| Luồng chính | 1. Chọn topic, độ khó, số câu → 2. Interview gọi `GET /api/v1/questions/random` theo topic, độ khó → lưu `question_logs`, phiên `ACTIVE` → 3. FE kết nối STOMP `/ws/interview` kèm JWT, subscribe `/user/queue/interview`, gửi `/app/interview/{id}/start` → 4. Nhận `QUESTION` → 5. Gửi `/app/interview/{id}/answer` → lưu `user_answers_raw`, nhận câu kế → 6. Hết câu → phiên `COMPLETED`, nhận `SESSION_END`, phát `session_completed` |
 | Luồng thay thế | 2a. Không lấy được câu hỏi → `NoQuestionsAvailableException` · 5a. Trả lời trùng câu → lỗi `ERROR` · 5b. Quá 60 phút → scheduler đặt `EXPIRED`, phát `session_completed` (finalStatus `EXPIRED`) · 5c. Người dùng bấm kết thúc → `PUT .../end` |
 | Hậu điều kiện | Grading nhận sự kiện và bắt đầu chấm |
 
 ### UC-05 Chấm điểm tự động (hệ thống)
+
 | Mục | Nội dung |
 |---|---|
 | Tác nhân | Grading service, LLM provider |
@@ -117,6 +122,7 @@ flowchart LR
 | Luồng thay thế | 1a. Interview không phản hồi → Kafka retry 3 lần × 5 s · 3a. LLM lỗi 5xx/timeout → retry 1 lần sau 2 s; vẫn lỗi → điểm 0, feedback "Unable to grade" · 4a. Mọi câu lỗi → `FAILED` (cho phép chấm lại) |
 
 ### UC-06 Xem báo cáo và tiến bộ
+
 | Mục | Nội dung |
 |---|---|
 | Tác nhân | Candidate |
@@ -125,6 +131,7 @@ flowchart LR
 | Luồng thay thế | 3a. Chưa có báo cáo → FE hiển thị "đang chấm" (polling 3 s, tối đa 40 lần) |
 
 ### UC-07 Kiểm duyệt câu hỏi
+
 | Mục | Nội dung |
 |---|---|
 | Tác nhân | Candidate (người gửi), Admin |

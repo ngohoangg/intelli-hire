@@ -1,13 +1,13 @@
 # 06 – Thiết kế frontend
 
-Frontend là SPA Angular 19 (standalone component, lazy loading), gọi backend qua `ApiService` với `environment.apiUrl` (`/api` khi dev) và kết nối WebSocket STOMP cho phòng phỏng vấn.
+Frontend được thiết kế là SPA Angular 19 (standalone component, lazy loading), gọi backend qua `ApiService` với `environment.apiUrl` (`/api` khi dev) và kết nối WebSocket STOMP cho phòng phỏng vấn.
 
 | Thuộc tính | Giá trị |
 |---|---|
 | Thư mục | `intelli-hire-uiux/intelli-hire-frontend` |
 | Stack | Angular 19.2, Angular Material/CDK, RxJS 7.8, @stomp/stompjs 7 + sockjs-client |
 | State | Service + Observable (không NgRx) |
-| Theme | Neon Cyberpunk, token trong `src/styles/_variables.scss`, quy tắc tại `CLAUDE.md`, `src/design-system.md` |
+| Theme | Neon Cyberpunk, token trong `src/styles/_variables.scss`, quy tắc tại `src/design-system.md` |
 | Test | Karma + Jasmine |
 
 ## 6.1 Sitemap
@@ -50,7 +50,6 @@ src/app/
 ├── core/
 │   ├── guards/         authGuard, adminGuard
 │   ├── interceptors/   authInterceptor, errorInterceptor
-│   ├── mocks/          (TẠM THỜI) cv-parse, interview mock
 │   ├── models/
 │   └── services/       ApiService, AuthService, ProfileService, AdminService, AdminQuestionService, IdleService, TokenManager
 ├── features/           account · admin · auth · contact · education · experience · file · interviews · parse-job · questions · reports · resume · resume-skills · skill-profile · skills
@@ -63,21 +62,14 @@ src/app/
 ```mermaid
 flowchart LR
     REQ[HttpClient request] --> AI[authInterceptor]
-    AI --> CM{mockCvParse?}
-    CM -- true --> CMI[cvParseMockInterceptor]
-    CM -- false --> IM
-    CMI --> IM{mockInterview?}
-    IM -- true --> IMI[interviewMockInterceptor]
-    IM -- false --> EI
-    IMI --> EI[errorInterceptor]
+    AI --> EI[errorInterceptor]
     EI --> BE[Backend]
 ```
 
 | Interceptor | Hành vi |
 |---|---|
-| `authInterceptor` | Gắn `Authorization: Bearer`, `X-User-Id`; refresh chủ động khi JWT còn < 30 s; 401 `AUTH_1009` → dừng idle + đăng xuất; 401 khác → refresh và thử lại 1 lần, thất bại → đăng xuất; thành công → reset idle timer |
+| `authInterceptor` | Gắn `Authorization: Bearer`; refresh chủ động khi JWT còn < 30 s; 401 `AUTH_1009` → dừng idle + đăng xuất; 401 khác → refresh và thử lại 1 lần, thất bại → đăng xuất; thành công → reset idle timer |
 | `errorInterceptor` | Hiện MatSnackBar cho mọi lỗi trừ 404 |
-| Mock interceptors | Chỉ bật khi cờ `environment.mockCvParse` / `mockInterview` = true |
 
 `IdleService`: đăng xuất sau 30 phút không thao tác (localStorage `lastActivityAt`), khớp TTL Redis `session:activity` ở auth.
 
@@ -90,7 +82,7 @@ flowchart LR
 | `AdminService` | `/v1/admin/accounts[/{id}[/status|/roles[/{roleId}]]]`, `/v1/admin/roles[/{id}]` |
 | `AdminQuestionService` | `/v1/admin/questions` |
 | `InterviewService` | 6 endpoint `/v1/interviews/sessions` |
-| `InterviewWebSocketService` | SockJS `/ws/interview`, subscribe `/topic/interview/{id}`, publish `/app/interview/{id}/start|answer` |
+| `InterviewWebSocketService` | SockJS `/ws/interview` (JWT ở CONNECT), subscribe `/user/queue/interview`, publish `/app/interview/{id}/start|answer` |
 | `GradingService` | `/v1/gradings/session/{id}` |
 | `ReportService` | `/v1/reports/history/{userId}`, `/{id}`, `/session/{sid}` (GET, DELETE), `/stats/{uid}`, `/progress/{uid}[/{skill}]`, `POST /{id}/regenerate` |
 | Resume features | `/v1/resumes/**`, `/v1/skills/**`, `/v1/parse-jobs/**` |
@@ -105,7 +97,7 @@ sequenceDiagram
     participant WS as InterviewWebSocketService
     participant GS as GradingService
     U->>RC: mở /interviews/:id/room
-    RC->>WS: connect(X-User-Id), subscribe /topic/interview/:id
+    RC->>WS: connect(JWT), subscribe /user/queue/interview
     RC->>WS: publish start
     WS-->>RC: QUESTION
     loop mỗi câu
@@ -138,8 +130,7 @@ sequenceDiagram
 - Animation khai báo trong `_animations.scss`; `prefers-reduced-motion` xử lý toàn cục.
 - **Chỉ gọi API thật; không dùng mảng mock hoặc trường dữ liệu tự bịa trong component.**
 
-## 6.9 Điểm lệch cần xử lý ⚠️
+## 6.9 Rủi ro & lưu ý khi triển khai
 
-1. `environment.ts` (dev) đang bật `mockCvParse` và `mockInterview` → dev không chạy được phiên thật (mock WS thay hoàn toàn WS thật). Cần tắt khi backend đã sửa, rồi xóa `core/mocks/`.
-2. `InterviewWebSocketService` đặt `reconnectDelay = 0` (không tự kết nối lại) — trái yêu cầu FR-INT-02.
-3. Polling kết quả chấm tối đa 2 phút; cần trạng thái "chấm lâu hơn dự kiến" thay vì báo lỗi.
+1. Mất kết nối WebSocket giữa phiên làm gián đoạn phỏng vấn → `InterviewWebSocketService` cần tự kết nối lại (`reconnectDelay` > 0) và dùng REST gửi câu trả lời làm dự phòng (FR-INT-03).
+2. Chấm bằng LLM có thể lâu hơn thời gian polling (tối đa 2 phút) → hiển thị trạng thái "chấm lâu hơn dự kiến" và cho phép xem lại sau, không báo lỗi.
