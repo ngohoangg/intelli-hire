@@ -1,0 +1,14 @@
+# Build
+target/
+*.class
+*.jar
+*.log
+
+# Env
+.env
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.DS_Store

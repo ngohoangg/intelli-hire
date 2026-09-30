@@ -1,0 +1,9 @@
+# Profile prod: staging / production
+springdoc:
+  swagger-ui:
+    enabled: false
+
+logging:
+  level:
+    root: WARN
+    org.aibles.intellihireresume: INFO

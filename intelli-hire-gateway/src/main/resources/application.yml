@@ -1,0 +1,89 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: api-gateway
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+  cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: ${CORS_ALLOWED_ORIGINS:http://localhost:4200}
+            allowedMethods: [GET, POST, PUT, PATCH, DELETE, OPTIONS]
+            allowedHeaders: ['*']
+            allowCredentials: true
+      # Route cụ thể phải đứng trước route rộng (admin-questions trước admin)
+      routes:
+        - id: auth
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/v1/auth/**,/api/v1/oauth/**,/api/v1/profiles/**,/api/v1/accounts/**
+          filters:
+            - StripPrefix=1
+        - id: admin-questions
+          uri: lb://question-service
+          predicates:
+            - Path=/api/v1/admin/questions/**
+        - id: admin
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/v1/admin/**
+          filters:
+            - StripPrefix=1
+        - id: question
+          uri: lb://question-service
+          predicates:
+            - Path=/api/v1/questions/**,/api/v1/topics/**,/api/v1/tags/**,/api/v1/difficulties/**,/api/v1/study-articles/**
+        - id: resume
+          uri: lb://resume-service
+          predicates:
+            - Path=/api/v1/resumes/**,/api/v1/skills/**,/api/v1/parse-jobs/**
+        - id: interview
+          uri: lb://interview-service
+          predicates:
+            - Path=/api/v1/interviews/**
+        - id: interview-ws
+          uri: lb:ws://interview-service
+          predicates:
+            - Path=/ws/interview/**
+        - id: grading
+          uri: lb://grading-service
+          predicates:
+            - Path=/api/v1/gradings/**
+        - id: report
+          uri: lb://report-service
+          predicates:
+            - Path=/api/v1/reports/**
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka}
+  instance:
+    prefer-ip-address: true
+
+application:
+  jwt:
+    secret: ${JWT_SECRET}
+    issuer: ${JWT_ISSUER:intellihire-auth}
+    access-token-audience: ${JWT_ACCESS_AUDIENCE:intellihire-api}
+  public-paths:
+    - /api/v1/auth/login
+    - /api/v1/auth/register
+    - /api/v1/auth/refresh
+    - /api/v1/auth/forgot-password
+    - /api/v1/auth/reset-password
+    - /api/v1/auth/verify-email
+    - /api/v1/auth/resend-verification
+    - /api/v1/oauth/**
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
