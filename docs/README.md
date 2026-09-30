@@ -6,7 +6,7 @@
 ## Mục lục
 
 | # | Tài liệu | Loại tài liệu | Nội dung chính |
-|---|---|---|---|
+|---|---|---|
 | 01 | [Giới thiệu](01-gioi-thieu.md) | Tổng quan | Mục đích, phạm vi, thuật ngữ, tham chiếu |
 | 02 | [Đặc tả yêu cầu (SRS)](02-dac-ta-yeu-cau.md) | SRS | Tác nhân, yêu cầu chức năng, phi chức năng |
 | 03 | [Use case](03-use-case.md) | Phân tích | Sơ đồ use case, đặc tả use case chính |
@@ -23,15 +23,15 @@
 
 Mỗi file gồm: trách nhiệm · ERD · từ điển dữ liệu · API · sequence · state machine (nếu có) · cấu trúc package · cấu hình · lỗi.
 
-| Service | Tài liệu | Port | Owner (theo phân công) |
-|---|---|---|---|
-| Auth | [services/auth-service.md](services/auth-service.md) | 8090 | A |
-| Question | [services/question-service.md](services/question-service.md) | 8081 | B |
-| Resume | [services/resume-service.md](services/resume-service.md) | 8082 | B |
-| Interview | [services/interview-service.md](services/interview-service.md) | 8083 | C |
-| Grading | [services/grading-service.md](services/grading-service.md) | 8084 | C |
-| Report | [services/report-service.md](services/report-service.md) | 8085 | A |
-| Gateway & Eureka | [services/gateway-eureka.md](services/gateway-eureka.md) | 8080 / 8761 | A |
+| Service | Tài liệu | Port |
+|---|---|---|
+| Auth | [services/auth-service.md](services/auth-service.md) | 8090 |
+| Question | [services/question-service.md](services/question-service.md) | 8081 |
+| Resume | [services/resume-service.md](services/resume-service.md) | 8082 |
+| Interview | [services/interview-service.md](services/interview-service.md) | 8083 |
+| Grading | [services/grading-service.md](services/grading-service.md) | 8084 |
+| Report | [services/report-service.md](services/report-service.md) | 8085 |
+| Gateway & Eureka | [services/gateway-eureka.md](services/gateway-eureka.md) | 8080 / 8761 |
 
 ## Quy ước
 

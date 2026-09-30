@@ -48,4 +48,3 @@ IntelliHire là nền tảng luyện phỏng vấn kỹ thuật có AI: ứng vi
 - `intelli-hire-resume/ROADMAP.md`, `CHECKLIST.md`
 - Postman: `intelli-hire-grading/IntelliHire-Full-System.postman_collection.json`, `intelli-hire-report/intelli-hire-report.postman_collection.json`
 - `intelli-hire-uiux/intelli-hire-frontend/docs/*-wireframe.md` – wireframe màn câu hỏi
-- `../PHAN_CONG_CONG_VIEC.md` – phân công 3 người, 10 tuần

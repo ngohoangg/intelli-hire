@@ -18,7 +18,7 @@ Mỗi ADR ghi lại một quyết định, bối cảnh và hệ quả.
 ---
 
 ## ADR-001 Microservice, database-per-service
-- **Bối cảnh:** 3 người phát triển song song, mỗi miền (auth, CV, câu hỏi, phỏng vấn, chấm, báo cáo) có vòng đời và tải khác nhau; chấm bằng LLM chậm và tốn tài nguyên.
+- **Bối cảnh:** Nhiều miền được phát triển song song, mỗi miền (auth, CV, câu hỏi, phỏng vấn, chấm, báo cáo) có vòng đời và tải khác nhau; chấm bằng LLM chậm và tốn tài nguyên.
 - **Quyết định:** Mỗi miền một service Spring Boot, một schema PostgreSQL riêng, Flyway riêng; không truy vấn chéo schema.
 - **Hệ quả:** (+) Tách sở hữu, deploy độc lập, scale grading riêng. (−) Cần hợp đồng API/sự kiện, dữ liệu phân tán (tên câu hỏi được sao chép vào `question_logs`, `grading_results`, `question_scores`), vận hành phức tạp hơn.
 
@@ -44,7 +44,7 @@ Mỗi ADR ghi lại một quyết định, bối cảnh và hệ quả.
 
 ## ADR-006 Trừu tượng hóa LLM
 - **Quyết định:** Interface `AiProvider` (resume) với 5 hiện thực chọn bằng `ai.provider`; grading và question dùng OpenRouter.
-- **Hệ quả:** (+) Đổi nhà cung cấp theo chi phí/chất lượng. (−) Ba service có ba client khác nhau; nên gom thành module `ai-client` dùng chung (xem phân công).
+- **Hệ quả:** (+) Đổi nhà cung cấp theo chi phí/chất lượng. (−) Ba service có ba client khác nhau; nên gom thành module `ai-client` dùng chung.
 
 ## ADR-007 MinIO
 - **Quyết định:** Lưu file CV trên MinIO (API S3), DB chỉ giữ metadata (`object_bucket`, `object_key`, `etag`).
