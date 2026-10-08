@@ -12,3 +12,7 @@ target/
 *.iml
 .vscode/
 .DS_Store
+
+# AI Agent local customizations                                                                
+.agents/                                                                                       
+AGENTS.md  
