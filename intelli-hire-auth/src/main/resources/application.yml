@@ -33,6 +33,7 @@ spring:
     default-schema: ${DB_SCHEMA:auth}
     table: flyway_schema_history_auth
     baseline-on-migrate: true
+    out-of-order: true
 
   jackson:
     default-property-inclusion: non_null
