@@ -1,0 +1,212 @@
+.page-container {
+  padding: 32px;
+  max-width: 900px;
+  margin: 0 auto;
+  animation: fadeInUp 0.5s ease-out both;
+}
+
+// Header Card
+.header-card {
+  margin-top: 24px;
+  margin-bottom: 24px;
+  padding: 24px;
+}
+
+.header-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.session-avatar {
+  width: 64px;
+  height: 64px;
+  background: var(--cyan-glow);
+  border: 1px solid var(--border-accent);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cyan);
+  flex-shrink: 0;
+}
+
+.header-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 8px;
+
+  h1 {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+    letter-spacing: -0.02em;
+  }
+}
+
+.meta-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.meta-text {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.meta-sep {
+  color: var(--text-tertiary);
+  font-size: 13px;
+}
+
+// Status + difficulty badges
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+
+  &.status-created   { color: var(--text-secondary); border: 1px solid var(--border); }
+  &.status-active    { color: var(--cyan); border: 1px solid var(--cyan); }
+  &.status-completed { color: var(--success); border: 1px solid var(--success); }
+  &.status-expired   { color: var(--text-tertiary); border: 1px solid var(--border); }
+
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--cyan);
+  }
+}
+
+.difficulty-badge {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+
+  &.difficulty-junior { color: var(--success); border: 1px solid var(--success); }
+  &.difficulty-mid    { color: var(--warning); border: 1px solid var(--warning); }
+  &.difficulty-senior { color: var(--danger);  border: 1px solid var(--danger); }
+}
+
+// View Report Button
+.btn-view-report {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding: 10px 20px;
+  border: 2px solid var(--cyan);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--cyan);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: var(--cyan-glow);
+    box-shadow: var(--glow-subtle);
+  }
+}
+
+// Q&A List
+.qa-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.qa-item {
+  padding: 20px 24px;
+  overflow: hidden;
+}
+
+.qa-question {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+
+  .q-num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--cyan);
+    background: var(--cyan-glow);
+    border: 1px solid var(--border-accent);
+    border-radius: 4px;
+    padding: 2px 6px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .q-text {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-primary);
+    line-height: 1.6;
+    margin: 0;
+  }
+}
+
+.qa-answer {
+  padding-left: 4px;
+
+  .answer-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    letter-spacing: 0.08em;
+    display: block;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+
+  .answer-text {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    white-space: pre-wrap;
+    margin: 0;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 60px 20px;
+  color: var(--text-tertiary);
+  font-size: 14px;
+
+  p { margin: 0; }
+}

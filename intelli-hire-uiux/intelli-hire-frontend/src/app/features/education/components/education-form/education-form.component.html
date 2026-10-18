@@ -1,0 +1,57 @@
+<h2 mat-dialog-title>{{ isEdit ? 'Chỉnh sửa học vấn' : 'Thêm học vấn' }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="edu-form">
+
+    <mat-form-field appearance="outline" floatLabel="always" class="full-width">
+      <mat-label>Trường / Cơ sở đào tạo *</mat-label>
+      <input matInput formControlName="school" placeholder="VD: Đại học Bách khoa Hà Nội">
+      <mat-error *ngIf="school.hasError('required')">Vui lòng nhập tên trường</mat-error>
+    </mat-form-field>
+
+    <div class="two-col">
+      <mat-form-field appearance="outline" floatLabel="always">
+        <mat-label>Bằng cấp</mat-label>
+        <input matInput formControlName="degree" placeholder="VD: Cử nhân Khoa học">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" floatLabel="always">
+        <mat-label>Chuyên ngành</mat-label>
+        <input matInput formControlName="field" placeholder="VD: Khoa học máy tính">
+      </mat-form-field>
+    </div>
+
+    <div class="two-col">
+      <mat-form-field appearance="outline" floatLabel="always">
+        <mat-label>Năm bắt đầu</mat-label>
+        <input matInput formControlName="startYear" type="number" [min]="1900" [max]="currentYear" placeholder="VD: 2018">
+        <mat-error *ngIf="startYear.hasError('yearRange')">Năm phải nằm trong khoảng 1900 đến {{ currentYear }}</mat-error>
+        <mat-error *ngIf="startYear.hasError('yearInvalid')">Vui lòng nhập năm hợp lệ</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" floatLabel="always">
+        <mat-label>Năm kết thúc</mat-label>
+        <input matInput formControlName="endYear" type="number" [min]="1900" [max]="currentYear" placeholder="VD: 2022">
+        <mat-error *ngIf="endYear.hasError('yearRange')">Năm phải nằm trong khoảng 1900 đến {{ currentYear }}</mat-error>
+        <mat-error *ngIf="endYear.hasError('yearInvalid')">Vui lòng nhập năm hợp lệ</mat-error>
+      </mat-form-field>
+    </div>
+
+    <mat-error class="range-error" *ngIf="hasYearOrderError">
+      Năm kết thúc phải sau năm bắt đầu
+    </mat-error>
+
+    <mat-form-field appearance="outline" floatLabel="always" class="full-width">
+      <mat-label>Mô tả</mat-label>
+      <textarea matInput formControlName="description" rows="3" placeholder="GPA, danh hiệu, hoạt động…"></textarea>
+    </mat-form-field>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()">Hủy</button>
+  <button mat-flat-button class="save-btn" (click)="submit()">
+    {{ isEdit ? 'Lưu thay đổi' : 'Thêm học vấn' }}
+  </button>
+</mat-dialog-actions>

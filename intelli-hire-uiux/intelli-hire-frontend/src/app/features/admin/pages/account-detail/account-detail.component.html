@@ -1,0 +1,51 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="page-title">
+      <button class="back-btn" routerLink="/admin/accounts">← Tài khoản</button>
+      <span class="ai-dot"></span>
+      <h1>{{ account?.username ?? 'Chi tiết tài khoản' }}</h1>
+      <span class="status-badge" *ngIf="account" [class]="'status-' + account.status.toLowerCase()">{{ statusLabel(account.status) }}</span>
+    </div>
+  </div>
+
+  <app-loading-spinner [isLoading]="loading" />
+
+  <div class="content-grid" *ngIf="account && !loading">
+    <div class="card detail-card">
+      <div class="error-banner" *ngIf="error">{{ error }}</div>
+      <div class="success-banner" *ngIf="success">{{ success }}</div>
+
+      <span class="section-label">Thông tin tài khoản</span>
+      <div class="detail-grid">
+        <div class="detail-item"><span class="detail-label">Tên đăng nhập</span><span class="detail-value">{{ account.username }}</span></div>
+        <div class="detail-item"><span class="detail-label">Email</span><span class="detail-value">{{ account.email }}</span></div>
+        <div class="detail-item"><span class="detail-label">Số lần đăng nhập thất bại</span><span class="detail-value mono">{{ account.failed_login_attempts }}</span></div>
+        <div class="detail-item" *ngIf="account.locked_reason"><span class="detail-label">Lý do khóa</span><span class="detail-value">{{ account.locked_reason }}</span></div>
+      </div>
+    </div>
+
+    <div class="card roles-card">
+      <span class="section-label">Vai trò đã gán</span>
+
+      <div class="protected-notice" *ngIf="isSuperAdmin">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Tài khoản Super Admin — việc quản lý vai trò bị hạn chế
+      </div>
+
+      <div class="role-list">
+        <div class="role-row" *ngFor="let r of roles">
+          <span class="role-name">{{ r.role_name }}</span>
+          <button class="btn-danger-outline small" (click)="removeRole(r.role_id)" *ngIf="!isSuperAdmin">Gỡ</button>
+        </div>
+        <p class="empty-text" *ngIf="roles.length === 0">Chưa có vai trò nào được gán.</p>
+      </div>
+
+      <div class="assign-section" *ngIf="!isSuperAdmin && unassignedRoles.length > 0">
+        <span class="section-label">Thêm vai trò</span>
+        <div class="role-chips">
+          <button class="chip-btn" *ngFor="let r of unassignedRoles" (click)="assignRole(r.id)">+ {{ r.name }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

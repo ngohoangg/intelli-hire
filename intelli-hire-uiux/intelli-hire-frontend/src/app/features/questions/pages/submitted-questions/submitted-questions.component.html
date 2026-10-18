@@ -1,0 +1,83 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="page-title-group">
+      <div class="page-title">
+        <span class="ai-dot"></span>
+        <h1>Câu hỏi đã gửi</h1>
+        <span class="count-badge" *ngIf="totalElements > 0">{{ totalElements }}</span>
+      </div>
+      <p class="page-subtitle">Theo dõi và quản lý các câu hỏi bạn đã gửi để được duyệt.</p>
+    </div>
+
+    <div class="header-actions">
+      <a class="btn-primary" routerLink="/questions/create">Câu hỏi mới</a>
+    </div>
+  </div>
+
+  <section class="card section-card">
+    <div class="submissions-list" *ngIf="!loading">
+      <ng-container *ngIf="questions.length > 0; else emptyState">
+        <div class="submission-card" *ngFor="let q of questions">
+
+          <!-- Rejection reason banner -->
+          <div class="rejection-banner" *ngIf="q.status === 'REJECTED'">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span><strong>Bị từ chối:</strong> {{ q.rejection_reason ?? 'Không có lý do.' }}</span>
+          </div>
+
+          <!-- Archived banner -->
+          <div class="archived-banner" *ngIf="q.status === 'ARCHIVED'">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+            <span>Câu hỏi này đã được quản trị viên lưu trữ.</span>
+          </div>
+
+          <div class="card-header">
+            <span class="status-badge" [attr.data-status]="q.status">{{ statusLabel(q.status) }}</span>
+            <span class="card-meta">{{ q.topic_name }} · {{ typeLabel(q.question_type) }} · {{ q.created_at | date:'dd/MM/yyyy' }}</span>
+          </div>
+
+          <p class="question-text">{{ q.question_text }}</p>
+
+          <div class="card-actions">
+            <button class="btn-view" (click)="viewDetail(q.id)">Xem</button>
+            <ng-container *ngIf="q.status === 'PENDING' || q.status === 'REJECTED'">
+              <button class="btn-edit" (click)="edit(q.id)">Sửa</button>
+            </ng-container>
+            <ng-container *ngIf="q.status === 'REJECTED'">
+              <button
+                class="btn-resubmit"
+                (click)="resubmit(q)"
+                [disabled]="resubmittingId === q.id">
+                {{ resubmittingId === q.id ? 'Đang gửi...' : 'Gửi lại' }}
+              </button>
+            </ng-container>
+            <ng-container *ngIf="q.status === 'PENDING' || q.status === 'REJECTED'">
+              <button
+                class="btn-withdraw"
+                (click)="withdraw(q)"
+                [disabled]="withdrawingId === q.id">
+                {{ withdrawingId === q.id ? 'Đang xóa...' : 'Xóa' }}
+              </button>
+            </ng-container>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-template #emptyState>
+        <div class="empty-panel">
+          <h3>Chưa có câu hỏi nào được gửi</h3>
+          <p>Bạn chưa gửi câu hỏi nào.</p>
+        </div>
+      </ng-template>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination" *ngIf="totalElements > size">
+      <button class="page-btn" (click)="prevPage()" [disabled]="page === 0">← Trước</button>
+      <span class="page-info">Trang {{ page + 1 }} / {{ Math.ceil(totalElements / size) }}</span>
+      <button class="page-btn" (click)="nextPage()" [disabled]="(page + 1) * size >= totalElements">Sau →</button>
+    </div>
+  </section>
+
+  <app-loading-spinner [isLoading]="loading" />
+</div>

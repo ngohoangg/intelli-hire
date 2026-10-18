@@ -1,0 +1,96 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="page-title">
+      <span class="ai-dot"></span>
+      <h1>Quản lý câu hỏi</h1>
+      <span class="count-badge" *ngIf="totalElements > 0">{{ totalElements }}</span>
+    </div>
+    <div class="header-actions">
+      <button class="btn-primary" (click)="navigateToCreate()">Câu hỏi mới</button>
+    </div>
+  </div>
+
+  <!-- Status Tabs -->
+  <div class="status-tabs">
+    <button
+      *ngFor="let tab of statusTabs"
+      class="status-tab"
+      [class.active]="statusFilter === tab.value"
+      [attr.data-status]="tab.value || 'all'"
+      (click)="setStatus(tab.value)">
+      {{ tab.label }}
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <div class="filter-bar">
+    <input
+      class="filter-input"
+      type="text"
+      placeholder="Tìm theo nội dung câu hỏi..."
+      [(ngModel)]="keywordFilter"
+      (keyup.enter)="onSearch()" />
+    <select class="filter-select" [(ngModel)]="typeFilter" (change)="onSearch()">
+      <option *ngFor="let opt of questionTypeOptions" [value]="opt.value">{{ opt.label }}</option>
+    </select>
+    <button class="btn-search" (click)="onSearch()">Tìm kiếm</button>
+  </div>
+
+  <!-- Action Error -->
+  <div class="action-error" *ngIf="actionError">{{ actionError }}</div>
+
+  <!-- Loading -->
+  <app-loading-spinner *ngIf="loading" />
+
+  <!-- Table -->
+  <div class="table-wrapper" *ngIf="!loading">
+    <table class="questions-table" *ngIf="questions.length > 0; else emptyState">
+      <thead>
+        <tr>
+          <th>Trạng thái</th>
+          <th>Câu hỏi</th>
+          <th>Chủ đề</th>
+          <th>Loại</th>
+          <th>Người gửi</th>
+          <th>Ngày tạo</th>
+          <th>Thao tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let q of questions">
+          <td>
+            <span class="status-badge" [attr.data-status]="q.status">
+              {{ statusLabel(q.status) }}
+            </span>
+          </td>
+          <td class="question-text-cell" [title]="q.question_text">{{ truncate(q.question_text) }}</td>
+          <td class="mono-cell">{{ q.topic_name }}</td>
+          <td class="mono-cell">{{ typeLabel(q.question_type) }}</td>
+          <td class="mono-cell">{{ q.submitted_by ?? '—' }}</td>
+          <td class="mono-cell">{{ q.created_at | date:'dd/MM/yyyy' }}</td>
+          <td class="actions-cell">
+            <button *ngIf="q.status === 'PENDING'" class="action-btn approve" (click)="approve(q)">Duyệt</button>
+            <button *ngIf="q.status === 'PENDING'" class="action-btn reject" (click)="openRejectDialog(q)">Từ chối</button>
+            <button *ngIf="q.status === 'APPROVED' || q.status === 'REJECTED'" class="action-btn archive" (click)="archive(q)">Lưu trữ</button>
+            <button *ngIf="q.status === 'ARCHIVED'" class="action-btn restore" (click)="restore(q)">Khôi phục</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <ng-template #emptyState>
+      <div class="empty-state">
+        <span class="empty-icon">▣</span>
+        <p>Không tìm thấy câu hỏi nào</p>
+        <span class="terminal-cursor">_</span>
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination" *ngIf="totalElements > size">
+    <button class="page-btn" (click)="prevPage()" [disabled]="page === 0">← Trước</button>
+    <span class="page-info">{{ page + 1 }} / {{ Math.ceil(totalElements / size) }}</span>
+    <button class="page-btn" (click)="nextPage()" [disabled]="(page + 1) * size >= totalElements">Sau →</button>
+  </div>
+</div>

@@ -1,0 +1,53 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="page-title">
+      <span class="ai-dot"></span>
+      <h1>Vai trò</h1>
+    </div>
+    <button class="btn-primary" (click)="creating = !creating">+ Vai trò mới</button>
+  </div>
+
+  <div class="card create-card" *ngIf="creating">
+    <div class="field-row">
+      <div class="field-group"><label class="field-label">Tên vai trò *</label><input class="field-input" [(ngModel)]="newRoleName" placeholder="ROLE_MANAGER" /></div>
+      <div class="field-group"><label class="field-label">Mô tả</label><input class="field-input" [(ngModel)]="newRoleDesc" placeholder="Mô tả (không bắt buộc)" /></div>
+    </div>
+    <div class="create-actions">
+      <button class="btn-primary" (click)="create()">Tạo</button>
+      <button class="btn-ghost" (click)="creating = false">Hủy</button>
+    </div>
+  </div>
+
+  <div class="error-banner" *ngIf="error">{{ error }}</div>
+  <div class="success-banner" *ngIf="success">{{ success }}</div>
+
+  <div class="card table-card">
+    <table class="ih-table">
+      <thead>
+        <tr>
+          <th>Tên vai trò</th>
+          <th>Mô tả</th>
+          <th>Loại</th>
+          <th>Trạng thái</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let r of roles">
+          <td><span class="role-name-cell">{{ r.name }}</span></td>
+          <td class="desc-cell">{{ r.description || '—' }}</td>
+          <td><span class="type-badge" [class.system]="r.is_system">{{ r.is_system ? 'Hệ thống' : 'Tùy chỉnh' }}</span></td>
+          <td><span class="status-badge" [class.status-active]="r.is_active" [class.status-inactive]="!r.is_active">{{ r.is_active ? 'Hoạt động' : 'Không hoạt động' }}</span></td>
+          <td class="actions-cell">
+            <button class="action-btn" (click)="toggleActive(r)" [title]="r.is_active ? 'Vô hiệu hóa' : 'Kích hoạt'">
+              {{ r.is_active ? '⏸' : '▶' }}
+            </button>
+            <button class="action-btn delete-btn" (click)="delete(r)" title="Xóa" [disabled]="r.is_system">✕</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <app-loading-spinner [isLoading]="loading" />
+</div>

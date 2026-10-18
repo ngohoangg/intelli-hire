@@ -1,0 +1,94 @@
+<div class="profile-wrapper">
+
+  <!-- Loading -->
+  <div class="loading-row" *ngIf="loading">
+    <div class="skeleton tall"></div>
+    <div class="skeleton-row">
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
+    </div>
+  </div>
+
+  <!-- Not Generated Yet -->
+  <div class="empty-profile" *ngIf="!loading && notFound">
+    <div class="empty-icon">📊</div>
+    <h3>Chưa có hồ sơ kỹ năng</h3>
+    <p>Tạo hồ sơ dựa trên các kỹ năng bạn đã thêm vào hồ sơ này.</p>
+    <button class="btn-primary" (click)="generate()" [disabled]="generating">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polygon points="5 3 19 12 5 21 5 3"/>
+      </svg>
+      {{ generating ? 'Đang tạo...' : 'Tạo hồ sơ kỹ năng' }}
+    </button>
+  </div>
+
+  <!-- Profile Content -->
+  <div class="profile-content" *ngIf="!loading && profile">
+
+    <!-- Header row -->
+    <div class="profile-header">
+      <button class="btn-regen" (click)="generate()" [disabled]="generating">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M23 4v6h-6"/>
+          <path d="M1 20v-6h6"/>
+          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+        </svg>
+        {{ generating ? 'Đang tạo...' : 'Tạo lại' }}
+      </button>
+    </div>
+
+    <!-- Top Skills -->
+    <div class="section" *ngIf="topSkillEntries().length > 0">
+      <div class="section-label">Kỹ năng nổi bật</div>
+      <div class="top-skills-list">
+        <div class="top-skill-item" *ngFor="let entry of topSkillEntries(); let i = index">
+          <div class="skill-rank">#{{ i + 1 }}</div>
+          <div class="skill-bar-wrap">
+            <div class="skill-bar-label-row">
+              <span class="skill-bar-label">{{ entry[0] }}</span>
+              <span class="skill-bar-pct">{{ toConfidencePct(entry[1]) }}%</span>
+            </div>
+            <div class="skill-bar-track">
+              <div class="skill-bar-fill"
+                [style.width.%]="toConfidencePct(entry[1])">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Signals -->
+    <div class="section">
+      <div class="section-label">Tín hiệu</div>
+      <div class="signals-list" *ngIf="signalEntries().length > 0">
+        <div class="signal-item" *ngFor="let entry of signalEntries()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span>{{ entry[1] }}</span>
+          <button class="remove-signal-btn" (click)="removeSignal(entry[0])" title="Xóa">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <p class="no-content" *ngIf="signalEntries().length === 0">Chưa có tín hiệu nào.</p>
+
+      <div class="add-signal-row">
+        <input class="signal-input" type="text" [(ngModel)]="newSignal"
+          placeholder="Thêm tín hiệu (VD: 'Dẫn dắt nhóm 5 người')"
+          (keydown.enter)="addSignal()">
+        <button class="btn-ghost-sm" (click)="addSignal()" [disabled]="!newSignal.trim()">Thêm</button>
+      </div>
+    </div>
+
+    <!-- Generated At -->
+    <div class="generated-at" *ngIf="profile.generated_at">
+      Tạo lần cuối: {{ formatDate(profile.generated_at!) }}
+    </div>
+
+  </div>
+
+</div>

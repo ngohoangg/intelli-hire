@@ -1,0 +1,191 @@
+<div class="generator-shell">
+  <section class="card hero-panel">
+    <div class="hero-copy">
+      <div class="hero-kicker">
+        <span class="ai-dot"></span>
+        <span>Chuẩn bị phỏng vấn dựa trên CV</span>
+      </div>
+      <h2>Tạo bộ câu hỏi từ CV này</h2>
+      <p>
+        Lấy thông tin ứng viên từ hồ sơ CV, tinh chỉnh các lĩnh vực trọng tâm, sau đó để dịch vụ câu hỏi
+        tạo bộ câu hỏi phù hợp cho luyện tập hoặc chuẩn bị của người phỏng vấn.
+      </p>
+    </div>
+
+    <div class="hero-metrics">
+      <div class="hero-metric">
+        <span class="metric-label">CV</span>
+        <strong>{{ resumeId }}</strong>
+      </div>
+      <div class="hero-metric">
+        <span class="metric-label">Trọng tâm gợi ý</span>
+        <strong>{{ suggestedFocusAreas.length || 0 }}</strong>
+      </div>
+      <div class="hero-metric" *ngIf="profile?.seniority">
+        <span class="metric-label">Cấp bậc</span>
+        <strong>{{ profile?.seniority }}</strong>
+      </div>
+      <div class="hero-metric" *ngIf="profile?.years_estimated != null">
+        <span class="metric-label">Kinh nghiệm</span>
+        <strong>{{ profile?.years_estimated }} năm</strong>
+      </div>
+    </div>
+  </section>
+
+  <div class="content-grid">
+    <section class="card control-panel" [formGroup]="form">
+      <div class="section-header">
+        <div class="section-header-left">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2">
+            <path d="M12 3v18"></path>
+            <path d="M3 12h18"></path>
+          </svg>
+          <h3>Tùy chọn tạo câu hỏi</h3>
+        </div>
+        <button class="btn-ghost" type="button" (click)="resetForm()">Đặt lại</button>
+      </div>
+
+      <div class="field-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Số lượng câu hỏi</mat-label>
+          <input matInput type="number" formControlName="count" />
+          <mat-hint>Từ 1 đến 20 câu hỏi</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Loại câu hỏi</mat-label>
+          <mat-select formControlName="question_type">
+            <mat-option value="">Kết hợp tự động</mat-option>
+            <mat-option *ngFor="let type of questionTypes" [value]="type">{{ formatType(type) }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Độ khó</mat-label>
+          <mat-select formControlName="difficulty_name" [disabled]="loadingDifficulties">
+            <mat-option value="">Để hệ thống tự điều chỉnh</mat-option>
+            <mat-option *ngFor="let difficulty of difficulties" [value]="difficulty.name">
+              {{ difficulty.name }}
+            </mat-option>
+          </mat-select>
+          <mat-hint>Độ khó mục tiêu cụ thể (tùy chọn)</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Ngôn ngữ</mat-label>
+          <mat-select formControlName="language">
+            <mat-option *ngFor="let language of languageOptions" [value]="language.value">
+              {{ language.label }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="suggestion-block" *ngIf="suggestedFocusAreas.length">
+        <div class="block-head">
+          <div>
+            <p class="block-label">Lĩnh vực trọng tâm gợi ý</p>
+            <p class="block-copy">Lấy từ hồ sơ kỹ năng của CV hiện tại.</p>
+          </div>
+          <button class="text-action" type="button" (click)="applySuggestedFocusAreas()">Dùng tất cả</button>
+        </div>
+
+        <div class="chip-list">
+          <button
+            class="chip selectable-chip"
+            type="button"
+            *ngFor="let area of suggestedFocusAreas"
+            [class.selected]="isFocusAreaSelected(area)"
+            (click)="toggleSuggestedFocusArea(area)">
+            {{ area }}
+          </button>
+        </div>
+      </div>
+
+      <mat-form-field appearance="outline" class="full-span">
+        <mat-label>Lĩnh vực trọng tâm</mat-label>
+        <textarea
+          matInput
+          rows="6"
+          formControlName="focus_areas"
+          placeholder="Mỗi lĩnh vực một dòng. Ví dụ: Spring Boot&#10;REST APIs&#10;Microservices">
+        </textarea>
+        <mat-hint>Để trống để hệ thống tự suy ra các lĩnh vực trọng tâm từ CV.</mat-hint>
+      </mat-form-field>
+
+      <div class="action-row">
+        <button class="btn-primary" type="button" (click)="generate()" [disabled]="loading">
+          {{ loading ? 'Đang tạo…' : 'Tạo bộ câu hỏi' }}
+        </button>
+      </div>
+
+      <p class="inline-error" *ngIf="errorMessage">{{ errorMessage }}</p>
+    </section>
+
+    <section class="card result-panel">
+      <div class="section-header">
+        <div class="section-header-left">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--magenta)" stroke-width="2">
+            <path d="M5 12h14"></path>
+            <path d="M12 5v14"></path>
+          </svg>
+          <h3>Kết quả đã tạo</h3>
+        </div>
+        <span class="count-badge" *ngIf="generatedCount">{{ generatedCount }}</span>
+      </div>
+
+      <p class="result-caption">
+        Bộ câu hỏi hiển thị cùng giao diện với hồ sơ CV để người xem lướt nhanh mà không bị ngắt quãng.
+      </p>
+
+      <div class="loading-state" *ngIf="loading">
+        <div class="skeleton hero-skeleton"></div>
+        <div class="skeleton question-skeleton" *ngFor="let _ of [1, 2, 3]"></div>
+      </div>
+
+      <ng-container *ngIf="!loading && result; else emptyState">
+        <div class="summary-panel" *ngIf="result.candidate_summary">
+          <p class="summary-label">Tóm tắt ứng viên</p>
+          <p class="summary-text">{{ result.candidate_summary }}</p>
+          <p class="summary-meta" *ngIf="result.generated_at">
+            Tạo lúc {{ formatGeneratedAt(result.generated_at) }}
+          </p>
+        </div>
+
+        <div class="question-stack">
+          <article
+            class="question-item"
+            *ngFor="let question of result.questions; let index = index"
+            [ngClass]="'type-' + (question.question_type || 'technical').toLowerCase()">
+            <div class="question-meta">
+              <span class="question-index">Q{{ index + 1 }}</span>
+              <span class="chip chip-accent">{{ formatType(question.question_type) }}</span>
+              <span class="chip" *ngIf="question.topic_name">{{ question.topic_name }}</span>
+              <span class="chip" *ngIf="question.difficulty_name">{{ question.difficulty_name }}</span>
+            </div>
+
+            <div class="question-body">
+              <h4>{{ question.question_text }}</h4>
+
+              <div class="question-rationale-block" *ngIf="question.rationale">
+                <span class="rationale-label">Lý do xuất hiện</span>
+                <p class="question-rationale">
+                  {{ question.rationale }}
+                </p>
+              </div>
+            </div>
+          </article>
+        </div>
+      </ng-container>
+
+      <ng-template #emptyState>
+        <div class="empty-panel">
+          <h4>Chưa tạo bộ câu hỏi nào</h4>
+          <p>
+            Thiết lập tùy chọn ở bên trái và tạo bộ câu hỏi phù hợp với CV tại đây.
+          </p>
+        </div>
+      </ng-template>
+    </section>
+  </div>
+</div>

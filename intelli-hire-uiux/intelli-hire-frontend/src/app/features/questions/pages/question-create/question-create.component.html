@@ -1,0 +1,180 @@
+<div class="page-container">
+  <button class="back-btn" routerLink="/questions">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="15 18 9 12 15 6"></polyline>
+    </svg>
+    Quay lại ngân hàng câu hỏi
+  </button>
+
+  <div class="page-header">
+    <div class="page-title-group">
+      <div class="page-title">
+        <span class="ai-dot"></span>
+        <h1>Câu hỏi mới</h1>
+      </div>
+      <p class="page-subtitle">
+        Tạo câu hỏi phỏng vấn chuẩn với chủ đề phân loại và thẻ có thể tái sử dụng.
+      </p>
+    </div>
+  </div>
+
+  <div class="success-toast" *ngIf="successMessage">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20,6 9,17 4,12"/></svg>
+    {{ successMessage }}
+  </div>
+
+  <form class="wizard-step" [formGroup]="form" (ngSubmit)="submit()">
+
+    <section class="card section-card">
+      <div class="section-header">
+        <div class="section-header-left">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+          </svg>
+          <h2 class="section-title">Nội dung câu hỏi</h2>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="question-text">Câu hỏi *</label>
+        <div class="input-wrap textarea-wrap">
+          <span class="field-icon field-icon--top">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+          </span>
+          <textarea
+            id="question-text"
+            class="field-input field-textarea"
+            rows="8"
+            formControlName="question_text"
+            placeholder="Giải thích dependency injection trong Spring và vì sao nó giúp mã nguồn dễ bảo trì hơn."></textarea>
+        </div>
+        <span class="field-error" *ngIf="form.get('question_text')?.touched && form.get('question_text')?.hasError('required')">Vui lòng nhập nội dung câu hỏi.</span>
+        <span class="field-hint">Tối đa 5.000 ký tự. Mỗi câu hỏi nên tập trung vào một yêu cầu chuẩn.</span>
+      </div>
+    </section>
+
+    <section class="card section-card">
+      <div class="section-header">
+        <div class="section-header-left">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--magenta)" stroke-width="2">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+          </svg>
+          <h2 class="section-title">Phân loại &amp; Thẻ</h2>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="field-group">
+          <label class="field-label" for="question-topic">Chủ đề *</label>
+          <div class="input-wrap">
+            <span class="field-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 6h18"></path><path d="M7 12h10"></path><path d="M10 18h4"></path>
+              </svg>
+            </span>
+            <mat-select id="question-topic" class="field-input field-select" formControlName="topic_id" panelClass="question-select-panel">
+              <mat-option value="">Chọn chủ đề</mat-option>
+              <mat-option *ngFor="let topic of topicOptions" [value]="topic.id">{{ topic.label }}</mat-option>
+            </mat-select>
+          </div>
+          <span class="field-error" *ngIf="form.get('topic_id')?.touched && form.get('topic_id')?.hasError('required')">Vui lòng chọn chủ đề.</span>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="question-difficulty">Độ khó *</label>
+          <div class="input-wrap">
+            <span class="field-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 3 4 8l8 5 8-5-8-5Z"></path>
+                <path d="m4 16 8 5 8-5"></path><path d="m4 12 8 5 8-5"></path>
+              </svg>
+            </span>
+            <mat-select id="question-difficulty" class="field-input field-select" formControlName="difficulty_id" panelClass="question-select-panel">
+              <mat-option value="">Chọn độ khó</mat-option>
+              <mat-option *ngFor="let difficulty of difficulties" [value]="difficulty.id">{{ difficulty.name }}</mat-option>
+            </mat-select>
+          </div>
+          <span class="field-error" *ngIf="form.get('difficulty_id')?.touched && form.get('difficulty_id')?.hasError('required')">Vui lòng chọn độ khó.</span>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="question-type">Loại câu hỏi *</label>
+          <div class="input-wrap">
+            <span class="field-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 7h16"></path><path d="M4 12h10"></path><path d="M4 17h7"></path>
+              </svg>
+            </span>
+            <mat-select id="question-type" class="field-input field-select" formControlName="question_type" panelClass="question-select-panel">
+              <mat-option *ngFor="let type of questionTypes" [value]="type">{{ formatType(type) }}</mat-option>
+            </mat-select>
+          </div>
+          <span class="field-error" *ngIf="form.get('question_type')?.touched && form.get('question_type')?.hasError('required')">Vui lòng chọn loại câu hỏi.</span>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="question-tags">Thẻ</label>
+          <div class="input-wrap">
+            <span class="field-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20.59 13.41L11 3.83a2 2 0 0 0-1.41-.59H4a2 2 0 0 0-2 2v5.59a2 2 0 0 0 .59 1.41L12.17 22a2 2 0 0 0 2.83 0l5.59-5.59a2 2 0 0 0 0-2.83z"></path>
+                <line x1="7" y1="7" x2="7.01" y2="7"></line>
+              </svg>
+            </span>
+            <mat-select
+              id="question-tags"
+              class="field-input field-select field-select-multiple"
+              formControlName="tag_ids"
+              multiple
+              panelClass="question-select-panel question-select-panel--multiple">
+              <mat-option *ngFor="let tag of tags" [value]="tag.id">{{ tag.name }}</mat-option>
+            </mat-select>
+          </div>
+        </div>
+      </div>
+
+      <div class="chip-list" *ngIf="selectedTagList.length">
+        <span class="chip chip-accent" *ngFor="let tag of selectedTagList">{{ tag.name }}</span>
+      </div>
+
+      <div class="quick-tag-row">
+        <div class="field-group">
+          <label class="field-label" for="quick-tag">Tạo nhanh thẻ</label>
+          <div class="input-wrap">
+            <span class="field-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14"></path><path d="M5 12h14"></path>
+              </svg>
+            </span>
+            <input id="quick-tag" class="field-input" [formControl]="quickTagControl" placeholder="spring-core" />
+          </div>
+        </div>
+        <button class="btn-ghost" type="button" (click)="createTag()">
+          {{ creatingTag ? 'Đang tạo...' : 'Tạo thẻ' }}
+        </button>
+      </div>
+
+      <div class="toggle-row">
+        <mat-checkbox formControlName="is_active">Đang hoạt động trong kho câu hỏi</mat-checkbox>
+        <p class="field-hint">Câu hỏi ngừng hoạt động sẽ bị loại khỏi các luồng danh mục đang dùng.</p>
+      </div>
+    </section>
+
+    <div class="wizard-actions">
+      <a class="btn-ghost" routerLink="/questions">Hủy</a>
+      <div class="wizard-actions-right">
+        <button class="btn-primary" type="submit">
+          Lưu
+        </button>
+      </div>
+    </div>
+
+  </form>
+
+</div>
+
+<app-loading-spinner [isLoading]="loading || saving" />

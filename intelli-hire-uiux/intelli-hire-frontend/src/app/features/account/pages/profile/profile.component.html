@@ -1,0 +1,64 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="page-title">
+      <span class="ai-dot"></span>
+      <h1>Cài đặt hồ sơ cá nhân</h1>
+    </div>
+  </div>
+
+  <app-loading-spinner [isLoading]="loading" />
+
+  <div class="card settings-card" *ngIf="!loading">
+    <div class="error-banner" *ngIf="error">{{ error }}</div>
+    <div class="success-banner" *ngIf="success">{{ success }}</div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="settings-form">
+      <div class="form-section">
+        <span class="section-label">Thông tin cá nhân</span>
+        <div class="field-row-3">
+          <div class="field-group"><label class="field-label">Tên</label><input class="field-input" formControlName="firstName" /></div>
+          <div class="field-group"><label class="field-label">Tên đệm</label><input class="field-input" formControlName="middleName" /></div>
+          <div class="field-group"><label class="field-label">Họ</label><input class="field-input" formControlName="lastName" /></div>
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <label class="field-label">Số điện thoại</label>
+            <input class="field-input" formControlName="phone"
+              [class.field-input--error]="form.get('phone')?.invalid && form.get('phone')?.dirty"
+              placeholder="+84901234567" />
+            <span class="field-error" *ngIf="form.get('phone')?.hasError('pattern') && form.get('phone')?.dirty">
+              Chỉ cho phép chữ số; nếu dùng mã quốc gia, hãy bắt đầu bằng +
+            </span>
+          </div>
+          <div class="field-group"><label class="field-label">Ngày sinh</label><input class="field-input" formControlName="birthOfDate" type="date" /></div>
+          <div class="field-group">
+            <label class="field-label">Giới tính</label>
+            <select class="field-select" formControlName="gender">
+              <option value="">-- Chọn --</option>
+              <option value="MALE">Nam</option>
+              <option value="FEMALE">Nữ</option>
+              <option value="OTHER">Khác</option>
+              <option value="PREFER_NOT_TO_SAY">Không muốn tiết lộ</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-group"><label class="field-label">Địa chỉ</label><input class="field-input" formControlName="address" /></div>
+      </div>
+
+      <div class="form-section" *ngIf="!auth.isAdmin">
+        <span class="section-label">Liên kết mạng xã hội</span>
+        <div class="field-row">
+          <div class="field-group"><label class="field-label">GitHub URL</label><input class="field-input" formControlName="githubUrl" placeholder="https://github.com/..." /></div>
+          <div class="field-group"><label class="field-label">LinkedIn URL</label><input class="field-input" formControlName="linkedInUrl" placeholder="https://linkedin.com/in/..." /></div>
+        </div>
+        <div class="field-group"><label class="field-label">Avatar URL</label><input class="field-input" formControlName="avatarUrl" placeholder="https://..." /></div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn-primary" type="submit" [disabled]="saving || form.invalid">
+          {{ saving ? 'Đang lưu...' : 'Lưu thay đổi' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

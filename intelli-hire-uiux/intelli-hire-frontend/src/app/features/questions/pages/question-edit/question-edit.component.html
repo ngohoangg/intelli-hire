@@ -1,0 +1,293 @@
+<div class="page-container">
+  <button class="back-btn" [routerLink]="['/questions', questionId]">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="15 18 9 12 15 6"></polyline>
+    </svg>
+    Quay lại chi tiết câu hỏi
+  </button>
+
+  <div class="page-header">
+    <div class="page-title-group">
+      <div class="page-title">
+        <span class="ai-dot"></span>
+        <h1>Chỉnh sửa câu hỏi</h1>
+      </div>
+      <p class="page-subtitle">
+        Cập nhật nội dung câu hỏi, phân loại và tiêu chí đánh giá mà không làm lệch
+        giữa ngân hàng câu hỏi, phòng thử ngẫu nhiên và luồng luyện tập của người dùng.
+      </p>
+    </div>
+
+    <div class="header-actions">
+      <a class="btn-ghost" [routerLink]="['/questions', questionId]">Hủy</a>
+      <button class="btn-primary" type="button" (click)="submit()">Lưu thay đổi</button>
+    </div>
+  </div>
+
+  <form class="content-grid" [formGroup]="form" (ngSubmit)="submit()" *ngIf="!loading">
+
+    <!-- ── Col 1 · Thông tin chính ────────────────────────── -->
+    <section class="card section-card main-card">
+      <div class="section-header">
+        <div class="section-header-left">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+          </svg>
+          <h2 class="section-title">Thông tin chính</h2>
+        </div>
+      </div>
+
+      <div class="field-group full-span">
+        <label class="field-label" for="edit-question-text">Nội dung câu hỏi</label>
+        <div class="input-wrap textarea-wrap">
+          <span class="field-icon field-icon--top">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+          </span>
+          <textarea id="edit-question-text" class="field-input field-textarea" rows="11" formControlName="question_text"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Col 2 · Classification + Tags stacked ────────────── -->
+    <div class="side-stack">
+
+      <section class="card section-card">
+        <div class="section-header">
+          <div class="section-header-left">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--magenta)" stroke-width="2">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+            </svg>
+            <h2 class="section-title">Phân loại</h2>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="edit-question-topic">Chủ đề</label>
+          <div class="input-wrap">
+            <span class="field-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 6h18"></path>
+                <path d="M7 12h10"></path>
+                <path d="M10 18h4"></path>
+              </svg>
+            </span>
+            <mat-select
+              id="edit-question-topic"
+              class="field-input field-select"
+              formControlName="topic_id"
+              panelClass="question-select-panel">
+              <mat-option value="">Chọn chủ đề</mat-option>
+              <mat-option *ngFor="let topic of topicOptions" [value]="topic.id">{{ topic.label }}</mat-option>
+            </mat-select>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="edit-question-difficulty">Độ khó</label>
+          <div class="input-wrap">
+            <span class="field-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 3 4 8l8 5 8-5-8-5Z"></path>
+                <path d="m4 16 8 5 8-5"></path>
+                <path d="m4 12 8 5 8-5"></path>
+              </svg>
+            </span>
+            <mat-select
+              id="edit-question-difficulty"
+              class="field-input field-select"
+              formControlName="difficulty_id"
+              panelClass="question-select-panel">
+              <mat-option value="">Chọn độ khó</mat-option>
+              <mat-option *ngFor="let difficulty of difficulties" [value]="difficulty.id">{{ difficulty.name }}</mat-option>
+            </mat-select>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="edit-question-type">Loại câu hỏi</label>
+          <div class="input-wrap">
+            <span class="field-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 7h16"></path>
+                <path d="M4 12h10"></path>
+                <path d="M4 17h7"></path>
+              </svg>
+            </span>
+            <mat-select
+              id="edit-question-type"
+              class="field-input field-select"
+              formControlName="question_type"
+              panelClass="question-select-panel">
+              <mat-option *ngFor="let type of questionTypes" [value]="type">{{ formatType(type) }}</mat-option>
+            </mat-select>
+          </div>
+        </div>
+
+        <mat-checkbox formControlName="is_active">Đang hoạt động trong kho câu hỏi</mat-checkbox>
+        <p class="field-hint">Chọn ngừng hoạt động khi câu hỏi cần giữ trong lịch sử quản trị nhưng không còn nằm trong kho chọn đang dùng.</p>
+      </section>
+
+      <section class="card section-card">
+        <div class="section-header">
+          <div class="section-header-left">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2">
+              <path d="M20.59 13.41L11 3.83a2 2 0 0 0-1.41-.59H4a2 2 0 0 0-2 2v5.59a2 2 0 0 0 .59 1.41L12.17 22a2 2 0 0 0 2.83 0l5.59-5.59a2 2 0 0 0 0-2.83z"></path>
+              <line x1="7" y1="7" x2="7.01" y2="7"></line>
+            </svg>
+            <h2 class="section-title">Thẻ</h2>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="edit-question-tags">Chọn thẻ</label>
+          <div class="input-wrap">
+            <span class="field-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20.59 13.41L11 3.83a2 2 0 0 0-1.41-.59H4a2 2 0 0 0-2 2v5.59a2 2 0 0 0 .59 1.41L12.17 22a2 2 0 0 0 2.83 0l5.59-5.59a2 2 0 0 0 0-2.83z"></path>
+                <line x1="7" y1="7" x2="7.01" y2="7"></line>
+              </svg>
+            </span>
+            <mat-select
+              id="edit-question-tags"
+              class="field-input field-select field-select-multiple"
+              formControlName="tag_ids"
+              multiple
+              panelClass="question-select-panel question-select-panel--multiple">
+              <mat-option *ngFor="let tag of tags" [value]="tag.id">{{ tag.name }}</mat-option>
+            </mat-select>
+          </div>
+        </div>
+
+        <div class="chip-list" *ngIf="selectedTags().length">
+          <span class="chip chip-accent" *ngFor="let tag of selectedTags()">{{ tag.name }}</span>
+        </div>
+
+        <div class="quick-tag-row">
+          <div class="field-group">
+            <label class="field-label" for="edit-quick-tag">Tạo nhanh thẻ</label>
+            <div class="input-wrap">
+              <span class="field-icon">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 5v14"></path>
+                  <path d="M5 12h14"></path>
+                </svg>
+              </span>
+              <input id="edit-quick-tag" class="field-input" [formControl]="quickTagControl" placeholder="distributed-systems" />
+            </div>
+          </div>
+          <button class="btn-ghost" type="button" (click)="createTag()">
+            {{ creatingTag ? 'Đang tạo...' : 'Tạo thẻ' }}
+          </button>
+        </div>
+      </section>
+
+    </div><!-- /side-stack -->
+
+    <!-- ── Full width · Thiết lập tiêu chí đánh giá ─────────────────────────── -->
+    <section class="card section-card full-span">
+      <div class="section-header">
+        <div class="section-header-left">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2">
+            <path d="M9 11l3 3L22 4"></path>
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+          </svg>
+          <h2 class="section-title">Thiết lập tiêu chí đánh giá</h2>
+        </div>
+        <span class="status-badge" [class.success]="rubricExists" [class.warning]="!rubricExists">
+          <span class="dot" *ngIf="rubricExists"></span>
+          {{ rubricExists ? 'Đã có tiêu chí' : 'Tiêu chí mới' }}
+        </span>
+      </div>
+
+      <div class="form-grid">
+        <div class="field-group full-span">
+          <label class="field-label" for="edit-criteria">Tiêu chí</label>
+          <div class="input-wrap textarea-wrap">
+            <span class="field-icon field-icon--top">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 11l3 3L22 4"></path>
+                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+              </svg>
+            </span>
+            <textarea id="edit-criteria" class="field-input field-textarea" rows="4" formControlName="criteria"></textarea>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="edit-keywords">Từ khóa</label>
+          <div class="input-wrap textarea-wrap">
+            <span class="field-icon field-icon--top">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 7h16"></path>
+                <path d="M4 12h10"></path>
+                <path d="M4 17h7"></path>
+              </svg>
+            </span>
+            <textarea id="edit-keywords" class="field-input field-textarea" rows="4" formControlName="keywords" placeholder="Mỗi từ khóa một dòng"></textarea>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="edit-max-score">Điểm tối đa</label>
+          <div class="input-wrap">
+            <span class="field-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 1v22"></path>
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+              </svg>
+            </span>
+            <input id="edit-max-score" class="field-input" type="number" formControlName="max_score" />
+          </div>
+          <span class="field-hint">1 - 100</span>
+        </div>
+
+        <div class="field-group full-span">
+          <label class="field-label" for="edit-example-answer">Câu trả lời mẫu</label>
+          <div class="input-wrap textarea-wrap">
+            <span class="field-icon field-icon--top">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+              </svg>
+            </span>
+            <textarea id="edit-example-answer" class="field-input field-textarea" rows="5" formControlName="example_answer"></textarea>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="edit-common-mistakes">Lỗi thường gặp</label>
+          <div class="input-wrap textarea-wrap">
+            <span class="field-icon field-icon--top">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+            </span>
+            <textarea id="edit-common-mistakes" class="field-input field-textarea" rows="4" formControlName="common_mistakes" placeholder="Mỗi mục một dòng"></textarea>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="edit-hints">Gợi ý</label>
+          <div class="input-wrap textarea-wrap">
+            <span class="field-icon field-icon--top">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9.09 9a3 3 0 1 1 5.82 1c0 2-3 3-3 3"></path>
+                <path d="M12 17h.01"></path>
+                <circle cx="12" cy="12" r="10"></circle>
+              </svg>
+            </span>
+            <textarea id="edit-hints" class="field-input field-textarea" rows="4" formControlName="hints" placeholder="Mỗi mục một dòng"></textarea>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </form>
+</div>
+
+<app-loading-spinner [isLoading]="loading || saving" />

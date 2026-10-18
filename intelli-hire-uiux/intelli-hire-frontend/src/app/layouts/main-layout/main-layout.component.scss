@@ -1,0 +1,309 @@
+/* ---- App Shell ---- */
+.app-shell {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--bg-void);
+  position: relative;
+
+  > * { position: relative; z-index: 1; }
+}
+
+/* ---- Sidebar ---- */
+.sidebar {
+  width: 240px;
+  min-width: 240px;
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border-accent);
+  display: flex;
+  flex-direction: column;
+  padding: 20px 12px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+
+}
+
+/* ---- Brand ---- */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  margin-bottom: 28px;
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  transition: background 0.2s;
+  position: relative;
+  z-index: 1;
+
+  &:hover {
+    background: var(--cyan-glow);
+    .brand-name {}
+  }
+}
+
+.brand-icon {
+  width: 34px;
+  height: 34px;
+  background: var(--cyan);
+  color: var(--bg-primary);
+  font-size: 18px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  flex-shrink: 0;
+  box-shadow: var(--glow-subtle);
+  position: relative;
+
+}
+
+.brand-name {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+
+/* ---- Nav ---- */
+.nav-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.nav-section-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 14px 12px 6px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid transparent;
+  position: relative;
+  overflow: hidden;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-primary);
+    border-color: var(--border);
+  }
+
+  &.active {
+    background: rgba(96, 165, 250, 0.07);
+    color: var(--cyan);
+    border-color: var(--border-accent);
+    font-weight: 600;
+
+    svg { stroke: var(--cyan); }
+
+    /* Left neon bar */
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 18%; bottom: 18%;
+      width: 3px;
+      background: var(--cyan);
+      border-radius: 0 2px 2px 0;
+      box-shadow: 0 0 8px var(--cyan);
+    }
+
+  }
+}
+
+/* ---- Sidebar Footer ---- */
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.user-menu-wrapper {
+  position: relative;
+}
+
+.user-menu {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-md);
+  padding: 6px;
+  z-index: 200;
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.6), 0 0 0 1px var(--cyan-glow);
+  animation: fadeInUp 0.15s ease-out both;
+}
+
+.user-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.15s;
+  text-align: left;
+
+  svg { flex-shrink: 0; }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+  }
+
+  &.danger {
+    color: var(--danger);
+    &:hover { background: rgba(248, 113, 113, 0.08); }
+  }
+}
+
+.user-menu-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 4px 6px;
+}
+
+.user-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  transition: all 0.2s;
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(96, 165, 250, 0.05);
+    border-color: var(--border-accent);
+  }
+
+  &.open {
+    background: rgba(96, 165, 250, 0.07);
+    border-color: var(--border-accent);
+    .menu-chevron { color: var(--cyan); }
+  }
+}
+
+.menu-chevron {
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+  transition: transform 0.2s ease, color 0.2s;
+
+  &.rotated { transform: rotate(180deg); }
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--cyan), var(--purple));
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-family: var(--font-display);
+  box-shadow: 0 0 12px var(--cyan-glow);
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+  min-width: 0;
+}
+
+.user-name {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-role {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+
+/* ---- Main Content ---- */
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  min-width: 0;
+  position: relative;
+  z-index: 1;
+}
+
+/* ---- Nav Sub Items ---- */
+.nav-sub-item {
+  padding-left: 2.25rem;
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+
+/* ---- Pending Badge ---- */
+.pending-badge {
+  margin-left: auto;
+  background: var(--magenta);
+  border-radius: 50%;
+  color: var(--bg-void);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  height: 18px;
+  width: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--glow-magenta);
+}

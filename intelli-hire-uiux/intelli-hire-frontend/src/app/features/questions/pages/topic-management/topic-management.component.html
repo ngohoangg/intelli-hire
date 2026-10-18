@@ -1,0 +1,143 @@
+<div class="page-container">
+  <button class="back-btn" routerLink="/questions">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="15 18 9 12 15 6"></polyline>
+    </svg>
+    Quay lại
+  </button>
+
+  <div class="page-header">
+    <div class="page-title-group">
+      <div class="page-title">
+        <span class="ai-dot"></span>
+        <h1>Chủ đề</h1>
+        <span class="count-badge">{{ topics.length }}</span>
+      </div>
+      <p class="page-subtitle">
+        Quản lý cây phân loại phục vụ tìm kiếm câu hỏi, thiết lập phỏng vấn và gợi ý trong báo cáo.
+      </p>
+    </div>
+
+    <div class="header-actions">
+      <button class="btn-ghost" type="button" (click)="startCreate()">Chủ đề mới</button>
+    </div>
+  </div>
+
+  <div class="metric-grid">
+    <article class="card metric-card">
+      <p class="metric-label">Tổng số chủ đề</p>
+      <h2 class="metric-value">{{ topics.length }}</h2>
+      <p class="metric-detail">Số nút phân loại chuẩn hiện có.</p>
+    </article>
+    <article class="card metric-card">
+      <p class="metric-label">Chủ đề gốc</p>
+      <h2 class="metric-value">{{ rootCount }}</h2>
+      <p class="metric-detail">Các nhánh cấp cao nhất tạo nên cây chủ đề.</p>
+    </article>
+    <article class="card metric-card">
+      <p class="metric-label">Chủ đề đang hoạt động</p>
+      <h2 class="metric-value">{{ activeCount }}</h2>
+      <p class="metric-detail">Các nút đang bật, hiển thị khi gán và tra cứu câu hỏi.</p>
+    </article>
+  </div>
+
+  <div class="split-layout">
+    <section class="card section-card">
+      <div class="section-header">
+        <div class="section-header-left">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2">
+            <path d="M3 3h7v7H3z"></path>
+            <path d="M14 3h7v7h-7z"></path>
+            <path d="M14 14h7v7h-7z"></path>
+            <path d="M3 14h7v7H3z"></path>
+          </svg>
+          <h2 class="section-title">Cây chủ đề</h2>
+        </div>
+      </div>
+
+      <div class="tree-list" *ngIf="topicList.length; else emptyState">
+        <article
+          class="tree-node topic-node"
+          *ngFor="let topic of topicList"
+          [class.selected]="isSelected(topic)"
+          (click)="selectTopic(topic)">
+          <div class="topic-node-top">
+            <span class="topic-label" [style.paddingLeft.px]="topic.depth * 18">{{ topic.label }}</span>
+            <span class="status-badge" [class.active]="topic.is_active" [class.inactive]="!topic.is_active">
+              <span class="dot" *ngIf="topic.is_active"></span>
+              {{ topic.is_active ? 'Hoạt động' : 'Ngừng hoạt động' }}
+            </span>
+          </div>
+          <p class="topic-description">{{ topic.description || 'Chưa có mô tả.' }}</p>
+          <div class="topic-node-footer">
+            <span class="table-secondary">{{ formatDate(topic.last_updated_at) }}</span>
+            <button class="text-action danger" type="button" (click)="deleteTopic(topic, $event)">Xóa</button>
+          </div>
+        </article>
+      </div>
+
+      <ng-template #emptyState>
+        <div class="empty-panel compact">
+          <h3>Chưa có chủ đề nào</h3>
+          <p>Hãy tạo nhánh chủ đề đầu tiên trước khi gán phân loại cho câu hỏi.</p>
+        </div>
+      </ng-template>
+    </section>
+
+    <aside class="side-panel">
+      <div class="section-header">
+        <div class="section-header-left">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--magenta)" stroke-width="2">
+            <path d="M12 20h9"></path>
+            <path d="M12 4h9"></path>
+            <path d="M4 9h16"></path>
+            <path d="M4 15h16"></path>
+          </svg>
+          <h2 class="section-title">{{ selectedTopicId ? 'Chỉnh sửa chủ đề' : 'Tạo chủ đề' }}</h2>
+        </div>
+      </div>
+
+      <form [formGroup]="form" class="stack-list">
+        <mat-form-field appearance="outline">
+          <mat-label>Tên</mat-label>
+          <input matInput formControlName="name" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Mô tả</mat-label>
+          <textarea matInput rows="4" formControlName="description"></textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Chủ đề cha</mat-label>
+          <mat-select formControlName="parent_id">
+            <mat-option value="">Không có chủ đề cha</mat-option>
+            <mat-option *ngFor="let topic of topicOptions" [value]="topic.id">{{ topic.label }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Thứ tự hiển thị</mat-label>
+          <input matInput type="number" formControlName="order" />
+        </mat-form-field>
+
+        <mat-checkbox formControlName="is_active">Chủ đề đang hoạt động</mat-checkbox>
+
+        <div class="editor-actions">
+          <button class="btn-ghost" type="button" (click)="startCreate()">Đặt lại</button>
+          <button class="btn-primary" type="button" (click)="submit()">
+            {{ selectedTopicId ? 'Lưu chủ đề' : 'Tạo chủ đề' }}
+          </button>
+        </div>
+      </form>
+
+      <div class="divider"></div>
+
+      <button class="text-action" type="button" [disabled]="!selectedTopicId" (click)="openTopicQuestions()">
+        Mở câu hỏi của chủ đề
+      </button>
+    </aside>
+  </div>
+</div>
+
+<app-loading-spinner [isLoading]="loading || saving" />

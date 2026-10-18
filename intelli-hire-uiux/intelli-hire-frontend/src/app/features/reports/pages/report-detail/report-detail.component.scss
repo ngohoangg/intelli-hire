@@ -1,0 +1,386 @@
+.page-container {
+  padding: 32px;
+  max-width: 1000px;
+  margin: 0 auto;
+  animation: fadeInUp 0.5s ease-out both;
+}
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 20px;
+  transition: color 0.2s;
+
+  &:hover { color: var(--cyan); }
+}
+
+// ---- Header Card ----
+.header-card {
+  padding: 28px;
+  margin-bottom: 20px;
+}
+
+.header-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.report-avatar {
+  width: 48px;
+  height: 48px;
+  background: var(--cyan-glow);
+  border: 1px solid var(--border-accent);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cyan);
+  flex-shrink: 0;
+}
+
+.header-info {
+  flex: 1;
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 6px;
+
+  h1 {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+    letter-spacing: -0.02em;
+  }
+}
+
+.meta-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.meta-text {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.meta-sep {
+  color: var(--text-tertiary);
+  font-size: 10px;
+}
+
+.status-badge {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+
+  &.status-completed { color: var(--success); border: 1px solid var(--success); }
+  &.status-pending   { color: var(--warning); border: 1px solid var(--warning); }
+  &.status-failed    { color: var(--danger);  border: 1px solid var(--danger); }
+}
+
+// ---- Total Score ----
+.total-score-section {
+  border-top: 1px solid var(--border);
+  padding-top: 20px;
+}
+
+.total-score-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.total-score-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.total-score-value {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--cyan);
+}
+
+.total-score-percent {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.score-bar-track {
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+
+  &.large { height: 10px; border-radius: 5px; }
+}
+
+.score-bar-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--cyan), var(--success));
+  transition: width 0.8s ease-out;
+}
+
+// ---- Section Cards ----
+.section-card {
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.section-title {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  flex: 1;
+}
+
+.summary-text {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+// ---- Skill Scores ----
+.skill-scores-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.skill-score-item {
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+
+  &:last-child { border-bottom: none; padding-bottom: 0; }
+}
+
+.skill-score-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.skill-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.skill-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.skill-score-value {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cyan);
+}
+
+.skill-q-count {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+}
+
+.skill-feedback {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  font-style: italic;
+  margin: 8px 0 0 0;
+}
+
+// ---- Question Scores ----
+.question-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.question-item {
+  padding: 18px 0;
+  border-bottom: 1px solid var(--border);
+
+  &:first-child { padding-top: 0; }
+  &:last-child { border-bottom: none; padding-bottom: 0; }
+}
+
+.question-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.question-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.q-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--cyan);
+  background: var(--cyan-glow);
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-xs);
+  padding: 2px 6px;
+}
+
+.skill-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--magenta);
+  border: 1px solid var(--border-magenta);
+  border-radius: var(--radius-xs);
+  padding: 2px 6px;
+  text-transform: uppercase;
+}
+
+.q-score {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.q-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin: 0 0 12px 0;
+  line-height: 1.5;
+}
+
+.q-answer, .q-feedback {
+  margin-top: 10px;
+  padding-left: 12px;
+  border-left: 2px solid var(--border);
+}
+
+.answer-label, .feedback-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.answer-text {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.feedback-text {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  font-style: italic;
+  margin: 0;
+  line-height: 1.5;
+}
+
+// ---- Roadmap ----
+.btn-regen {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: var(--cyan);
+    color: var(--cyan);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.roadmap-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.roadmap-item {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+  border-left: 3px solid var(--cyan);
+  background: rgba(96, 165, 250, 0.03);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.roadmap-key {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--cyan);
+  text-transform: uppercase;
+  white-space: nowrap;
+  min-width: 60px;
+}
+
+.roadmap-value {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}

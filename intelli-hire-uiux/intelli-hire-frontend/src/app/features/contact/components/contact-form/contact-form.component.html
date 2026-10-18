@@ -1,0 +1,175 @@
+<div class="contact-form-wrapper">
+
+  <!-- Section Header -->
+  <div class="section-header">
+    <div class="header-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+    </div>
+    <div class="header-text">
+      <h3 class="section-title">Thông tin liên hệ</h3>
+      <p class="section-desc">Tự động điền từ hồ sơ đã phân tích — chỉnh sửa nếu cần.</p>
+    </div>
+  </div>
+
+  <!-- Skeleton loading -->
+  <div class="skeleton-grid" *ngIf="loading">
+    <div class="skeleton sk-full"></div>
+    <div class="skeleton sk-half"></div>
+    <div class="skeleton sk-half"></div>
+    <div class="skeleton sk-full"></div>
+    <div class="skeleton sk-full"></div>
+    <div class="skeleton sk-full sk-tall"></div>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="save()" class="contact-grid" *ngIf="!loading">
+
+    <!-- Full Name -->
+    <div class="field-group full-width">
+      <label class="field-label" for="cf-fullName">
+        Họ và tên <span class="required-star">*</span>
+      </label>
+      <div class="input-wrap" [class.has-error]="fullName.touched && fullName.invalid" [class.focused]="false">
+        <span class="field-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+        </span>
+        <input
+          id="cf-fullName"
+          class="field-input"
+          formControlName="fullName"
+          placeholder="VD: Nguyễn Văn An"
+          autocomplete="name"
+        >
+      </div>
+      <span class="field-error" *ngIf="fullName.touched && fullName.hasError('required')">Vui lòng nhập họ và tên</span>
+      <span class="field-error" *ngIf="fullName.touched && fullName.hasError('maxlength')">Tối đa 200 ký tự</span>
+    </div>
+
+    <!-- Email + Phone -->
+    <div class="two-col">
+      <div class="field-group">
+        <label class="field-label" for="cf-email">Email</label>
+        <div class="input-wrap" [class.has-error]="email.touched && email.invalid">
+          <span class="field-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+              <polyline points="22,6 12,13 2,6"/>
+            </svg>
+          </span>
+          <input
+            id="cf-email"
+            class="field-input"
+            formControlName="email"
+            type="email"
+            placeholder="jane@example.com"
+            autocomplete="email"
+          >
+        </div>
+        <span class="field-error" *ngIf="email.touched && email.hasError('email')">Vui lòng nhập email hợp lệ</span>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="cf-phone">Số điện thoại</label>
+        <div class="input-wrap" [class.has-error]="phone.touched && phone.invalid">
+          <span class="field-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.6a16 16 0 0 0 6.5 6.5l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+            </svg>
+          </span>
+          <input
+            id="cf-phone"
+            class="field-input"
+            formControlName="phone"
+            placeholder="+84 912 345 678"
+            autocomplete="tel"
+          >
+        </div>
+        <span class="field-error" *ngIf="phone.touched && phone.hasError('pattern')">Vui lòng nhập số điện thoại hợp lệ</span>
+      </div>
+    </div>
+
+    <!-- Location -->
+    <div class="field-group full-width">
+      <label class="field-label" for="cf-location">Địa điểm</label>
+      <div class="input-wrap">
+        <span class="field-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+        </span>
+        <input
+          id="cf-location"
+          class="field-input"
+          formControlName="location"
+          placeholder="VD: TP. Hồ Chí Minh, Việt Nam"
+          autocomplete="address-level1"
+        >
+      </div>
+    </div>
+
+    <!-- LinkedIn URL -->
+    <div class="field-group full-width">
+      <label class="field-label" for="cf-linkedin">Đường dẫn LinkedIn</label>
+      <div class="input-wrap" [class.has-error]="linkedinUrl.touched && linkedinUrl.invalid">
+        <span class="field-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+            <rect x="2" y="9" width="4" height="12"/>
+            <circle cx="4" cy="4" r="2"/>
+          </svg>
+        </span>
+        <input
+          id="cf-linkedin"
+          class="field-input"
+          formControlName="linkedinUrl"
+          placeholder="linkedin.com/in/janedoe"
+        >
+      </div>
+      <span class="field-error" *ngIf="linkedinUrl.touched && linkedinUrl.hasError('pattern')">Vui lòng nhập đường dẫn LinkedIn hợp lệ</span>
+    </div>
+
+    <!-- Other Info -->
+    <div class="field-group full-width">
+      <label class="field-label" for="cf-other">Thông tin khác</label>
+      <div class="input-wrap textarea-wrap">
+        <span class="field-icon field-icon--top">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+        </span>
+        <textarea
+          id="cf-other"
+          class="field-input field-textarea"
+          formControlName="otherInfo"
+          rows="3"
+          placeholder="GitHub, portfolio, website cá nhân…"
+        ></textarea>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="form-actions">
+      <span class="save-status" *ngIf="saving">
+        <span class="status-dot"></span>
+        Đang lưu…
+      </span>
+      <button type="submit" class="save-btn" [disabled]="saving || form.invalid">
+        <svg class="save-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+          <polyline points="17,21 17,13 7,13 7,21"/>
+          <polyline points="7,3 7,8 15,8"/>
+        </svg>
+        Lưu liên hệ
+      </button>
+    </div>
+
+  </form>
+</div>

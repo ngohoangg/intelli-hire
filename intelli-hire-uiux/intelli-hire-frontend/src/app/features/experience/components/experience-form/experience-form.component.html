@@ -1,0 +1,56 @@
+<h2 mat-dialog-title>{{ isEdit ? 'Chỉnh sửa kinh nghiệm' : 'Thêm kinh nghiệm' }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="exp-form">
+
+    <mat-form-field appearance="outline" floatLabel="always" class="full-width">
+      <mat-label>Công ty *</mat-label>
+      <input matInput formControlName="company" placeholder="VD: Công ty Acme">
+      <mat-error *ngIf="company.hasError('required')">Vui lòng nhập tên công ty</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" floatLabel="always" class="full-width">
+      <mat-label>Chức danh *</mat-label>
+      <input matInput formControlName="title" placeholder="VD: Kỹ sư phần mềm">
+      <mat-error *ngIf="title.hasError('required')">Vui lòng nhập chức danh</mat-error>
+    </mat-form-field>
+
+    <div class="two-col">
+      <mat-form-field appearance="outline" floatLabel="always">
+        <mat-label>Ngày bắt đầu *</mat-label>
+        <input matInput [matDatepicker]="startPicker" formControlName="startDate">
+        <mat-datepicker-toggle matIconSuffix [for]="startPicker" />
+        <mat-datepicker #startPicker />
+        <mat-error *ngIf="startDate.hasError('required')">Vui lòng chọn ngày bắt đầu</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" floatLabel="always">
+        <mat-label>Ngày kết thúc</mat-label>
+        <input matInput [matDatepicker]="endPicker" formControlName="endDate">
+        <mat-datepicker-toggle matIconSuffix [for]="endPicker" />
+        <mat-datepicker #endPicker />
+      </mat-form-field>
+    </div>
+
+    <mat-error class="range-error" *ngIf="hasDateRangeError">
+      Ngày kết thúc phải sau ngày bắt đầu
+    </mat-error>
+
+    <mat-checkbox formControlName="isCurrent" class="current-checkbox">
+      Đang làm việc tại đây
+    </mat-checkbox>
+
+    <mat-form-field appearance="outline" floatLabel="always" class="full-width">
+      <mat-label>Mô tả</mat-label>
+      <textarea matInput formControlName="description" rows="4" placeholder="Trách nhiệm chính và thành tích nổi bật…"></textarea>
+    </mat-form-field>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()">Hủy</button>
+  <button mat-flat-button class="save-btn" (click)="submit()">
+    {{ isEdit ? 'Lưu thay đổi' : 'Thêm kinh nghiệm' }}
+  </button>
+</mat-dialog-actions>
