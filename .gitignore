@@ -16,3 +16,11 @@ target/
 # AI Agent local customizations                                                                
 .agents/                                                                                       
 AGENTS.md  
+
+# Personal Documentation & Progress Tracking
+PROGRESS.md
+PHAN_CONG_CONG_VIEC.md
+*PROGRESS*.md
+*TODO*.md
+*NOTES*.md
+docs/PHAN_CONG_CONG_VIEC.md
