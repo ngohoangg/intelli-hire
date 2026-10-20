@@ -11,6 +11,8 @@ public interface UserProfileRepository extends JpaRepository<UserProfileEntity, 
 
     Optional<UserProfileEntity> findByAccountId(Long accountId);
 
+    Optional<UserProfileEntity> findByPhone(String phone);
+
     boolean existsByAccountId(Long accountId);
 
     boolean existsByPhone(String phone);
