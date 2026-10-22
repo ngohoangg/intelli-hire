@@ -33,6 +33,10 @@ public class AccountRoleEntity {
     @Column(name = "expires_at")
     private LocalDateTime expiresAt;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "role_id", insertable = false, updatable = false)
+    private RoleEntity role;
+
     // Helper methods
     public boolean isExpired() {
         return expiresAt != null && expiresAt.isBefore(LocalDateTime.now());
