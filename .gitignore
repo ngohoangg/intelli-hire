@@ -18,3 +18,7 @@ node_modules/
 # OS
 .DS_Store
 Thumbs.db
+
+# AI Agent local customizations
+.agents/
+AGENTS.md
