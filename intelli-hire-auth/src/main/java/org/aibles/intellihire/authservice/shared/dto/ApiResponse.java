@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Getter
 @Builder
@@ -13,30 +13,43 @@ public class ApiResponse<T> {
     private final boolean success;
     private final String message;
     private final T data;
-    private final Instant timestamp;
+    private final LocalDateTime timestamp;
 
-    public static <T> ApiResponse<T> ok(T data) {
+    public static <T> ApiResponse<T> success(T data) {
         return ApiResponse.<T>builder()
                 .success(true)
                 .data(data)
-                .timestamp(Instant.now())
+                .timestamp(LocalDateTime.now())
                 .build();
+    }
+
+    public static <T> ApiResponse<T> success(String message, T data) {
+        return ApiResponse.<T>builder()
+                .success(true)
+                .message(message)
+                .data(data)
+                .timestamp(LocalDateTime.now())
+                .build();
+    }
+
+    public static <T> ApiResponse<T> success(String message) {
+        return ApiResponse.<T>builder()
+                .success(true)
+                .message(message)
+                .timestamp(LocalDateTime.now())
+                .build();
+    }
+
+    // Aliases for compatibility
+    public static <T> ApiResponse<T> ok(T data) {
+        return success(data);
     }
 
     public static <T> ApiResponse<T> ok(String message, T data) {
-        return ApiResponse.<T>builder()
-                .success(true)
-                .message(message)
-                .data(data)
-                .timestamp(Instant.now())
-                .build();
+        return success(message, data);
     }
 
     public static ApiResponse<Void> message(String message) {
-        return ApiResponse.<Void>builder()
-                .success(true)
-                .message(message)
-                .timestamp(Instant.now())
-                .build();
+        return success(message);
     }
 }
